@@ -1,0 +1,6 @@
+venv
+__pycache__
+save
+backup
+.ipynb_checkpoints
+pull_remote.sh
