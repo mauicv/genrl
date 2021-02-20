@@ -134,7 +134,15 @@ class Mutator:
         return genome
 
     def add_edge(self, genome):
-        pass
+        non_empty_layers = [layer_num for layer_num in
+                            range(len(genome.layers)) if
+                            len(genome.layers[layer_num]) > 0]
+        from_layer, to_layer = sorted(choice(
+            non_empty_layers, 2, replace=False))
+        from_node = choice(genome.layers[from_layer])
+        to_node = choice(genome.layers[to_layer])
+        genome.add_edge(from_node, to_node)
+        return genome
 
     def mate(genome_1, genome_2):
         pass

@@ -59,3 +59,17 @@ class TestMutatorClass(unittest.TestCase):
             new_node.edges_out[0].to_node.layer_num,
             old_edge.to_node.layer_num
         )
+
+    def test_add_edge_mutation(self):
+        """Test mutator correctly adds nodes to genome."""
+
+        g = Genome.default(input_size=2, output_size=3, depth=5)
+        num_of_nodes = len(g.nodes)
+        num_of_edges = len(g.edges)
+        greatest_edge_innov = sorted(g.edges, key=lambda n: n.innov)[-1].innov
+        m = Mutator()
+        m.add_edge(g)
+        self.assertEqual(len(g.nodes), num_of_nodes)
+        self.assertEqual(len(g.edges), num_of_edges + 1)
+        new_edge = sorted(g.edges, key=lambda n: n.innov)[-1]
+        self.assertEqual(new_edge.innov, greatest_edge_innov + 1)
