@@ -5,7 +5,6 @@ import shutil
 from time import time, sleep
 from gym import Env
 
-
 def setup_env(var=0, vis=True):
     env = Env('quadruped', var=var, vis=vis)
     state_space_dim = env.observation_space.shape[0]

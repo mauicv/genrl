@@ -38,7 +38,7 @@ class TestEdgeClass(unittest.TestCase):
         e2 = g1.add_edge(n, g1.layers[2][0])
 
         mutation_rate = 0.1
-        ne = Edge.copy(e1, g2, mutation_rate=mutation_rate)
+        ne = Edge.copy(e1, g2)
 
         self.assertNotEqual(ne, e1)
         self.assertEqual(ne.innov, e1.innov)

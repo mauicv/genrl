@@ -3,13 +3,12 @@
 Taken from NEAT implementation and adapted for layered networks.
 see http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
 """
-
-from random import random
+import random
 import itertools
 
 
 def get_random():
-    return random()*2 - 1
+    return random.random()*2 - 1
 
 class Genome:
     """Genome."""
@@ -24,7 +23,7 @@ class Genome:
         self.depth = depth
         self.weight_low = weight_low
         self.weight_high = weight_high
-        self.weight_range = self.weight_high - self.weight_high
+        self.weight_range = self.weight_high - self.weight_low
         self.inputs = [Node(0, i, innov=-1) for i in range(input_size)]
         self.outputs = [Node(1+depth, j, innov=-1) for j in
                         range(output_size)]
@@ -58,7 +57,7 @@ class Genome:
         return genome
 
     @classmethod
-    def copy(cls, genome, mutation_rate=0):
+    def copy(cls, genome):
         new_genome = cls(
             input_size=len(genome.inputs),
             output_size=len(genome.outputs),
@@ -74,13 +73,13 @@ class Genome:
             new_genome.outputs
         ]
 
-        for edge in genome.get_edges():
-            Edge.copy(edge, new_genome, mutation_rate=mutation_rate)
+        for edge in genome.edges:
+            Edge.copy(edge, new_genome)
         return new_genome
 
     @property
     def sample_weight(self):
-        return random() * self.weight_range - self.weight_low
+        return random.random() * self.weight_range + self.weight_low
 
     def layer_edges_out(self, layer_num):
         return [edge for node in self.layers[layer_num]
@@ -100,7 +99,8 @@ class Genome:
                 for edge in node.edges_out
                 if addmissable(edge)]
 
-    def get_edges(self):
+    @property
+    def edges(self):
         """Returns all available edges."""
 
         return [edge for layer in self.layers for node in layer
@@ -159,11 +159,9 @@ class Edge:
         to_node.edges_in.append(self)
 
     @classmethod
-    def copy(
-            cls,
-            edge,
-            new_genome,
-            mutation_rate=0):
+    def copy(cls,
+             edge,
+             new_genome):
         fn = edge.from_node
         tn = edge.to_node
 
@@ -177,5 +175,4 @@ class Edge:
 
         from_node = new_genome.layers[fn.layer_num][fn.layer_ind]
         to_node = new_genome.layers[tn.layer_num][tn.layer_ind]
-        mutated_weight = edge.weight + mutation_rate*get_random()
-        return cls(from_node, to_node, mutated_weight, innov=edge.innov)
+        return cls(from_node, to_node, edge.weight, innov=edge.innov)

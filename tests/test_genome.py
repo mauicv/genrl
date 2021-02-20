@@ -1,6 +1,8 @@
 import unittest
 from graph.genome import Genome, Edge, Node
 import itertools
+from unittest.mock import Mock
+import random
 
 class TestGenomeClass(unittest.TestCase):
     """Test methods assoicated to Genome class."""
@@ -69,3 +71,12 @@ class TestGenomeClass(unittest.TestCase):
                 self.assertEqual(node_copy.innov, node.innov)
                 self.assertEqual(len(node_copy.edges_in), len(node.edges_in))
                 self.assertEqual(len(node_copy.edges_out), len(node.edges_out))
+
+        for edge_copy, edge in zip(g_copy.edges, g.edges):
+            self.assertNotEqual(edge_copy, edge)
+            self.assertEqual(edge_copy.innov, edge.innov)
+
+    def test_genome_sample_weight(self):
+        g = Genome.default(input_size=2, output_size=3, depth=5)
+        random.random = Mock(return_value=0.1)
+        self.assertEqual(g.sample_weight, random.random()*4 - 2)
