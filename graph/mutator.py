@@ -119,9 +119,10 @@ class Mutator:
 
     def mutate_topology(self, genome):
         if np.random.uniform(0, 1, 1) < self.new_node_probability:
-            print('here')
+            self.add_node(genome)
         if np.random.uniform(0, 1, 1) < self.new_edge_probability:
-            print('here')
+            self.add_edge(genome)
+        return genome
 
     def add_node(self, genome):
         edge = choice(genome.get_addmissable_edges())
