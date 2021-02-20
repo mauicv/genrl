@@ -1,6 +1,7 @@
 import unittest
-from graph.genome import Genome, Edge, Node
+from graph.genome import Edge, Node
 import itertools
+
 
 class TestNodeClass(unittest.TestCase):
     """Test methods assoicated to Node class."""
@@ -12,10 +13,10 @@ class TestNodeClass(unittest.TestCase):
     def test_node_init(self):
         """Test node."""
 
-        n1 = Node(0,0)
-        n2 = Node(0,1)
-        n3 = Node(1,0)
-        n4 = Node(1,1)
+        n1 = Node(0, 0)
+        n2 = Node(0, 1)
+        n3 = Node(1, 0)
+        n4 = Node(1, 1)
 
         # Check correct nodes
         self.assertEqual(n1.innov, 0)
@@ -25,7 +26,7 @@ class TestNodeClass(unittest.TestCase):
 
     def test_node_copy(self):
         """Test node."""
-        n = Node(0,0)
+        n = Node(0, 0)
         m = Node.copy(n)
         self.assertNotEqual(n, m)
         self.assertEqual(n.innov, m.innov)

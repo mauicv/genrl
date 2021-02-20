@@ -4,6 +4,7 @@ import itertools
 from unittest.mock import Mock
 import random
 
+
 class TestGenomeClass(unittest.TestCase):
     """Test methods assoicated to Genome class."""
     def setUp(self):
@@ -26,7 +27,7 @@ class TestGenomeClass(unittest.TestCase):
         for node in g.inputs:
             self.assertEqual(node.layer_num, 0)
         for node in g.outputs:
-            self.assertEqual(node.layer_num, len(g.layers) -1)
+            self.assertEqual(node.layer_num, len(g.layers) - 1)
         self.assertEqual(len(g.layers), 7)
 
         # check central connecting node edges
@@ -48,7 +49,7 @@ class TestGenomeClass(unittest.TestCase):
         self.assertEqual(len(g.layer_edges_in(3)), 1)
         self.assertEqual(len(g.layer_edges_out(3)), 1)
 
-        for layer_num in [2,4,5]:
+        for layer_num in [2, 4, 5]:
             self.assertEqual(len(g.layer_edges_in(layer_num)), 0)
             self.assertEqual(len(g.layer_edges_out(layer_num)), 0)
 
@@ -79,4 +80,4 @@ class TestGenomeClass(unittest.TestCase):
     def test_genome_sample_weight(self):
         g = Genome.default(input_size=2, output_size=3, depth=5)
         random.random = Mock(return_value=0.1)
-        self.assertEqual(g.sample_weight, random.random()*4 - 2)
+        self.assertEqual(g.sample_weight, random.random() * 4 - 2)

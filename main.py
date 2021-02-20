@@ -1,9 +1,10 @@
 import click
 import numpy as np
-import os
-import shutil
-from time import time, sleep
+# import os
+# import shutil
+# from time import time, sleep
 from gym import Env
+
 
 def setup_env(var=0, vis=True):
     env = Env('quadruped', var=var, vis=vis)
@@ -61,7 +62,6 @@ def cli(ctx):
 def play(ctx, steps, dir):
     env, state_space_dim, action_space_dim, state_norm_array, min_action, \
         max_action = setup_env(var=0, vis=True)
-    r = 0
     for i in range(steps):
         state, reward, done, _ = env \
             .step([])
@@ -78,6 +78,7 @@ def play(ctx, steps, dir):
 #             shutil.rmtree(f'save/{dir}')
 #     else:
 #         shutil.rmtree(f'save/{dir}')
+
 
 if __name__ == '__main__':
     cli()

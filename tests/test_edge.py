@@ -2,6 +2,7 @@ import unittest
 from graph.genome import Genome, Node, Edge
 import itertools
 
+
 class TestEdgeClass(unittest.TestCase):
     """Test methods assoicated to Genome class."""
     def setUp(self):
@@ -12,8 +13,8 @@ class TestEdgeClass(unittest.TestCase):
     def test_edge_init(self):
         """Test edge init."""
 
-        n = Node(0,0)
-        m = Node(0,1)
+        n = Node(0, 0)
+        m = Node(0, 1)
         with self.assertRaises(Exception) as context:
             Edge(n, m, 0)
 
@@ -32,10 +33,10 @@ class TestEdgeClass(unittest.TestCase):
         g2 = Genome.default(input_size=1, output_size=1, depth=1)
 
         n = g1.add_node(1)
-        m = g2.add_node(1)
+        g2.add_node(1)
 
         e1 = g1.add_edge(g1.layers[0][0], n)
-        e2 = g1.add_edge(n, g1.layers[2][0])
+        g1.add_edge(n, g1.layers[2][0])
 
         mutation_rate = 0.1
         ne = Edge.copy(e1, g2)
@@ -43,7 +44,6 @@ class TestEdgeClass(unittest.TestCase):
         self.assertNotEqual(ne, e1)
         self.assertEqual(ne.innov, e1.innov)
         self.assertLess(abs(ne.weight - e1.weight), mutation_rate)
-
 
     def test_edge_copy_err(self):
         """Test copy edge throws correct error if node doesn't exist on
@@ -54,10 +54,10 @@ class TestEdgeClass(unittest.TestCase):
         n = g1.add_node(1)
 
         e1 = g1.add_edge(g1.layers[0][0], n)
-        e2 = g1.add_edge(n, g1.layers[2][0])
+        g1.add_edge(n, g1.layers[2][0])
 
         with self.assertRaises(Exception) as context:
-            ne = Edge.copy(e1, g2)
+            Edge.copy(e1, g2)
 
         err_msg = 'to_node does not exist on new_genome.'
         self.assertTrue(err_msg == str(context.exception))

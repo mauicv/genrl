@@ -1,0 +1,6 @@
+[flake8]
+ignore = E221,E731
+exclude =
+  .git
+  venv
+  

@@ -1,5 +1,4 @@
 from random import random, seed
-import time
 import pybullet as p
 import pybullet_data
 from datetime import datetime
@@ -10,20 +9,20 @@ from gym.spaces import Box
 seed(datetime.now())
 
 TARGET_LOC          = np.array([0.0, 0.0, 0.18])
-TARGET_ORIENT       = np.array([1,1,0])
+TARGET_ORIENT       = np.array([1, 1, 0])
 JOINT_AT_LIMIT_COST = 0.1
 TORQUE_COST         = 0.4
 STEP_ACTION_RATE    = 5
 REWARD_SCALE        = 10
 GROUND_CONTACT_COST = 100
 
+
 class Env:
     def __init__(
             self,
             name,
             var=0.1,
-            vis=False
-        ):
+            vis=False):
         self.var = var
         self.vis = vis
         self.name = name
@@ -63,8 +62,8 @@ class Env:
             p.removeBody(body_id)
 
         slope = p.getQuaternionFromEuler([
-            self.var*random() - self.var/2,
-            self.var*random() - self.var/2,
+            self.var * random() - self.var / 2,
+            self.var * random() - self.var / 2,
             0])
 
         # slope = p.getQuaternionFromEuler([0, 0, 0])
@@ -128,12 +127,12 @@ class Env:
         base_loc = np.array(base_data[0])
         orient = np.array(p.getEulerFromQuaternion(base_data[1]))
 
-        dist_from_target =  np.linalg.norm(base_loc - TARGET_LOC) \
+        dist_from_target = np.linalg.norm(base_loc - TARGET_LOC) \
             + 6 * np.linalg.norm(orient * TARGET_ORIENT)
-        return REWARD_SCALE/max(dist_from_target, 0.01)
+        return REWARD_SCALE / max(dist_from_target, 0.01)
 
     def _torque_cost(self):
-        torque_sum = sum([abs(p.getJointState(self.robot_id, i)[3])/1500
+        torque_sum = sum([abs(p.getJointState(self.robot_id, i)[3]) / 1500
                           for i in range(p.getNumJoints(self.robot_id))])
         return - torque_sum * TORQUE_COST
 

@@ -8,7 +8,8 @@ import itertools
 
 
 def get_random():
-    return random.random()*2 - 1
+    return random.random() * 2 - 1
+
 
 class Genome:
     """Genome."""
@@ -25,7 +26,7 @@ class Genome:
         self.weight_high = weight_high
         self.weight_range = self.weight_high - self.weight_low
         self.inputs = [Node(0, i, innov=-1) for i in range(input_size)]
-        self.outputs = [Node(1+depth, j, innov=-1) for j in
+        self.outputs = [Node(1 + depth, j, innov=-1) for j in
                         range(output_size)]
         self.layers = None
 
@@ -53,7 +54,7 @@ class Genome:
             Edge(n, genome.layers[1][0], genome.sample_weight)
 
         for n in genome.outputs:
-             Edge(genome.layers[1][0], n, genome.sample_weight)
+            Edge(genome.layers[1][0], n, genome.sample_weight)
         return genome
 
     @classmethod
@@ -111,7 +112,7 @@ class Genome:
         return [node for layer in self.layers for node in layer]
 
     def add_node(self, layer_num):
-        if layer_num == 0 or layer_num == len(self.layers)-1:
+        if layer_num == 0 or layer_num == len(self.layers) - 1:
             raise ValueError('Cannot add node to input or output layer')
         new_node = Node(layer_num, len(self.layers[layer_num]))
         self.layers[layer_num].append(new_node)
@@ -120,10 +121,12 @@ class Genome:
     def add_edge(self, from_node, to_node):
         return Edge(from_node, to_node, self.sample_weight)
 
+
 class Node:
     """Node."""
 
     innov_iter = itertools.count()
+
     def __init__(self, layer_num, layer_ind, innov=None):
         self.layer_num = layer_num
         self.layer_ind = layer_ind
@@ -143,10 +146,12 @@ class Node:
             node.layer_ind,
             innov=node.innov)
 
+
 class Edge:
     """Edge."""
 
     innov_iter = itertools.count()
+
     def __init__(self, from_node, to_node, weight, innov=None):
         if to_node.layer_num - from_node.layer_num < 1:
             raise ValueError('Cannot connect edge to lower or same layer')
@@ -165,11 +170,11 @@ class Edge:
         fn = edge.from_node
         tn = edge.to_node
 
-        if  len(new_genome.layers) - 1 < fn.layer_num or \
+        if len(new_genome.layers) - 1 < fn.layer_num or \
                 len(new_genome.layers[fn.layer_num]) - 1 < fn.layer_ind:
             raise ValueError('from_node does not exist on new_genome.')
 
-        if  len(new_genome.layers) - 1 < tn.layer_ind or \
+        if len(new_genome.layers) - 1 < tn.layer_ind or \
                 len(new_genome.layers[tn.layer_num]) - 1 < tn.layer_ind:
             raise ValueError('to_node does not exist on new_genome.')
 

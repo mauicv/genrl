@@ -43,8 +43,9 @@ Config:
     pass
 
 """
-from random import random
+
 import numpy as np
+from numpy.random import choice
 from graph.genome import Genome
 
 
@@ -61,7 +62,8 @@ GENE_DISABLE_RATE               = 0.75
 MUTATION_WITHOUT_CROSSOVER_RATE = 0.25
 INSTERSPECIES_MATING_RATE       = 0.001
 NEW_NODE_PROBABILITY            = 0.03
-NEW_LINK_PROBABILITY            = 0.05
+NEW_EDGE_PROBABILITY            = 0.05
+
 
 class Mutator:
     def __init__(
@@ -78,7 +80,7 @@ class Mutator:
             mutation_without_crossover_rate=MUTATION_WITHOUT_CROSSOVER_RATE,
             insterspecies_mating_rate=INSTERSPECIES_MATING_RATE,
             new_node_probability=NEW_NODE_PROBABILITY,
-            new_link_probability=NEW_LINK_PROBABILITY):
+            new_edge_probability=NEW_EDGE_PROBABILITY):
         self.c_1 = c_1
         self.c_2 = c_2
         self.c_3 = c_3
@@ -91,14 +93,14 @@ class Mutator:
         self.mutation_without_crossover_rate = mutation_without_crossover_rate
         self.insterspecies_mating_rate = insterspecies_mating_rate
         self.new_node_probability = new_node_probability
-        self.new_link_probability = new_link_probability
+        self.new_edge_probability = new_edge_probability
 
     def __call__(self, population):
         return self.gen_step(population)
 
-    def mutate(self, genome):
+    def mutate_weights(self, genome):
         new_genome = Genome.copy(genome)
-        if np.random.uniform(0,1,1) < self.weight_mutation_likelyhood:
+        if np.random.uniform(0, 1, 1) < self.weight_mutation_likelyhood:
             edges = new_genome.edges
             random_nums = np.random.uniform(0, 1, len(edges))
             for edge, random_num in zip(edges, random_nums):
@@ -114,6 +116,28 @@ class Mutator:
                         new_genome.weight_high)
                     edge.weight = perturbation
         return new_genome
+
+    def mutate_topology(self, genome):
+        if np.random.uniform(0, 1, 1) < self.new_node_probability:
+            print('here')
+        if np.random.uniform(0, 1, 1) < self.new_edge_probability:
+            print('here')
+
+    def add_node(self, genome):
+        edge = choice(genome.get_addmissable_edges())
+        edge.disabled = True
+        from_node, to_node = (edge.from_node, edge.to_node)
+        layer_num = choice(range(from_node.layer_num, to_node.layer_num))
+        new_node = genome.add_node(layer_num)
+        genome.add_edge(from_node, new_node)
+        genome.add_edge(new_node, to_node)
+        return genome
+
+    def add_edge(self, genome):
+        pass
+
+    def mate(genome_1, genome_2):
+        pass
 
     def gen_step(self, population):
         pass
