@@ -127,7 +127,7 @@ class Mutator:
         edge = choice(genome.get_addmissable_edges())
         edge.disabled = True
         from_node, to_node = (edge.from_node, edge.to_node)
-        layer_num = choice(range(from_node.layer_num, to_node.layer_num))
+        layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))
         new_node = genome.add_node(layer_num)
         genome.add_edge(from_node, new_node)
         genome.add_edge(new_node, to_node)

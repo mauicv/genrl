@@ -37,10 +37,7 @@ class TestMutatorClass(unittest.TestCase):
         self.assertEqual(g.edges[1].weight + 0.1, m_g.edges[1].weight)
 
     def test_add_node_mutation(self):
-        """Test mutator correctly adds nodes to genome.
-
-        TEST CURRENTLY FAILS INTERMITENTLY
-        """
+        """Test mutator correctly adds nodes to genome."""
 
         np.random.uniform = Mock(side_effect=[0.02, 0.04])
         g = Genome.default(input_size=2, output_size=3, depth=5)
@@ -50,3 +47,13 @@ class TestMutatorClass(unittest.TestCase):
         m.add_node(g)
         self.assertEqual(len(g.nodes), num_of_nodes + 1)
         self.assertEqual(len(g.edges), num_of_edges + 2)
+        old_edge = [e for e in g.edges if e.disabled][0]
+        new_node = sorted(g.nodes, key=lambda n: n.innov)[-1]
+        self.assertEqual(
+            new_node.edges_in[0].from_node.layer_num,
+            old_edge.from_node.layer_num
+        )
+        self.assertEqual(
+            new_node.edges_out[0].to_node.layer_num,
+            old_edge.to_node.layer_num
+        )
