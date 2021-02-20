@@ -1,7 +1,9 @@
 import numpy as np
 import unittest
 from unittest.mock import Mock
-from graph.genome import Genome, Edge, Node
+from graph.genome import Genome
+from graph.edge import Edge
+from graph.node import Node
 from graph.mutator import Mutator
 import itertools
 from random import random

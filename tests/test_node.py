@@ -1,5 +1,6 @@
 import unittest
-from graph.genome import Edge, Node
+from graph.edge import Edge
+from graph.node import Node
 import itertools
 
 

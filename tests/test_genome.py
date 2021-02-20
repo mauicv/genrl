@@ -1,5 +1,7 @@
 import unittest
-from graph.genome import Genome, Edge, Node
+from graph.genome import Genome
+from graph.edge import Edge
+from graph.node import Node
 import itertools
 from unittest.mock import Mock
 import random
