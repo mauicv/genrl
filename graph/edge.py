@@ -34,4 +34,9 @@ class Edge:
 
         from_node = new_genome.layers[fn.layer_num][fn.layer_ind]
         to_node = new_genome.layers[tn.layer_num][tn.layer_ind]
-        return cls(from_node, to_node, edge.weight, innov=edge.innov)
+
+        edge = cls(from_node, to_node, edge.weight, innov=edge.innov)
+        if new_genome.edges and new_genome.edges[-1].innov > edge.innov:
+            raise ValueError('innovation numbers are out of order.')
+        new_genome.edges.append(edge)
+        return edge

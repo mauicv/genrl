@@ -1,48 +1,4 @@
-"""Class that acts on genomes to mutate them.
-
-Use:
-
-if mutating a single genome:
-
-    ```py
-    m = Mutator(config)
-    new_genome = m.mutate(genome)
-    ```
-
-if mutating an entire generation of genomes with speciation:
-
-    ```
-    m = Mutator(config)
-    new_genomes = m.gen_step(genomes)
-    ```
-
-Config:
-- c_1:
-    pass
-- c_2:
-    pass
-- c_3:
-    pass
-- delta:
-    pass
-- weight_mutation_likelyhood,
-    pass
-- weight_mutation_rate_random,
-    pass
-- weight_mutation_rate_uniform,
-    pass
-- gene_disable_rate,
-    pass
-- mutation_without_crossover_rate,
-    pass
-- insterspecies_mating_rate,
-    pass
-- new_node_probability,
-    pass
-- new_link_probability
-    pass
-
-"""
+"""Class that acts on genomes to mutate them."""
 
 import numpy as np
 from numpy.random import choice
@@ -94,6 +50,7 @@ class Mutator:
         self.insterspecies_mating_rate = insterspecies_mating_rate
         self.new_node_probability = new_node_probability
         self.new_edge_probability = new_edge_probability
+        self.edge_innovations = {}
 
     def __call__(self, population):
         return self.gen_step(population)
@@ -125,16 +82,37 @@ class Mutator:
         return genome
 
     def add_node(self, genome):
+        """When a node is added we randomly sample an admissible edge and then
+        randomly sample an layer index in the range of layers the edge spans.
+        After disabling the sampled edge we add a new node in the selected
+        layer and then connect it with two new edges.
+
+        NOTE: We also update the edge_innovation dictionary in order to
+        prevent duplicate edge innovations which can occur in add_edge.
+        """
+
         edge = choice(genome.get_addmissable_edges())
         edge.disabled = True
         from_node, to_node = (edge.from_node, edge.to_node)
         layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))
         new_node = genome.add_node(layer_num)
-        genome.add_edge(from_node, new_node)
-        genome.add_edge(new_node, to_node)
+        edge_1 = genome.add_edge(from_node, new_node)
+        key_1 = (edge_1.from_node.innov, edge_1.to_node.innov)
+        self.edge_innovations[key_1] = edge_1.innov
+        edge_2 = genome.add_edge(new_node, to_node)
+        key_2 = (edge_2.from_node.innov, edge_2.to_node.innov)
+        self.edge_innovations[key_2] = edge_2.innov
         return genome
 
     def add_edge(self, genome):
+        """When a edge is added we sample two layers without replacement and
+        then order them. We then sample a node from each and add a new edge
+        between them.
+
+        NOTE: we also maintain a dictionary of edge_innovations as there is a
+        possibility we may generate the same innovation twice.
+        """
+
         non_empty_layers = [layer_num for layer_num in
                             range(len(genome.layers)) if
                             len(genome.layers[layer_num]) > 0]
@@ -142,11 +120,35 @@ class Mutator:
             non_empty_layers, 2, replace=False))
         from_node = choice(genome.layers[from_layer])
         to_node = choice(genome.layers[to_layer])
-        genome.add_edge(from_node, to_node)
+        key = (from_node.innov, to_node.innov)
+        innov = self.edge_innovations.get(key, None)
+        edge = genome.add_edge(from_node, to_node, innov=innov)
+        self.edge_innovations[key] = edge.innov
         return genome
 
-    def mate(genome_1, genome_2):
-        pass
+    def mate(self, genome_1, genome_2):
+        nodes = self.pair_genes(genome_1.nodes, genome_2.nodes)
+        edges = self.pair_genes(genome_1.edges, genome_2.edges)
+        Genome.fromGenes(nodes, edges)
 
-    def gen_step(self, population):
-        pass
+    def pair_genes(self, primary, secondary):
+        i, j = (0, 0)
+        selected_nodes = []
+        while True:
+            if primary[i].innov == secondary[j].innov:
+                gene = choice([primary[i], secondary[j]])
+                selected_nodes.append(gene.__class__.Copy(gene))
+                i, j = (i + 1, j + 1)
+            elif primary[i].innov < secondary[j].innov:
+                selected_nodes.append(primary[i].__class__.Copy(gene))
+                i += 1
+            elif primary[i].innov > secondary[j].innov:
+                j += 1
+
+            if i == len(primary):
+                break
+
+            if j == len(secondary):
+                excess = [gene.__class__.Copy(gene) for gene in primary[i:]]
+                selected_nodes = selected_nodes + excess
+                break

@@ -30,6 +30,12 @@ class Genome:
         self.outputs = [Node(1 + depth, j, innov=-1) for j in
                         range(output_size)]
         self.layers = None
+        self.nodes = []
+        self.edges = []
+
+    @classmethod
+    def from_genes(cls, nodes, edges):
+        pass
 
     @classmethod
     def default(
@@ -45,17 +51,16 @@ class Genome:
             weight_low=weight_low,
             weight_high=weight_high,
             depth=depth)
-
         genome.layers = [genome.inputs,
                          *[[] for i in range(depth)],
                          genome.outputs]
         genome.add_node(1)
-
         for n in genome.inputs:
-            Edge(n, genome.layers[1][0], genome.sample_weight)
-
+            genome.edges.append(
+                Edge(n, genome.layers[1][0], genome.sample_weight))
         for n in genome.outputs:
-            Edge(genome.layers[1][0], n, genome.sample_weight)
+            genome.edges.append(
+                Edge(genome.layers[1][0], n, genome.sample_weight))
         return genome
 
     @classmethod
@@ -66,7 +71,6 @@ class Genome:
             weight_low=genome.weight_low,
             weight_high=genome.weight_high,
             depth=genome.depth)
-
         layers = [[Node.copy(node) for node in layer]
                   for layer in genome.layers[1:-1]]
         new_genome.layers = [
@@ -74,9 +78,12 @@ class Genome:
             *layers,
             new_genome.outputs
         ]
-
+        nodes = [new_genome.layers[node.layer_num][node.layer_ind]
+                 for node in genome.nodes]
+        new_genome.nodes = nodes
         for edge in genome.edges:
             Edge.copy(edge, new_genome)
+
         return new_genome
 
     @property
@@ -93,31 +100,24 @@ class Genome:
 
     def get_addmissable_edges(self):
         """Addmissable edges are defined as those that span more than one
-        layer."""
+        layer and are not disabled."""
 
-        addmissable = lambda e: e.to_node.layer_num - e.from_node.layer_num > 1
+        addmissable = lambda e: e.to_node.layer_num - e.from_node.layer_num \
+            > 1 and not e.disabled
         return [edge for layer in self.layers
                 for node in layer
                 for edge in node.edges_out
                 if addmissable(edge)]
-
-    @property
-    def edges(self):
-        """Returns all available edges."""
-
-        return [edge for layer in self.layers for node in layer
-                for edge in node.edges_out]
-
-    @property
-    def nodes(self):
-        return [node for layer in self.layers for node in layer]
 
     def add_node(self, layer_num):
         if layer_num == 0 or layer_num == len(self.layers) - 1:
             raise ValueError('Cannot add node to input or output layer')
         new_node = Node(layer_num, len(self.layers[layer_num]))
         self.layers[layer_num].append(new_node)
+        self.nodes.append(new_node)
         return new_node
 
-    def add_edge(self, from_node, to_node):
-        return Edge(from_node, to_node, self.sample_weight)
+    def add_edge(self, from_node, to_node, innov=None):
+        edge = Edge(from_node, to_node, self.sample_weight, innov=innov)
+        self.edges.append(edge)
+        return edge

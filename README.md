@@ -2,6 +2,39 @@
 
 Aim is to use genetic algorithms to do the bulk of the heavy lifting and traditional reinforcement learning methods to optimize at a later date. The process should be periodically human driven and from the data gathered from human selection process we can further derive the value function that the automated RL and Evolutionary Strategies use.
 
+
+
+## Use:
+
+if mutating a single genome:
+
+```py
+m = Mutator(config)
+new_genome = m.mutate(genome)
+```
+
+if mutating an entire generation of genomes with speciation:
+
+```py
+m = Mutator(config)
+new_genomes = m.gen_step(genomes)
+```
+
+Config:
+- c_1
+- c_2
+- c_3
+- delta
+- weight_mutation_likelyhood
+- weight_mutation_rate_random
+- weight_mutation_rate_uniform
+- gene_disable_rate
+- mutation_without_crossover_rate
+- insterspecies_mating_rate
+- new_node_probability
+- new_link_probability
+
+
 ### Spec:
 
 #### Genome class:

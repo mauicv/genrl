@@ -24,7 +24,7 @@ class TestGenomeClass(unittest.TestCase):
 
         # Check correct nodes
         self.assertEqual(len(g.inputs), 2)
-        self.assertEqual(len(g.nodes), 6)
+        self.assertEqual(len(g.nodes), 1)
         self.assertEqual(len(g.outputs), 3)
         for node in g.inputs:
             self.assertEqual(node.layer_num, 0)
@@ -67,6 +67,9 @@ class TestGenomeClass(unittest.TestCase):
         g.add_edge(n2, g.outputs[0])
         g_copy = Genome.copy(g)
         self.assertNotEqual(g_copy, g)
+        for node_copy, node in zip(g_copy.nodes, g.nodes):
+            self.assertEqual(node_copy.innov, node.innov)
+
         for layer_copy, layer in zip(g_copy.layers, g.layers):
             self.assertEqual(len(layer_copy), len(layer))
             for node_copy, node in zip(layer_copy, layer):
