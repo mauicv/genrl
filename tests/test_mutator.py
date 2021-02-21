@@ -98,6 +98,7 @@ class TestMutatorClass(unittest.TestCase):
 
     def test_mate_mutation(self):
         """Test genomes are correctly combined when mated."""
+        np.random.seed(1)
 
         g1 = Genome.default(input_size=2, output_size=3, depth=5)
         n1 = g1.add_node(4)
@@ -124,12 +125,31 @@ class TestMutatorClass(unittest.TestCase):
         g2.layers[3].append(Node.copy(n3))
         g2.nodes.append(Node.copy(n3))
 
+        n6 = g1.add_node(3)
+        g1.add_edge(g1.layers[0][0], n6)
+        g1.add_edge(n6, g1.outputs[1])
+
         g2.add_edge(g2.layers[0][0], n3, innov=e1.innov)
         e2 = g2.add_edge(n3, g2.outputs[2], innov=e2.innov)
 
-        print('g1: ', g1)
-        print('g2: ', g2)
+        for edge in g1.edges:
+            edge.weight = 1
+        for edge in g2.edges:
+            edge.weight = -1
 
         m = Mutator()
         child_g = m.mate(primary=g1, secondary=g2)
-        print('child_g: ', child_g)
+
+        g1_nodes, g1_edges = g1.to_reduced_repr
+        g2_nodes, g2_edges = g2.to_reduced_repr
+        child_g_nodes, child_g_edges = child_g.to_reduced_repr
+
+        self.assertEqual(g1_nodes, child_g_nodes)
+        self.assertEqual(
+            [e[-1] for e in g1_edges],
+            [e[-1] for e in child_g_edges]
+        )
+        self.assertEqual(
+            {-1, 1},
+            {e[-2] for e in child_g_edges}
+        )

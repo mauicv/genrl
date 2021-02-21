@@ -167,27 +167,20 @@ class Genome:
 
     def __repr__(self):
         repr_str = '\nNodes: \n'
-        for node in self.nodes:
+        for node in self.nodes[0:5]:
             repr_str += '\t' + str(node.to_reduced_repr) + '\n'
+        if len(self.nodes) > 5:
+            repr_str += '\t.\n\t.\n\t.\n'
+            repr_str += '\t' + str(self.nodes[-1].to_reduced_repr) + '\n'
         repr_str += 'Edges: \n'
-        for edge in self.edges:
+        for edge in self.edges[0:5]:
             repr_str += '\t' + str(edge.to_reduced_repr) + '\n'
-        # repr_str = '\nNodes: \n'
-        # for node in self.nodes[0:5]:
-        #     repr_str += '\t' + str(node.to_reduced_repr) + '\n'
-        # if len(self.nodes) > 5:
-        #     repr_str += '\t.\n\t.\n\t.\n'
-        #     repr_str += '\t' + str(self.nodes[-1].to_reduced_repr) + '\n'
-        # repr_str += 'Edges: \n'
-        # for edge in self.edges[0:5]:
-        #     repr_str += '\t' + str(edge.to_reduced_repr) + '\n'
-        # if len(self.edges) > 5:
-        #     repr_str += '\t.\n\t.\n\t.\n'
-        #     repr_str += '\t' + str(self.edges[-1].to_reduced_repr) + '\n'
+        if len(self.edges) > 5:
+            repr_str += '\t.\n\t.\n\t.\n'
+            repr_str += '\t' + str(self.edges[-1].to_reduced_repr) + '\n'
         return repr_str
 
-    # def save(self):
-    #     pass
-    #
-    # def load(self):
-    #     pass
+    @property
+    def to_reduced_repr(self):
+        return [node.to_reduced_repr for node in self.nodes], \
+            [edge.to_reduced_repr for edge in self.edges]
