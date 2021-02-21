@@ -34,8 +34,51 @@ class Genome:
         self.edges = []
 
     @classmethod
-    def from_genes(cls, nodes, edges):
-        pass
+    def from_genes(
+            cls,
+            nodes_genes,
+            edges,
+            input_size=2,
+            output_size=2,
+            weight_low=-2,
+            weight_high=2,
+            depth=3):
+
+        new_genome = cls(
+            input_size=input_size,
+            output_size=output_size,
+            weight_low=weight_low,
+            weight_high=weight_high,
+            depth=depth)
+
+        layer_maxes = [0 for i in range(depth)]
+        for node_gene in nodes_genes:
+            layer_num, layer_ind, _ = node_gene
+            if layer_maxes[layer_num - 1] < layer_ind + 1:
+                layer_maxes[layer_num - 1] = layer_ind + 1
+
+        layers = []
+        for layer_max in layer_maxes:
+            layers.append([None for _ in range(layer_max)])
+
+        nodes = []
+        for node_gene in nodes_genes:
+            layer_num, layer_ind, innov = node_gene
+            node = Node(layer_num, layer_ind, innov=innov)
+            nodes.append(node)
+            layers[layer_num - 1][layer_ind] = node
+
+        new_genome.layers = [new_genome.inputs, *layers, new_genome.outputs]
+
+        new_genome.nodes = nodes
+        for from_node_reduced, to_node_reduced, weight, innov in edges:
+            from_layer_num, from_layer_ind, _ = from_node_reduced
+            from_node = new_genome.layers[from_layer_num][from_layer_ind]
+            to_layer_num, to_layer_ind, _ = to_node_reduced
+            to_node = new_genome.layers[to_layer_num][to_layer_ind]
+            edge = Edge(from_node, to_node, weight, innov=innov)
+            new_genome.edges.append(edge)
+        return new_genome
 
     @classmethod
     def default(
@@ -121,3 +164,30 @@ class Genome:
         edge = Edge(from_node, to_node, self.sample_weight, innov=innov)
         self.edges.append(edge)
         return edge
+
+    def __repr__(self):
+        repr_str = '\nNodes: \n'
+        for node in self.nodes:
+            repr_str += '\t' + str(node.to_reduced_repr) + '\n'
+        repr_str += 'Edges: \n'
+        for edge in self.edges:
+            repr_str += '\t' + str(edge.to_reduced_repr) + '\n'
+        # repr_str = '\nNodes: \n'
+        # for node in self.nodes[0:5]:
+        #     repr_str += '\t' + str(node.to_reduced_repr) + '\n'
+        # if len(self.nodes) > 5:
+        #     repr_str += '\t.\n\t.\n\t.\n'
+        #     repr_str += '\t' + str(self.nodes[-1].to_reduced_repr) + '\n'
+        # repr_str += 'Edges: \n'
+        # for edge in self.edges[0:5]:
+        #     repr_str += '\t' + str(edge.to_reduced_repr) + '\n'
+        # if len(self.edges) > 5:
+        #     repr_str += '\t.\n\t.\n\t.\n'
+        #     repr_str += '\t' + str(self.edges[-1].to_reduced_repr) + '\n'
+        return repr_str
+
+    # def save(self):
+    #     pass
+    #
+    # def load(self):
+    #     pass

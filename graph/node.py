@@ -24,3 +24,7 @@ class Node:
             node.layer_num,
             node.layer_ind,
             innov=node.innov)
+
+    @property
+    def to_reduced_repr(self):
+        return (self.layer_num, self.layer_ind, self.innov)

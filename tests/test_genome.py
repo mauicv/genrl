@@ -82,6 +82,38 @@ class TestGenomeClass(unittest.TestCase):
             self.assertNotEqual(edge_copy, edge)
             self.assertEqual(edge_copy.innov, edge.innov)
 
+    def test_from_genes_constructor(self):
+        g = Genome.default(input_size=2, output_size=3, depth=5)
+        n2 = g.add_node(4)
+        g.add_edge(g.layers[0][0], n2)
+        g.add_edge(n2, g.outputs[0])
+        n2 = g.add_node(3)
+        g.add_edge(g.layers[0][1], n2)
+        g.add_edge(n2, g.outputs[2])
+        n2 = g.add_node(3)
+        g.add_edge(g.layers[0][0], n2)
+        g.add_edge(n2, g.outputs[2])
+
+        edges = [e.to_reduced_repr for e in g.edges]
+        nodes = [n.to_reduced_repr for n in g.nodes]
+
+        g_2 = Genome.from_genes(
+            nodes,
+            edges,
+            input_size=2,
+            output_size=3,
+            depth=5)
+
+        self.assertEqual(
+            [[n.to_reduced_repr for n in layer] for layer in g_2.layers],
+            [[n.to_reduced_repr for n in layer] for layer in g.layers]
+        )
+
+        self.assertEqual(
+            [edge.to_reduced_repr for edge in g_2.edges],
+            [edge.to_reduced_repr for edge in g.edges]
+        )
+
     def test_genome_sample_weight(self):
         g = Genome.default(input_size=2, output_size=3, depth=5)
         random.random = Mock(return_value=0.1)

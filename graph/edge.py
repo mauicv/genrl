@@ -40,3 +40,11 @@ class Edge:
             raise ValueError('innovation numbers are out of order.')
         new_genome.edges.append(edge)
         return edge
+
+    @property
+    def to_reduced_repr(self):
+        return (
+            self.from_node.to_reduced_repr,
+            self.to_node.to_reduced_repr,
+            self.weight,
+            self.innov)

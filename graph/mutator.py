@@ -126,21 +126,37 @@ class Mutator:
         self.edge_innovations[key] = edge.innov
         return genome
 
-    def mate(self, genome_1, genome_2):
-        nodes = self.pair_genes(genome_1.nodes, genome_2.nodes)
-        edges = self.pair_genes(genome_1.edges, genome_2.edges)
-        Genome.fromGenes(nodes, edges)
+    def mate(self, primary=None, secondary=None):
+        node_genes = self.pair_genes(
+            primary.nodes,
+            secondary.nodes)
+        edge_genes = self.pair_genes(
+            primary.edges,
+            secondary.edges)
+        return Genome.from_genes(
+            node_genes,
+            edge_genes,
+            input_size=len(primary.inputs),
+            output_size=len(primary.outputs),
+            weight_low=primary.weight_low,
+            weight_high=primary.weight_high,
+            depth=primary.depth)
 
     def pair_genes(self, primary, secondary):
+        """For any list of genes with innov values, so edges or nodes we
+        iterate through and chose one randomly when there exists a
+        corresponding innov number and select the primary (fittest) gene when
+        a match doesn't exist."""
+
         i, j = (0, 0)
-        selected_nodes = []
+        selected_gene = []
         while True:
             if primary[i].innov == secondary[j].innov:
                 gene = choice([primary[i], secondary[j]])
-                selected_nodes.append(gene.__class__.Copy(gene))
+                selected_gene.append(gene.to_reduced_repr)
                 i, j = (i + 1, j + 1)
             elif primary[i].innov < secondary[j].innov:
-                selected_nodes.append(primary[i].__class__.Copy(gene))
+                selected_gene.append(primary[i].to_reduced_repr)
                 i += 1
             elif primary[i].innov > secondary[j].innov:
                 j += 1
@@ -149,6 +165,7 @@ class Mutator:
                 break
 
             if j == len(secondary):
-                excess = [gene.__class__.Copy(gene) for gene in primary[i:]]
-                selected_nodes = selected_nodes + excess
+                excess = [gene.to_reduced_repr for gene in primary[i:]]
+                selected_gene = selected_gene + excess
                 break
+        return selected_gene
