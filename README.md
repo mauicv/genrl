@@ -2,22 +2,15 @@
 
 Aim is to use genetic algorithms to do the bulk of the heavy lifting and traditional reinforcement learning methods to optimize at a later date. The process should be periodically human driven and from the data gathered from human selection process we can further derive the value function that the automated RL and Evolutionary Strategies use.
 
+___
 
+#### Mutator Class:
 
-## Use:
-
-if mutating a single genome:
+## use:
 
 ```py
 m = Mutator(config)
 new_genome = m.mutate(genome)
-```
-
-if mutating an entire generation of genomes with speciation:
-
-```py
-m = Mutator(config)
-new_genomes = m.gen_step(genomes)
 ```
 
 Config:
@@ -33,9 +26,6 @@ Config:
 - insterspecies_mating_rate
 - new_node_probability
 - new_link_probability
-
-
-### Spec:
 
 #### Genome class:
 
@@ -60,18 +50,19 @@ Mutations:
 
   When a edge is added we sample two layers without replacement and then order them. We then sample a node from each and add a new edge between them.
 
+___
 
-#### Tensorflow Graph Obj:
-
-- Network is input, n hidden and an output layer. This is an adaptation to simplify NEAT in which there is only input, hidden and output layers.
-- The `tf.function` call is defined by the `tf.matmul` operations between:
-  - `input ->  first hidden`
-  - `hidden i -> hidden i+1`
-  - `final hidden -> output`
--
-
-### Resources:
+## Resources:
 
 1. [TensorFlow Tutorials](https://www.tensorflow.org/guide/intro_to_graphs)
 2. [NEAT in TensorFlow](https://github.com/crisbodnar/TensorFlow-NEAT/blob/master/tf_neat/adaptive_net.py)
-3.
+
+___
+
+## Tests:
+
+To run all tests:
+
+```sh
+python -m unittest discover tests
+```

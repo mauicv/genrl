@@ -3,8 +3,6 @@ from graph.genome import Genome
 from graph.edge import Edge
 from graph.node import Node
 import itertools
-from unittest.mock import Mock
-import random
 
 
 class TestGenomeClass(unittest.TestCase):
@@ -96,7 +94,6 @@ class TestGenomeClass(unittest.TestCase):
 
         edges = [e.to_reduced_repr for e in g.edges]
         nodes = [n.to_reduced_repr for n in g.nodes]
-
         g_2 = Genome.from_genes(
             nodes,
             edges,
@@ -113,8 +110,3 @@ class TestGenomeClass(unittest.TestCase):
             [edge.to_reduced_repr for edge in g_2.edges],
             [edge.to_reduced_repr for edge in g.edges]
         )
-
-    def test_genome_sample_weight(self):
-        g = Genome.default(input_size=2, output_size=3, depth=5)
-        random.random = Mock(return_value=0.1)
-        self.assertEqual(g.sample_weight, random.random() * 4 - 2)

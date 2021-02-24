@@ -15,15 +15,15 @@ class TestEdgeClass(unittest.TestCase):
     def test_edge_init(self):
         """Test edge init."""
 
-        n = Node(0, 0)
-        m = Node(0, 1)
+        n = Node(0, 0, 0)
+        m = Node(0, 1, 0)
         with self.assertRaises(Exception) as context:
             Edge(n, m, 0)
 
         err_msg = 'Cannot connect edge to lower or same layer'
         self.assertTrue(err_msg == str(context.exception))
 
-        k = Node(1, 0)
+        k = Node(1, 0, 0)
         e = Edge(n, k, 0)
         self.assertEqual(e.from_node, n)
         self.assertEqual(e.to_node, k)

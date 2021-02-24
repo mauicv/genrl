@@ -3,13 +3,9 @@
 Taken from NEAT implementation and adapted for layered networks.
 see http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
 """
-import random
 from graph.edge import Edge
 from graph.node import Node
-
-
-def get_random():
-    return random.random() * 2 - 1
+from graph.util import sample_weight
 
 
 class Genome:
@@ -25,10 +21,10 @@ class Genome:
         self.depth = depth
         self.weight_low = weight_low
         self.weight_high = weight_high
-        self.weight_range = self.weight_high - self.weight_low
-        self.inputs = [Node(0, i, innov=-1) for i in range(input_size)]
-        self.outputs = [Node(1 + depth, j, innov=-1) for j in
-                        range(output_size)]
+        self.inputs = [Node(0, i, 0, innov=-1)
+                       for i in range(input_size)]
+        self.outputs = [Node(1 + depth, j, 0, innov=-1)
+                        for j in range(output_size)]
         self.layers = None
         self.nodes = []
         self.edges = []
@@ -53,7 +49,7 @@ class Genome:
 
         layer_maxes = [0 for i in range(depth)]
         for node_gene in nodes_genes:
-            layer_num, layer_ind, _ = node_gene
+            layer_num, layer_ind, _, weight = node_gene
             if layer_maxes[layer_num - 1] < layer_ind + 1:
                 layer_maxes[layer_num - 1] = layer_ind + 1
 
@@ -63,8 +59,8 @@ class Genome:
 
         nodes = []
         for node_gene in nodes_genes:
-            layer_num, layer_ind, innov = node_gene
-            node = Node(layer_num, layer_ind, innov=innov)
+            layer_num, layer_ind, innov, weight = node_gene
+            node = Node(layer_num, layer_ind, weight, innov=innov)
             nodes.append(node)
             layers[layer_num - 1][layer_ind] = node
 
@@ -72,9 +68,9 @@ class Genome:
 
         new_genome.nodes = nodes
         for from_node_reduced, to_node_reduced, weight, innov in edges:
-            from_layer_num, from_layer_ind, _ = from_node_reduced
+            from_layer_num, from_layer_ind, _, _ = from_node_reduced
             from_node = new_genome.layers[from_layer_num][from_layer_ind]
-            to_layer_num, to_layer_ind, _ = to_node_reduced
+            to_layer_num, to_layer_ind, _, _ = to_node_reduced
             to_node = new_genome.layers[to_layer_num][to_layer_ind]
             edge = Edge(from_node, to_node, weight, innov=innov)
             new_genome.edges.append(edge)
@@ -99,11 +95,11 @@ class Genome:
                          genome.outputs]
         genome.add_node(1)
         for n in genome.inputs:
-            genome.edges.append(
-                Edge(n, genome.layers[1][0], genome.sample_weight))
+            weight = sample_weight(genome.weight_low, genome.weight_high)
+            genome.edges.append(Edge(n, genome.layers[1][0], weight))
         for n in genome.outputs:
-            genome.edges.append(
-                Edge(genome.layers[1][0], n, genome.sample_weight))
+            weight = sample_weight(genome.weight_low, genome.weight_high)
+            genome.edges.append(Edge(genome.layers[1][0], n, weight))
         return genome
 
     @classmethod
@@ -129,10 +125,6 @@ class Genome:
 
         return new_genome
 
-    @property
-    def sample_weight(self):
-        return random.random() * self.weight_range + self.weight_low
-
     def layer_edges_out(self, layer_num):
         return [edge for node in self.layers[layer_num]
                 for edge in node.edges_out]
@@ -155,13 +147,18 @@ class Genome:
     def add_node(self, layer_num):
         if layer_num == 0 or layer_num == len(self.layers) - 1:
             raise ValueError('Cannot add node to input or output layer')
-        new_node = Node(layer_num, len(self.layers[layer_num]))
+        new_node = Node(layer_num, len(self.layers[layer_num]),
+                        sample_weight(-self.weight_low, self.weight_high))
         self.layers[layer_num].append(new_node)
         self.nodes.append(new_node)
         return new_node
 
     def add_edge(self, from_node, to_node, innov=None):
-        edge = Edge(from_node, to_node, self.sample_weight, innov=innov)
+        edge = Edge(
+            from_node,
+            to_node,
+            sample_weight(self.weight_low, self.weight_high),
+            innov=innov)
         self.edges.append(edge)
         return edge
 

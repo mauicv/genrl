@@ -1,22 +1,15 @@
-"""Class that acts on genomes to mutate them."""
+"""Class that acts on a genome or pair of genomes to mutate them."""
 
 import numpy as np
 from numpy.random import choice
 from graph.genome import Genome
 
 
-POPULATION                      = 150
-C_1                             = 1.0
-C_2                             = 1.0
-C_3                             = 0.4
-DELTA                           = 3.0
 WEIGHT_MUTATION_LIKELYHOOD      = 0.8
 WEIGHT_MUTATION_RATE_UNIFORM    = 0.1
 WEIGHT_MUTATION_RATE_RANDOM     = 0.9
 WEIGHT_MUTATION_VARIANCE        = 0.1
 GENE_DISABLE_RATE               = 0.75
-MUTATION_WITHOUT_CROSSOVER_RATE = 0.25
-INSTERSPECIES_MATING_RATE       = 0.001
 NEW_NODE_PROBABILITY            = 0.03
 NEW_EDGE_PROBABILITY            = 0.05
 
@@ -24,36 +17,22 @@ NEW_EDGE_PROBABILITY            = 0.05
 class Mutator:
     def __init__(
             self,
-            c_1=C_1,
-            c_2=C_2,
-            c_3=C_3,
-            delta=DELTA,
             weight_mutation_likelyhood=WEIGHT_MUTATION_LIKELYHOOD,
             weight_mutation_rate_random=WEIGHT_MUTATION_RATE_RANDOM,
             weight_mutation_rate_uniform=WEIGHT_MUTATION_RATE_UNIFORM,
             weight_mutation_variance=WEIGHT_MUTATION_VARIANCE,
             gene_disable_rate=GENE_DISABLE_RATE,
-            mutation_without_crossover_rate=MUTATION_WITHOUT_CROSSOVER_RATE,
-            insterspecies_mating_rate=INSTERSPECIES_MATING_RATE,
             new_node_probability=NEW_NODE_PROBABILITY,
             new_edge_probability=NEW_EDGE_PROBABILITY):
-        self.c_1 = c_1
-        self.c_2 = c_2
-        self.c_3 = c_3
-        self.delta = delta
+
         self.weight_mutation_likelyhood = weight_mutation_likelyhood
         self.weight_mutation_rate_random = weight_mutation_rate_random
         self.weight_mutation_rate_uniform = weight_mutation_rate_uniform
         self.weight_mutation_variance = weight_mutation_variance
         self.gene_disable_rate = gene_disable_rate
-        self.mutation_without_crossover_rate = mutation_without_crossover_rate
-        self.insterspecies_mating_rate = insterspecies_mating_rate
         self.new_node_probability = new_node_probability
         self.new_edge_probability = new_edge_probability
         self.edge_innovations = {}
-
-    def __call__(self, population):
-        return self.gen_step(population)
 
     def mutate_weights(self, genome):
         new_genome = Genome.copy(genome)
