@@ -31,12 +31,14 @@ INSTERSPECIES_MATING_RATE       = 0.001
 class Population:
     def __init__(
             self,
+            population_size=POPULATION,
             c_1=C_1,
             c_2=C_2,
             c_3=C_3,
             delta=DELTA,
             mutation_without_crossover_rate=MUTATION_WITHOUT_CROSSOVER_RATE,
             insterspecies_mating_rate=INSTERSPECIES_MATING_RATE):
+        self.population_size = population_size
         self.c_1 = c_1
         self.c_2 = c_2
         self.c_3 = c_3
@@ -48,8 +50,9 @@ class Population:
         self.population = []
 
     def compare(self, genome_1, genome_2):
-        self.compare_gene_difference(genome_1.nodes, genome_2.nodes)
-        self.compare_gene_difference(genome_1.edges, genome_2.edges)
+        d = self.compare_gene_difference(genome_1.nodes, genome_2.nodes)
+        d += self.compare_gene_difference(genome_1.edges, genome_2.edges)
+        return d
 
     def compare_gene_difference(self, genes_1, genes_2):
         """Compatibility Distance:
@@ -64,7 +67,7 @@ class Population:
         while True:
             if genes_1[i].innov == genes_2[j].innov:
                 last_match = [i, j]
-                W += abs(genes_1[i].weight - genes_1[i].weight)
+                W += abs(genes_1[i].weight - genes_2[j].weight)
                 M, i, j = (M + 1, i + 1, j + 1)
             elif genes_1[i].innov < genes_2[j].innov:
                 i += 1
@@ -73,8 +76,8 @@ class Population:
             if i == len(genes_1) or j == len(genes_2):
                 break
         N = max(len(genes_1), len(genes_2))
-        D = last_match[0] + last_match[1] - 2 * M
-        E = len(genes_1) - last_match[0] + len(genes_2) - last_match[1]
+        D = 2 + last_match[0] + last_match[1] - 2 * M
+        E = len(genes_1) + len(genes_2) - last_match[0] - last_match[1] - 2
         W = W / M
         return self.c_1 * E / N + self.c_2 * D / N + self.c_3 * W
 
