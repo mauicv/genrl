@@ -1,6 +1,5 @@
-import numpy as np
 import unittest
-from unittest.mock import Mock
+from unittest.mock import patch
 from graph.genome import Genome
 from graph.edge import Edge
 from graph.node import Node
@@ -22,42 +21,42 @@ class TestMutatorClass(unittest.TestCase):
         """Test mutator acts correctly on genomes weights."""
 
         NEW_UNIFORM_WEIGHT = 0.5
-        np.random.uniform = Mock(
-            side_effect=[0.1, [0.95, 0.4, 0.95,
-                         *[random() for _ in range(10)]],
-                         NEW_UNIFORM_WEIGHT,
-                         *[random() for _ in range(10)]
-                         ])
-
-        np.random.normal = Mock(side_effect=[[0.1], [0.4],
-                                [random() for _ in range(10)]])
-
-        g = Genome.default(input_size=2, output_size=3, depth=5)
-        m = Mutator()
-        m_g = m.mutate_weights(g)
+        with patch('numpy.random.uniform',
+                   side_effect=[0.1, [0.95, 0.4, 0.95,
+                                *[random() for _ in range(10)]],
+                                NEW_UNIFORM_WEIGHT,
+                                *[random() for _ in range(10)]]):
+            with patch('numpy.random.normal',
+                       side_effect=[[0.1], [0.4],
+                                    [random() for _ in range(10)]]):
+                g = Genome.default(input_size=2, output_size=3, depth=5)
+                m = Mutator()
+                m_g = m.mutate_weights(g)
 
         self.assertEqual(m_g.edges[0].weight, NEW_UNIFORM_WEIGHT)
         self.assertEqual(g.edges[1].weight + 0.1, m_g.edges[1].weight)
 
     def test_genome_topology_mutation(self):
         """Test mutator acts correctly on genomes weights."""
-        np.random.uniform = Mock(side_effect=[0.02, 0.04, 0.12, 0.3])
-        g = Genome.default(input_size=2, output_size=3, depth=5)
-        num_of_nodes = len(g.nodes)
-        num_of_edges = len(g.edges)
-        m = Mutator()
-        m.mutate_topology(g)
+        with patch('numpy.random.uniform',
+                   side_effect=[0.02, 0.04, 0.12, 0.3]):
 
-        self.assertEqual(len(g.edges), num_of_edges + 3)
-        self.assertEqual(len(g.nodes), num_of_nodes + 1)
+            g = Genome.default(input_size=2, output_size=3, depth=5)
+            num_of_nodes = len(g.nodes)
+            num_of_edges = len(g.edges)
+            m = Mutator()
+            m.mutate_topology(g)
 
-        num_of_nodes = len(g.nodes)
-        num_of_edges = len(g.edges)
-        m = Mutator()
-        m.mutate_topology(g)
+            self.assertEqual(len(g.edges), num_of_edges + 3)
+            self.assertEqual(len(g.nodes), num_of_nodes + 1)
 
-        self.assertEqual(len(g.edges), num_of_edges)
-        self.assertEqual(len(g.nodes), num_of_nodes)
+            num_of_nodes = len(g.nodes)
+            num_of_edges = len(g.edges)
+            m = Mutator()
+            m.mutate_topology(g)
+
+            self.assertEqual(len(g.edges), num_of_edges)
+            self.assertEqual(len(g.nodes), num_of_nodes)
 
     def test_add_node_mutation(self):
         """Test mutator correctly adds nodes to genome."""

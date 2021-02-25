@@ -39,6 +39,7 @@ class Mutator:
         if np.random.uniform(0, 1, 1) < self.weight_mutation_likelyhood:
             edges = new_genome.edges
             random_nums = np.random.uniform(0, 1, len(edges))
+            # print(random_nums)
             for edge, random_num in zip(edges, random_nums):
                 if random_num < self.weight_mutation_rate_random:
                     perturbation = np.random \

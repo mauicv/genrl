@@ -16,8 +16,10 @@ Compatibility Distance:
 
 where E is excess and D is disjoint genes and W is the average weight
 differences of matching genes including disabled genes
-
 """
+
+from graph.genome import Genome
+
 
 POPULATION                      = 150
 C_1                             = 1.0
@@ -31,6 +33,7 @@ INSTERSPECIES_MATING_RATE       = 0.001
 class Population:
     def __init__(
             self,
+            mutator,
             population_size=POPULATION,
             c_1=C_1,
             c_2=C_2,
@@ -48,6 +51,13 @@ class Population:
         self.centers = []
         self.species = {}
         self.population = []
+        self.mutator = mutator
+
+    def populate(self):
+        seed_genome = Genome.default()
+        for i in range(self.population_size):
+            genome = self.mutator.mutate_weights(seed_genome)
+            self.population.append(genome)
 
     def compare(self, genome_1, genome_2):
         d = self.compare_gene_difference(genome_1.nodes, genome_2.nodes)
