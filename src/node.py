@@ -33,4 +33,4 @@ class Node:
 
     @property
     def to_reduced_repr(self):
-        return (self.layer_num, self.layer_ind, self.innov, self.weight)
+        return self.layer_num, self.layer_ind, self.innov, self.weight

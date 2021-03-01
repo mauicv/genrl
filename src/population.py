@@ -18,7 +18,7 @@ where E is excess and D is disjoint genes and W is the average weight
 differences of matching genes including disabled genes
 """
 
-from graph.genome import Genome
+from src.genome import Genome
 
 
 POPULATION                      = 150

@@ -4,3 +4,6 @@ save
 backup
 .ipynb_checkpoints
 pull_remote.sh
+dask-worker-space
+*pyc
+.idea

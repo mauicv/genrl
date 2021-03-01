@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from graph.genome import Genome
-from graph.edge import Edge
-from graph.node import Node
-from graph.mutator import Mutator
+from src.genome import Genome
+from src.edge import Edge
+from src.node import Node
+from src.mutator import Mutator
 from tests.factories import GenomePairFactory
 import itertools
 from random import random
@@ -100,6 +100,11 @@ class TestMutatorClass(unittest.TestCase):
         """Test genomes are correctly combined when mated."""
 
         g1, g2 = GenomePairFactory()
+        for edge in g1.edges:
+            edge.weight = 1
+        for edge in g2.edges:
+            edge.weight = -1
+
         m = Mutator()
         child_g = m.mate(primary=g1, secondary=g2)
 

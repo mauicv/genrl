@@ -1,6 +1,6 @@
 import unittest
-from graph.edge import Edge
-from graph.node import Node
+from src.edge import Edge
+from src.node import Node
 import itertools
 
 

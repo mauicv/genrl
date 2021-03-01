@@ -1,7 +1,7 @@
 import unittest
-from graph.genome import Genome
-from graph.edge import Edge
-from graph.node import Node
+from src.genome import Genome
+from src.edge import Edge
+from src.node import Node
 import itertools
 
 

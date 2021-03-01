@@ -2,10 +2,10 @@
 
 import numpy as np
 from numpy.random import choice
-from graph.genome import Genome
+from src.genome import Genome
 
 
-WEIGHT_MUTATION_LIKELYHOOD      = 0.8
+WEIGHT_MUTATION_LIKELIHOOD      = 0.8
 WEIGHT_MUTATION_RATE_UNIFORM    = 0.1
 WEIGHT_MUTATION_RATE_RANDOM     = 0.9
 WEIGHT_MUTATION_VARIANCE        = 0.1
@@ -17,7 +17,7 @@ NEW_EDGE_PROBABILITY            = 0.05
 class Mutator:
     def __init__(
             self,
-            weight_mutation_likelyhood=WEIGHT_MUTATION_LIKELYHOOD,
+            weight_mutation_likelihood=WEIGHT_MUTATION_LIKELIHOOD,
             weight_mutation_rate_random=WEIGHT_MUTATION_RATE_RANDOM,
             weight_mutation_rate_uniform=WEIGHT_MUTATION_RATE_UNIFORM,
             weight_mutation_variance=WEIGHT_MUTATION_VARIANCE,
@@ -25,7 +25,7 @@ class Mutator:
             new_node_probability=NEW_NODE_PROBABILITY,
             new_edge_probability=NEW_EDGE_PROBABILITY):
 
-        self.weight_mutation_likelyhood = weight_mutation_likelyhood
+        self.weight_mutation_likelihood = weight_mutation_likelihood
         self.weight_mutation_rate_random = weight_mutation_rate_random
         self.weight_mutation_rate_uniform = weight_mutation_rate_uniform
         self.weight_mutation_variance = weight_mutation_variance
@@ -36,7 +36,7 @@ class Mutator:
 
     def mutate_weights(self, genome):
         new_genome = Genome.copy(genome)
-        if np.random.uniform(0, 1, 1) < self.weight_mutation_likelyhood:
+        if np.random.uniform(0, 1, 1) < self.weight_mutation_likelihood:
             edges = new_genome.edges
             random_nums = np.random.uniform(0, 1, len(edges))
             # print(random_nums)
@@ -45,8 +45,7 @@ class Mutator:
                     perturbation = np.random \
                         .normal(0, self.weight_mutation_variance, 1)[0]
                     edge.weight += perturbation
-                if random_num > self.weight_mutation_rate_random and \
-                        random_num < self.weight_mutation_rate_random + \
+                if self.weight_mutation_rate_random < random_num < self.weight_mutation_rate_random + \
                         self.weight_mutation_rate_uniform:
                     perturbation = np.random.uniform(
                         new_genome.weight_low,
@@ -107,6 +106,10 @@ class Mutator:
         return genome
 
     def mate(self, primary=None, secondary=None):
+        """Produces a child of the primary and secondary genomes.
+
+        Note that genome.nodes excludes input and output layers."""
+
         node_genes = self.pair_genes(
             primary.nodes,
             secondary.nodes)

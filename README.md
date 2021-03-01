@@ -64,5 +64,5 @@ ___
 To run all tests:
 
 ```sh
-python -m unittest discover tests
+python -m unittest discover tests; pyclean .
 ```

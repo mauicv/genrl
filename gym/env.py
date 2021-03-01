@@ -1,6 +1,4 @@
 from random import random, seed
-import pybullet as p
-import pybullet_data
 from datetime import datetime
 import numpy as np
 from numpy import float32, inf
@@ -23,23 +21,30 @@ class Env:
             name,
             var=0.1,
             vis=False):
+
+        import pybullet
+        import pybullet_utils.bullet_client as bc
+        import pybullet_data
+
         self.var = var
         self.vis = vis
         self.name = name
         self.last_state = None
         self.current_state = None
-        self.client = p.connect(p.GUI) if vis else p.connect(p.DIRECT)
-        p.setAdditionalSearchPath(pybullet_data.getDataPath())
+        self.client = bc.BulletClient(connection_mode=pybullet.GUI) if vis \
+            else bc.BulletClient(connection_mode=pybullet.DIRECT)
+        self.client.setAdditionalSearchPath(pybullet_data.getDataPath())
         self.reset()
         self.describe_space()
 
     def describe_space(self):
         all_state = self._get_state()
         joint_lower_bounds, joint_upper_bounds = [], []
-        num_joints = p.getNumJoints(self.robot_id)
+        num_joints = self.client.getNumJoints(self.robot_id)
 
         for joint_i in range(num_joints):
-            lower, upper = p.getJointInfo(self.robot_id, joint_i)[8:10]
+            lower, upper = self.client \
+                .getJointInfo(self.robot_id, joint_i)[8:10]
             joint_lower_bounds.append(lower)
             joint_upper_bounds.append(upper)
 
@@ -58,29 +63,29 @@ class Env:
     def reset(self):
         self.plane_id = None
         self.robot_id = None
-        for body_id in range(p.getNumBodies()):
-            p.removeBody(body_id)
+        for body_id in range(self.client.getNumBodies()):
+            self.client.removeBody(body_id)
 
-        slope = p.getQuaternionFromEuler([
+        slope = self.client.getQuaternionFromEuler([
             self.var * random() - self.var / 2,
             self.var * random() - self.var / 2,
             0])
 
-        # slope = p.getQuaternionFromEuler([0, 0, 0])
+        # slope = self.client.getQuaternionFromEuler([0, 0, 0])
 
-        self.plane_id = p.loadURDF(
+        self.plane_id = self.client.loadURDF(
             "plane.urdf",
             [0, 0, 0],
             slope)
 
         robot_start_pos = [0, 0, 0.25]
-        robot_start_orientation = p.getQuaternionFromEuler([0, 0, 0])
-        self.robot_id = p.loadURDF(
+        robot_start_orientation = self.client.getQuaternionFromEuler([0, 0, 0])
+        self.robot_id = self.client.loadURDF(
             "gym/urdf/robot-simple.urdf",
             robot_start_pos,
             robot_start_orientation)
 
-        p.setGravity(0, 0, -10)
+        self.client.setGravity(0, 0, -10)
         state = self._get_state()
         self.last_state = state
         self.current_state = state
@@ -89,16 +94,17 @@ class Env:
     def take_action(self, actions):
         for joint_i, action in enumerate(actions):
             maxForce = 175
-            p.setJointMotorControl2(self.robot_id, joint_i,
-                                    controlMode=p.POSITION_CONTROL,
-                                    targetPosition=action,
-                                    force=maxForce)
+            self.client.setJointMotorControl2(
+                self.robot_id, joint_i,
+                controlMode=self.client.POSITION_CONTROL,
+                targetPosition=action,
+                force=maxForce)
 
     def step(self, actions):
         self.last_state = self.current_state
         for _ in range(STEP_ACTION_RATE):
             self.take_action(actions)
-            p.stepSimulation()
+            self.client.stepSimulation()
         # note _get_state must happen before _get_reward or _get_reward
         # will return nonsense!
         self.current_state = self._get_state()
@@ -106,12 +112,13 @@ class Env:
         return self.current_state, reward, done, None
 
     def _get_state(self):
-        state_ls = [p.getLinkState(self.robot_id, i)[0]
-                    for i in range(p.getNumJoints(self.robot_id))]
-        base_link_state = p.getBasePositionAndOrientation(self.robot_id)[0]
+        state_ls = [self.client.getLinkState(self.robot_id, i)[0]
+                    for i in range(self.client.getNumJoints(self.robot_id))]
+        base_link_state = self.client \
+            .getBasePositionAndOrientation(self.robot_id)[0]
         state = np.array([
-            *[p.getJointState(self.robot_id, i)[0]
-              for i in range(p.getNumJoints(self.robot_id))],
+            *[self.client.getJointState(self.robot_id, i)[0]
+              for i in range(self.client.getNumJoints(self.robot_id))],
             *[item for subls in state_ls for item in subls],
             *base_link_state
         ])
@@ -123,21 +130,22 @@ class Env:
         added and a small cost is added per unit of torque used.
         """
 
-        base_data = p.getBasePositionAndOrientation(self.robot_id)
+        base_data = self.client.getBasePositionAndOrientation(self.robot_id)
         base_loc = np.array(base_data[0])
-        orient = np.array(p.getEulerFromQuaternion(base_data[1]))
+        orient = np.array(self.client.getEulerFromQuaternion(base_data[1]))
 
         dist_from_target = np.linalg.norm(base_loc - TARGET_LOC) \
             + 6 * np.linalg.norm(orient * TARGET_ORIENT)
         return REWARD_SCALE / max(dist_from_target, 0.01)
 
     def _torque_cost(self):
-        torque_sum = sum([abs(p.getJointState(self.robot_id, i)[3]) / 1500
-                          for i in range(p.getNumJoints(self.robot_id))])
+        torques = [abs(self.client.getJointState(self.robot_id, i)[3]) / 1500
+                   for i in range(self.client.getNumJoints(self.robot_id))]
+        torque_sum = sum(torques)
         return - torque_sum * TORQUE_COST
 
     def _check_done(self):
-        if p.getContactPoints(
+        if self.client.getContactPoints(
                 bodyA=self.robot_id,
                 linkIndexA=-1,
                 bodyB=self.plane_id,
@@ -161,10 +169,10 @@ class Env:
         return forwards_movement * REWARD_SCALE
 
     def close(self):
-        p.disconnect()
+        self.client.disconnect()
 
     def _joints_at_limit_cost(self):
-        num_joints = p.getNumJoints(self.robot_id)
+        num_joints = self.client.getNumJoints(self.robot_id)
         count = 0
         for joint_i, j_rad in enumerate(self.current_state[:num_joints]):
             joint_per_loc = \

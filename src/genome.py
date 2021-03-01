@@ -3,9 +3,9 @@
 Taken from NEAT implementation and adapted for layered networks.
 see http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
 """
-from graph.edge import Edge
-from graph.node import Node
-from graph.util import sample_weight
+from src.edge import Edge
+from src.node import Node
+from src.util import sample_weight
 
 
 class Genome:
@@ -21,6 +21,7 @@ class Genome:
         self.depth = depth
         self.weight_low = weight_low
         self.weight_high = weight_high
+
         self.inputs = [Node(0, i, 0, innov=-1)
                        for i in range(input_size)]
         self.outputs = [Node(1 + depth, j, 0, innov=-1)
@@ -179,5 +180,6 @@ class Genome:
 
     @property
     def to_reduced_repr(self):
-        return [node.to_reduced_repr for node in self.nodes], \
+        all_nodes = [*self.inputs, *self.nodes, *self.outputs]
+        return [node.to_reduced_repr for node in all_nodes], \
             [edge.to_reduced_repr for edge in self.edges]
