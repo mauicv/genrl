@@ -10,7 +10,7 @@ def default_gen():
         yield 1
 
 
-def GenomePairFactory(
+def genome_pair_factory(
         weight_gen=default_gen(),
         bias_gen=default_gen()
     ):

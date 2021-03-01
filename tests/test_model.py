@@ -1,3 +1,4 @@
+from src.activations import step
 import unittest
 from random import random
 from src.util import sample_weight
@@ -44,18 +45,29 @@ class TestModelClass(unittest.TestCase):
             self.assertEqual(layer.mat[i, j], ew)
 
     def test_model_run(self):
-        """TODO finish!"""
-        def weight_gen():
-            while True:
-                yield 1
-        def bias_gen():
-            while True:
-                yield 1
+        """Test correct propagation of cell states"""
+        model = Model(([
+                            (0, 0, -1, 0), (0, 1, -1, 0),
+                            (1, 0, 1, 1), (1, 1, 2, 0), (1, 2, 3, -1),
+                            (2, 0, 4, 0), (2, 1, 5, 1),
+                            (3, 0, -1, -1), (3, 1, -1, 0)
+                       ],
+                       [
+                            ((0, 0, -1, 0), (1, 0, 1, 1), 1, 0),
+                            ((0, 0, -1, 0), (1, 1, 2, 0), -1, 1),
+                            ((0, 1, -1, 0), (1, 1, 2, 0), -1, 2),
+                            ((0, 1, -1, 0), (3, 1, 7, 0), 2, 3),
+                            ((0, 1, -1, 0), (1, 2, 3, -1), 1, 4),
+                            ((1, 0, 1, 1), (2, 0, 4, 0), 1, 5),
+                            ((1, 1, 2, 0), (2, 0, 4, 0), 1, 6),
+                            ((1, 1, 2, 0), (2, 1, 5, 1), -1, 7),
+                            ((1, 2, 3, -1), (2, 1, 5, 1), 2, 8),
+                            ((2, 0, 4, 0), (3, 0, -1, -1), 1, 9),
+                            ((2, 0, 4, 0), (3, 1, -1, 0), -1, 10),
+                            ((2, 1, 5, 1), (3, 0, -1, -1), 2, 11),
+                            ((2, 1, 5, 1), (3, 1, -1, 0), -1, 12)
+                       ]))
 
-        g = genome_factory(weight_gen=weight_gen(), bias_gen=bias_gen())
-        model = Model(g.to_reduced_repr)
-        nodes, edges = g.to_reduced_repr
-        # print(model([1, 1]))
-        self.assertEqual(len(model.inputs), 2)
-        self.assertEqual(len(model.outputs), 3)
-        self.assertEqual(len(model([1, 1])), 3)
+        self.assertEqual(model([1, 2]), [0.0, 4.0])
+        for layer, target in zip(model.layers[1:],[[1, -1, 1], [-1, 1]]):
+            self.assertEqual(target, [step(cell.acc + cell.b) for cell in layer.inputs])

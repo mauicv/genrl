@@ -7,6 +7,7 @@ TODO:
 - Implement biases and activation functions.
 """
 import numpy as np
+from src.activations import step
 
 
 class Model:
@@ -46,9 +47,10 @@ class Model:
     def __call__(self, inputs):
         for cell, val in zip(self.inputs, inputs):
             cell.acc = val
-        for layer in self.layers:
+        self.layers[0].run(activation=lambda x:x)
+        for layer in self.layers[1:]:
             layer.run()
-        return [cell.acc for cell in self.outputs]
+        return [cell.acc + cell.b for cell in self.outputs]
 
 
 class Layer:
@@ -69,8 +71,8 @@ class Layer:
                 self.outputs.append(cells[(tn_i, tn_j)])
             self.mat[input_cells_map[(fn_i, fn_j)], output_cells_map[(tn_i, tn_j)]] = w
 
-    def run(self):
-        input_vals = np.array([cell.acc for cell in self.inputs])
+    def run(self, activation=step):
+        input_vals = np.array([activation(cell.acc + cell.b) for cell in self.inputs])
         output_vals = self.mat.T @ input_vals
         for val, cell in zip(output_vals, self.outputs):
             cell.acc += val

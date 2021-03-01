@@ -4,7 +4,7 @@ from src.genome import Genome
 from src.edge import Edge
 from src.node import Node
 from src.mutator import Mutator
-from tests.factories import GenomePairFactory
+from tests.factories import genome_pair_factory
 import itertools
 from random import random
 
@@ -99,7 +99,7 @@ class TestMutatorClass(unittest.TestCase):
     def test_mate_mutation(self):
         """Test genomes are correctly combined when mated."""
 
-        g1, g2 = GenomePairFactory()
+        g1, g2 = genome_pair_factory()
         for edge in g1.edges:
             edge.weight = 1
         for edge in g2.edges:

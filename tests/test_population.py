@@ -4,7 +4,7 @@ from src.node import Node
 from src.population import Population
 from src.mutator import Mutator
 import itertools
-from tests.factories import GenomePairFactory
+from tests.factories import genome_pair_factory
 
 
 class TestPopulationClass(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestPopulationClass(unittest.TestCase):
 
     def test_compatibility_distance(self):
         """Test population."""
-        g1, g2 = GenomePairFactory()
+        g1, g2 = genome_pair_factory()
         p = Population(None)
         n1, e1 = g1.to_reduced_repr
         n2, e2 = g2.to_reduced_repr
