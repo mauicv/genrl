@@ -42,3 +42,20 @@ class TestModelClass(unittest.TestCase):
             i = layer.inputs.index(from_cell)
             j = layer.outputs.index(to_cell)
             self.assertEqual(layer.mat[i, j], ew)
+
+    def test_model_run(self):
+        """TODO finish!"""
+        def weight_gen():
+            while True:
+                yield 1
+        def bias_gen():
+            while True:
+                yield 1
+
+        g = genome_factory(weight_gen=weight_gen(), bias_gen=bias_gen())
+        model = Model(g.to_reduced_repr)
+        nodes, edges = g.to_reduced_repr
+        # print(model([1, 1]))
+        self.assertEqual(len(model.inputs), 2)
+        self.assertEqual(len(model.outputs), 3)
+        self.assertEqual(len(model([1, 1])), 3)

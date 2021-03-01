@@ -4,6 +4,7 @@ Transforms Genome object into a graph structure.
 
 TODO:
 - Implement tf_model_from_gene https://github.com/crisbodnar/TensorFlow-NEAT/blob/master/tf_neat/recurrent_net.py
+- Implement biases and activation functions.
 """
 import numpy as np
 
@@ -31,12 +32,23 @@ class Model:
             layer = Layer(dims, self.cells, from_edges)
             self.layers.append(layer)
 
+        self.constants = [self.cells[(i, j)] for i, j, innov, _ in nodes if innov == -1]
+        self.inputs = self.layers[0].inputs
+        self.outputs = [cell for cell in self.constants if cell.i != 0]
+
     def add_cell(self, i, j, b):
         cell = self.cells.get((i, j), None)
         if not cell:
             cell = Cell(i, j, b)
             self.cells[(i, j)] = cell
         return cell
+
+    def __call__(self, inputs):
+        for cell, val in zip(self.inputs, inputs):
+            cell.acc = val
+        for layer in self.layers:
+            layer.run()
+        return [cell.acc for cell in self.outputs]
 
 
 class Layer:
@@ -57,10 +69,15 @@ class Layer:
                 self.outputs.append(cells[(tn_i, tn_j)])
             self.mat[input_cells_map[(fn_i, fn_j)], output_cells_map[(tn_i, tn_j)]] = w
 
+    def run(self):
+        input_vals = np.array([cell.acc for cell in self.inputs])
+        output_vals = self.mat.T @ input_vals
+        for val, cell in zip(output_vals, self.outputs):
+            cell.acc += val
 
 class Cell:
     def __init__(self, i, j, b):
         self.i = i
         self.j = j
-        self.state = -1
         self.b = b
+        self.acc = 0
