@@ -23,8 +23,8 @@ class Model:
                           (from_node_layer, from_node_layer_ind, _, _), (to_node_layer, to_node_layer_ind, _, _),
                           weight, _ in edges if from_node_layer == from_layer]
             to_nodes = list(set((to_node_layer, to_node_layer_ind, bias) for
-                        (from_node_layer, _, _, _), (to_node_layer, to_node_layer_ind, _, bias),
-                        weight, _ in edges if from_node_layer == from_layer))
+                                (from_node_layer, _, _, _), (to_node_layer, to_node_layer_ind, _, bias),
+                                weight, _ in edges if from_node_layer == from_layer))
 
             for i, j, b in [*from_nodes, *to_nodes]:
                 self.add_cell(i, j, b)
@@ -50,8 +50,14 @@ class Model:
         self.layers[0].run(activation=lambda x:x)
         for layer in self.layers[1:]:
             layer.run()
-        return [cell.acc + cell.b for cell in self.outputs]
+        output = [cell.acc + cell.b for cell in self.outputs]
+        # TODO disable next line in test
+        self.reset()
+        return output
 
+    def reset(self):
+        for _, cell in self.cells.items():
+            cell.acc = 0
 
 class Layer:
     def __init__(self, dims, cells, edges):

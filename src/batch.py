@@ -42,8 +42,8 @@ class BatchJob:
 
             def process_tasks(task_queue, return_queue):
                 while not task_queue.empty():
-                    arg = task_queue.get()
-                    result = job(arg)
+                    args = task_queue.get()
+                    result = job(args)
                     return_queue.put(result)
                 return True
 

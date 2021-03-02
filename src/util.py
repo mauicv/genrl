@@ -3,8 +3,8 @@ import random
 
 
 def sample_weight(low, high):
-    range = high - low
-    return random.random() * range + low
+    weight_range = high - low
+    return random.random() * weight_range + low
 
 
 def get_random():

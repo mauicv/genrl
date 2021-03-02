@@ -1,8 +1,7 @@
 from src.activations import step
 import unittest
-from random import random
 from src.util import sample_weight
-from tests.factories import genome_factory
+from tests.unittests.factories import genome_factory
 from src.edge import Edge
 from src.node import Node
 from src.model import Model
@@ -67,7 +66,17 @@ class TestModelClass(unittest.TestCase):
                             ((2, 1, 5, 1), (3, 0, -1, -1), 2, 11),
                             ((2, 1, 5, 1), (3, 1, -1, 0), -1, 12)
                        ]))
-
+        # overwrite reset method so that we can inspect the run call
+        model.reset = lambda : None
         self.assertEqual(model([1, 2]), [0.0, 4.0])
         for layer, target in zip(model.layers[1:],[[1, -1, 1], [-1, 1]]):
             self.assertEqual(target, [step(cell.acc + cell.b) for cell in layer.inputs])
+
+
+    def test_model_reset(self):
+        """Test cleanup after model call."""
+        g = genome_factory()
+        model = Model(g.to_reduced_repr)
+        model([1, 2])
+        for _, cell in model.cells.items():
+            self.assertEqual(cell.acc, 0)

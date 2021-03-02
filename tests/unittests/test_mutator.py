@@ -4,7 +4,7 @@ from src.genome import Genome
 from src.edge import Edge
 from src.node import Node
 from src.mutator import Mutator
-from tests.factories import genome_pair_factory
+from tests.unittests.factories import genome_pair_factory
 import itertools
 from random import random
 
@@ -30,8 +30,9 @@ class TestMutatorClass(unittest.TestCase):
                        side_effect=[[0.1], [0.4],
                                     [random() for _ in range(10)]]):
                 g = Genome.default(input_size=2, output_size=3, depth=5)
+                m_g = Genome.copy(g)
                 m = Mutator()
-                m_g = m.mutate_weights(g)
+                m.mutate_weights(m_g)
 
         self.assertEqual(m_g.edges[0].weight, NEW_UNIFORM_WEIGHT)
         self.assertEqual(g.edges[1].weight + 0.1, m_g.edges[1].weight)

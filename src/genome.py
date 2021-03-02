@@ -1,8 +1,4 @@
-"""Genome class
-
-Taken from NEAT implementation and adapted for layered networks.
-see http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
-"""
+"""Genome class."""
 from src.edge import Edge
 from src.node import Node
 from src.util import sample_weight
@@ -149,7 +145,7 @@ class Genome:
         if layer_num == 0 or layer_num == len(self.layers) - 1:
             raise ValueError('Cannot add node to input or output layer')
         new_node = Node(layer_num, len(self.layers[layer_num]),
-                        sample_weight(-self.weight_low, self.weight_high))
+                        sample_weight(self.weight_low, self.weight_high))
         self.layers[layer_num].append(new_node)
         self.nodes.append(new_node)
         return new_node

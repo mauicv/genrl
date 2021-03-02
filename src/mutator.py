@@ -35,9 +35,8 @@ class Mutator:
         self.edge_innovations = {}
 
     def mutate_weights(self, genome):
-        new_genome = Genome.copy(genome)
         if np.random.uniform(0, 1, 1) < self.weight_mutation_likelihood:
-            edges = new_genome.edges
+            edges = genome.edges
             random_nums = np.random.uniform(0, 1, len(edges))
             # print(random_nums)
             for edge, random_num in zip(edges, random_nums):
@@ -48,10 +47,10 @@ class Mutator:
                 if self.weight_mutation_rate_random < random_num < self.weight_mutation_rate_random + \
                         self.weight_mutation_rate_uniform:
                     perturbation = np.random.uniform(
-                        new_genome.weight_low,
-                        new_genome.weight_high)
+                        genome.weight_low,
+                        genome.weight_high)
                     edge.weight = perturbation
-        return new_genome
+        return genome
 
     def mutate_topology(self, genome):
         if np.random.uniform(0, 1, 1) < self.new_node_probability:

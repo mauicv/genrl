@@ -9,8 +9,12 @@ ___
 ## use:
 
 ```py
-m = Mutator(config)
-new_genome = m.mutate(genome)
+from src.mutator import Mutator
+from src.genome import Genome
+genome = Genome.default()
+m = Mutator()
+new_genome = m.mutate_weights(genome)
+m.mutate_topology(new_genome)
 ```
 
 Config:
@@ -66,3 +70,14 @@ To run all tests:
 ```sh
 python -m unittest discover tests; pyclean .
 ```
+
+## TODO:
+
+- [x] Mock reset method in run model test
+- [ ] Implement NEAT algorithm
+- [ ] Implement sort method on Population class
+- [ ] Write test env
+
+- [ ] Write documentation
+- [ ] Make factory function for different genome classes
+- [ ] Create `setup.py`
