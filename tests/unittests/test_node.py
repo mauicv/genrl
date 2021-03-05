@@ -10,6 +10,8 @@ class TestNodeClass(unittest.TestCase):
         # reset innovation number
         Node.innov_iter = itertools.count()
         Edge.innov_iter = itertools.count()
+        Node.registry = {}
+        Edge.registry = {}
 
     def test_node_init(self):
         """Test node."""

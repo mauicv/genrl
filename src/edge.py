@@ -1,16 +1,21 @@
 import itertools
+from src.util import catch
 
 
 class Edge:
     """Edge."""
 
     innov_iter = itertools.count()
+    registry = {}
 
-    def __init__(self, from_node, to_node, weight, innov=None):
+    def __init__(self, from_node, to_node, weight):
+        innov = Edge.registry.get((from_node.innov, to_node.innov), None)
+        innov = innov if innov is not None else next(Edge.innov_iter)
+        Edge.registry[(from_node.innov, to_node.innov)] = innov
+        self.innov = innov
         if to_node.layer_num - from_node.layer_num < 1:
             raise ValueError('Cannot connect edge to lower or same layer')
         self.disabled = False
-        self.innov = innov if innov is not None else next(Edge.innov_iter)
         self.from_node = from_node
         self.to_node = to_node
         self.weight = weight
@@ -35,7 +40,8 @@ class Edge:
         from_node = new_genome.layers[fn.layer_num][fn.layer_ind]
         to_node = new_genome.layers[tn.layer_num][tn.layer_ind]
 
-        edge = cls(from_node, to_node, edge.weight, innov=edge.innov)
+        edge = cls(from_node, to_node, edge.weight)
+        catch(new_genome)
         if new_genome.edges and new_genome.edges[-1].innov > edge.innov:
             raise ValueError('innovation numbers are out of order.')
         new_genome.edges.append(edge)

@@ -14,6 +14,8 @@ class TestModelClass(unittest.TestCase):
         # reset innovation number
         Node.innov_iter = itertools.count()
         Edge.innov_iter = itertools.count()
+        Node.registry = {}
+        Edge.registry = {}
 
     def test_model_init(self):
         """Test model __init__ function."""

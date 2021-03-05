@@ -1,24 +1,60 @@
 import unittest
-from src.edge import Edge
-from src.node import Node
+from src.genome import Genome
 from src.population import Population
 from src.mutator import Mutator
+from src.metrics import generate_neat_metric
+from random import random
+from src.node import Node
+from src.edge import Edge
 import itertools
-from tests.unittests.factories import genome_pair_factory
 
 
 class TestPopulationClass(unittest.TestCase):
-    """Test methods assoicated to Node class."""
+    """Test methods associated to Population class."""
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
         Edge.innov_iter = itertools.count()
+        Node.registry = {}
+        Edge.registry = {}
 
     def test_populate(self):
         m = Mutator()
-        p = Population(mutator=m)
-        p.populate()
+        g = Genome.default()
+        p = Population(population_size=50, seed_genomes=[g], mutator=m)
+        for genome in p.genomes:
+            if len(set(e.innov for e in genome.edges)) != len(genome.edges):
+                print(Edge.registry)
+                print(genome.edge_innovs)
+                for e in genome.edges:
+                    print(e.to_reduced_repr)
+            self.assertEqual(len(set(n.innov for n in genome.nodes)), len(genome.nodes))
+            self.assertEqual(len(set(e.innov for e in genome.edges)), len(genome.edges))
         self.assertEqual(len(p.genomes), p.population_size)
 
     def test_sort(self):
-        self.assertEqual(1, 0)
+        m = Mutator()
+        g = Genome.default()
+        p = Population(
+            population_size=150,
+            seed_genomes=[g],
+            mutator=m)
+        d = generate_neat_metric()
+
+        for i in range(20):
+            print('generation: ', i)
+            # the following for loop is a simulation of the env role out and fitness computation.
+            for g in p.genomes:
+                g.fitness = random()
+            p.step(d)
+        p.evolve()
+
+        print("total population: ", len(p.genomes))
+        for key, item in p.species.items():
+            print(f'---- {key} ----')
+            print('group size:', len(item['group']))
+            print('group fitness:', item['group_fitness'])
+            print('best performers avg fitness:', sum([g.fitness for g in item['group']])/len(item['group']))
+            print("Unique genes in group:", len(set(item['group'])))
+            self.assertEqual(len(set(item['group'])), len(item['group']))
+            # TODO: non unique genes ending up in species group?

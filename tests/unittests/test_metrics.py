@@ -13,6 +13,8 @@ class TestMetrics(unittest.TestCase):
         # reset innovation number
         Node.innov_iter = itertools.count()
         Edge.innov_iter = itertools.count()
+        Node.registry = {}
+        Edge.registry = {}
 
     def test_compatibility_distance(self):
         """Test neat metric."""

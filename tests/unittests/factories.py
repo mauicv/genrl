@@ -48,8 +48,8 @@ def genome_pair_factory(
     g1.add_edge(g1.layers[0][0], n6)
     g1.add_edge(n6, g1.outputs[1])
 
-    g2.add_edge(g2.layers[0][0], n3, innov=e1.innov)
-    e2 = g2.add_edge(n3, g2.outputs[2], innov=e2.innov)
+    g2.add_edge(g2.layers[0][0], n3)
+    e2 = g2.add_edge(n3, g2.outputs[2])
 
     for w, edge in zip(weight_gen, [*g1.edges, *g2.edges]):
         edge.weight = w

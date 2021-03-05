@@ -11,6 +11,8 @@ class TestGenomeClass(unittest.TestCase):
         # reset innovation number
         Node.innov_iter = itertools.count()
         Edge.innov_iter = itertools.count()
+        Node.registry = {}
+        Edge.registry = {}
 
     def test_genome_init(self):
         """Test genome __init__ function.

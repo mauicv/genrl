@@ -5,14 +5,19 @@ class Node:
     """Node."""
 
     innov_iter = itertools.count()
+    registry = {}
 
-    def __init__(self, layer_num, layer_ind, weight, innov=None):
+    def __init__(self, layer_num, layer_ind, weight):
+        innov = Node.registry.get((layer_num, layer_ind), None)
+        innov = innov if innov is not None else next(Node.innov_iter)
+        Node.registry[(layer_num, layer_ind)] = innov
+        self.innov = innov
         self.layer_num = layer_num
         self.layer_ind = layer_ind
-        self.innov = innov if innov is not None else next(Node.innov_iter)
         self.weight = weight
         self.edges_out = []
         self.edges_in = []
+
 
     @classmethod
     def copy(cls, node):
@@ -24,8 +29,7 @@ class Node:
         return cls(
             node.layer_num,
             node.layer_ind,
-            node.weight,
-            innov=node.innov)
+            node.weight)
 
     @property
     def bias(self):

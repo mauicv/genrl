@@ -1,7 +1,7 @@
 """Genome class."""
 from src.edge import Edge
 from src.node import Node
-from src.util import sample_weight
+from src.util import sample_weight, catch, print_genome
 
 
 class Genome:
@@ -17,14 +17,16 @@ class Genome:
         self.depth = depth
         self.weight_low = weight_low
         self.weight_high = weight_high
+        self.edge_innovs = set()
 
-        self.inputs = [Node(0, i, 0, innov=-1)
+        self.inputs = [Node(0, i, 0)
                        for i in range(input_size)]
-        self.outputs = [Node(1 + depth, j, 0, innov=-1)
+        self.outputs = [Node(1 + depth, j, 0)
                         for j in range(output_size)]
         self.layers = None
         self.nodes = []
         self.edges = []
+        self.fitness = None
 
     @classmethod
     def from_genes(
@@ -57,7 +59,7 @@ class Genome:
         nodes = []
         for node_gene in nodes_genes:
             layer_num, layer_ind, innov, weight = node_gene
-            node = Node(layer_num, layer_ind, weight, innov=innov)
+            node = Node(layer_num, layer_ind, weight)
             nodes.append(node)
             layers[layer_num - 1][layer_ind] = node
 
@@ -69,8 +71,10 @@ class Genome:
             from_node = new_genome.layers[from_layer_num][from_layer_ind]
             to_layer_num, to_layer_ind, _, _ = to_node_reduced
             to_node = new_genome.layers[to_layer_num][to_layer_ind]
-            edge = Edge(from_node, to_node, weight, innov=innov)
+            edge = Edge(from_node, to_node, weight)
             new_genome.edges.append(edge)
+            new_genome.edge_innovs.add((from_node.innov, to_node.innov))
+        catch(new_genome)
         return new_genome
 
     @classmethod
@@ -92,11 +96,9 @@ class Genome:
                          genome.outputs]
         genome.add_node(1)
         for n in genome.inputs:
-            weight = sample_weight(genome.weight_low, genome.weight_high)
-            genome.edges.append(Edge(n, genome.layers[1][0], weight))
+            genome.add_edge(n, genome.layers[1][0])
         for n in genome.outputs:
-            weight = sample_weight(genome.weight_low, genome.weight_high)
-            genome.edges.append(Edge(genome.layers[1][0], n, weight))
+            genome.add_edge(genome.layers[1][0], n)
         return genome
 
     @classmethod
@@ -118,8 +120,11 @@ class Genome:
                  for node in genome.nodes]
         new_genome.nodes = nodes
         for edge in genome.edges:
-            Edge.copy(edge, new_genome)
-
+            new_edge = Edge.copy(edge, new_genome)
+            new_genome.edge_innovs.add((
+                new_edge.from_node.innov,
+                new_edge.to_node.innov))
+        catch(genome)
         return new_genome
 
     def layer_edges_out(self, layer_num):
@@ -150,32 +155,32 @@ class Genome:
         self.nodes.append(new_node)
         return new_node
 
-    def add_edge(self, from_node, to_node, innov=None):
+    def add_edge(self, from_node, to_node):
+        if (from_node.innov, to_node.innov) in self.edge_innovs:
+            return
         edge = Edge(
             from_node,
             to_node,
-            sample_weight(self.weight_low, self.weight_high),
-            innov=innov)
-        self.edges.append(edge)
+            sample_weight(self.weight_low, self.weight_high))
+        # NOTE: Error was occuring here because occasionally a from and to node pair are already an edge but also not
+        # currently members of the genome in question. In which case that edge is drawn from registry and inserted in
+        # the next line. This causes an error becuase that edge is likley to be a lower innov number than the one
+        # before it. The following line replced: self.edges.append(edge). There may be a better way here?
+
+        if self.edges and edge.innov > self.edges[-1].innov:
+            self.edges.append(edge)
+        else:
+            self.edges = [e for e in self.edges if e.innov < edge.innov] + [edge] \
+                + [e for e in self.edges if e.innov > edge.innov]
+        self.edge_innovs.add((from_node.innov, to_node.innov))
+        catch(self)
         return edge
 
     def __repr__(self):
-        repr_str = '\nNodes: \n'
-        for node in self.nodes[0:5]:
-            repr_str += '\t' + str(node.to_reduced_repr) + '\n'
-        if len(self.nodes) > 5:
-            repr_str += '\t.\n\t.\n\t.\n'
-            repr_str += '\t' + str(self.nodes[-1].to_reduced_repr) + '\n'
-        repr_str += 'Edges: \n'
-        for edge in self.edges[0:5]:
-            repr_str += '\t' + str(edge.to_reduced_repr) + '\n'
-        if len(self.edges) > 5:
-            repr_str += '\t.\n\t.\n\t.\n'
-            repr_str += '\t' + str(self.edges[-1].to_reduced_repr) + '\n'
-        return repr_str
+        return f'Genome(edges:{len(self.edges)}, nodes:{len(self.nodes)}, fitness:{self.fitness})'
 
     @property
     def to_reduced_repr(self):
-        all_nodes = [*self.inputs, *self.nodes, *self.outputs]
+        all_nodes = [*self.inputs, *self.outputs, *self.nodes]
         return [node.to_reduced_repr for node in all_nodes], \
             [edge.to_reduced_repr for edge in self.edges]
