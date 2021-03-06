@@ -74,10 +74,11 @@ python -m unittest discover tests; pyclean .
 ## TODO:
 
 - [x] Mock reset method in run model test
-- [ ] Implement sort method on Population class
+- [x] Implement sort method on Population class
+- [x] Non unique genes ending up in species group?
 - [ ] Implement NEAT algorithm test
 - [ ] Sometimes get_addmissable_edges returns emptylist.
-- [ ] Non unique genes ending up in species group?
+- [ ] debug decorators for each class...
 
 - [ ] Write documentation
 - [ ] Make factory function for different genome classes

@@ -77,30 +77,27 @@ class Population:
         total_group_fitness_sum = sum([item['group_fitness'] for key, item in self.species.items()])
         new_genomes = []
         for key, item in self.species.items():
-            pop_prop = int(self.population_size * (item['group_fitness']/total_group_fitness_sum))
-            item['group'] = item['group'][:int(len(item['group'])*self.species_member_survival_rate)]
+            pop_prop = int(round(self.population_size * (item['group_fitness']/total_group_fitness_sum)))
+            survival_prop = int(len(item['group']) * self.species_member_survival_rate)
+            survival_prop = 5 if survival_prop < 5 else survival_prop
+            item['group'] = item['group'][:survival_prop]
             best_performer = Genome.copy(item['group'][0])
             new_genomes.append(best_performer)
             for _ in range(pop_prop - 1):
                 selected_gene = choice(item['group'])
-                self.mutator.mutate_weights(selected_gene)
-                self.mutator.mutate_topology(selected_gene)
-                new_genome = selected_gene
+                new_genome = Genome.copy(selected_gene)
+                new_genome.fitness = selected_gene.fitness
+                self.mutator.mutate_weights(new_genome)
+                self.mutator.mutate_topology(new_genome)
                 if random() > self.mutation_without_crossover_rate:
                     if random() < self.interspecies_mating_rate and len(self.species) > 1:
                         # select from other species
-                        other_species = choice([key for key, _ in self.species.items()])
-                        other_item = self.species[other_species]
-                        other_genome = choice([g for g in other_item['group'] if g is not selected_gene])
-                    else:
-                        try:
-                            other_genome = choice([g for g in item['group'] if g is not selected_gene])
-                        except Exception as err:
-                            print(err)
-                            print([g for g in item['group'] if g is not selected_gene])
-                            print(item)
-                            raise err
-                    secondary, primary = sorted([selected_gene, other_genome], key=lambda g: g.fitness)
+                        other_item = choice([item for _, item in self.species.items()])
+                        if len(other_item['group']) > 2:
+                            other_genome = choice([g for g in other_item['group'] if g is not selected_gene])
+                    elif len(item['group']) > 2:
+                        other_genome = choice([g for g in item['group'] if g is not selected_gene])
+                    secondary, primary = sorted([new_genome, other_genome], key=lambda g: g.fitness)
                     new_genome = self.mutator.mate(primary, secondary)
                 new_genomes.append(new_genome)
         self.genomes = new_genomes
@@ -117,6 +114,7 @@ class Population:
                 if metric(genome, item['repr']) < self.delta:
                     assigned_group = True
                     self.species[key]['group'].append(genome)
+                    break
             if not assigned_group:
                 self.species[len(self.species)+1] = {
                     'repr': genome,

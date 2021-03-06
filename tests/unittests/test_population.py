@@ -7,6 +7,7 @@ from random import random
 from src.node import Node
 from src.edge import Edge
 import itertools
+from src.util import print_population
 
 
 class TestPopulationClass(unittest.TestCase):
@@ -33,28 +34,28 @@ class TestPopulationClass(unittest.TestCase):
         self.assertEqual(len(p.genomes), p.population_size)
 
     def test_sort(self):
+        pop_size = 10
         m = Mutator()
         g = Genome.default()
         p = Population(
-            population_size=150,
+            population_size=pop_size,
             seed_genomes=[g],
-            mutator=m)
+            mutator=m,
+            delta=1
+        )
         d = generate_neat_metric()
 
-        for i in range(20):
-            print('generation: ', i)
+        for i in range(10):
             # the following for loop is a simulation of the env role out and fitness computation.
             for g in p.genomes:
                 g.fitness = random()
             p.step(d)
-        p.evolve()
 
-        print("total population: ", len(p.genomes))
         for key, item in p.species.items():
-            print(f'---- {key} ----')
-            print('group size:', len(item['group']))
-            print('group fitness:', item['group_fitness'])
-            print('best performers avg fitness:', sum([g.fitness for g in item['group']])/len(item['group']))
-            print("Unique genes in group:", len(set(item['group'])))
             self.assertEqual(len(set(item['group'])), len(item['group']))
-            # TODO: non unique genes ending up in species group?
+
+        # Note that due to rounding errors population varies slightly.
+        # self.assertEqual(len(p.genomes), pop_size)
+
+        print_population(p)
+

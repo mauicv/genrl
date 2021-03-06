@@ -67,3 +67,11 @@ def catch(genome):
     if not verify_genome_consistency(genome):
         print_genome(genome)
         raise ValueError('Inconsistent genome found')
+
+
+def print_population(population):
+    for k, v in population.species.items():
+        print('')
+        print(' --- ', k, ' --- ')
+        print('representative: ', v['repr'])
+        print('size: ', len(v['group']))
