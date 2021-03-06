@@ -2,8 +2,11 @@
 from src.edge import Edge
 from src.node import Node
 from src.util import sample_weight
+from src.debug.class_debug_decorator import add_inst_validator
+from src.debug.genome_validator import validate_genome
 
 
+@add_inst_validator(env="TESTING", validator=validate_genome)
 class Genome:
     """Genome."""
     def __init__(
@@ -18,6 +21,7 @@ class Genome:
         self.weight_low = weight_low
         self.weight_high = weight_high
         self.edge_innovs = set()
+        # self.node_innovs = set()
 
         self.inputs = [Node(0, i, 0)
                        for i in range(input_size)]
@@ -150,7 +154,12 @@ class Genome:
         new_node = Node(layer_num, len(self.layers[layer_num]),
                         sample_weight(self.weight_low, self.weight_high))
         self.layers[layer_num].append(new_node)
-        self.nodes.append(new_node)
+        if self.nodes and new_node.innov > self.nodes[-1].innov:
+            self.nodes.append(new_node)
+        else:
+            self.nodes = [n for n in self.nodes if n.innov < new_node.innov] + [new_node] \
+                + [n for n  in self.nodes if n.innov > new_node.innov]
+        # self.node_innovs.add(node.innov)
         return new_node
 
     def add_edge(self, from_node, to_node):
@@ -160,10 +169,12 @@ class Genome:
             from_node,
             to_node,
             sample_weight(self.weight_low, self.weight_high))
-        # NOTE: Error was occuring here because occasionally a from and to node pair are already an edge but also not
+        # NOTE: An error was occuring here because occasionally a from and to node pair are already an edge but also not
         # currently members of the genome in question. In which case that edge is drawn from registry and inserted in
         # the next line. This causes an error becuase that edge is likley to be a lower innov number than the one
-        # before it. The following line replced: self.edges.append(edge). There may be a better way here?
+        # before it.
+
+        # TODO: There may be a better way here?
 
         if self.edges and edge.innov > self.edges[-1].innov:
             self.edges.append(edge)

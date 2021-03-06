@@ -58,6 +58,3 @@ class TestPopulationClass(unittest.TestCase):
             self.assertLess(metric_dist, p.delta)
             if metric_dist == 0:
                 self.assertTrue(equal_genome(test_genome, item['repr']))
-
-        # Note that due to rounding errors population varies slightly.
-        # self.assertEqual(len(p.genomes), pop_size)

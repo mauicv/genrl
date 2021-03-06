@@ -16,6 +16,8 @@ from src.genome import Genome
 from src.metrics import generate_neat_metric
 from src.mutator import Mutator
 from random import choice, random
+from src.debug.class_debug_decorator import add_inst_validator
+from src.debug.population_validator import validate_population
 
 POPULATION                      = 150
 DELTA                           = 3.0
@@ -24,6 +26,7 @@ INTERSPECIES_MATING_RATE        = 0.001
 SPECIES_MEMBER_SURVIVAL_RATE    = 0.2
 
 
+@add_inst_validator(env="TESTING", validator=validate_population)
 class Population:
     def __init__(
             self,
