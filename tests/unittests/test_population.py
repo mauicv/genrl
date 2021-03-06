@@ -3,11 +3,11 @@ from src.genome import Genome
 from src.population import Population
 from src.mutator import Mutator
 from src.metrics import generate_neat_metric
-from random import random
+from random import random, choice
 from src.node import Node
 from src.edge import Edge
 import itertools
-from src.util import print_population
+from src.util import print_genome, equal_genome
 
 
 class TestPopulationClass(unittest.TestCase):
@@ -33,8 +33,8 @@ class TestPopulationClass(unittest.TestCase):
             self.assertEqual(len(set(e.innov for e in genome.edges)), len(genome.edges))
         self.assertEqual(len(p.genomes), p.population_size)
 
-    def test_sort(self):
-        pop_size = 10
+    def test_evolve(self):
+        pop_size = 30
         m = Mutator()
         g = Genome.default()
         p = Population(
@@ -53,9 +53,11 @@ class TestPopulationClass(unittest.TestCase):
 
         for key, item in p.species.items():
             self.assertEqual(len(set(item['group'])), len(item['group']))
+            test_genome = choice(item['group'])
+            metric_dist = d(test_genome, item['repr'])
+            self.assertLess(metric_dist, p.delta)
+            if metric_dist == 0:
+                self.assertTrue(equal_genome(test_genome, item['repr']))
 
         # Note that due to rounding errors population varies slightly.
         # self.assertEqual(len(p.genomes), pop_size)
-
-        print_population(p)
-

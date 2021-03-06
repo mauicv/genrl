@@ -3,8 +3,6 @@
 import numpy as np
 from numpy.random import choice
 from src.genome import Genome
-from src.util import catch
-
 
 WEIGHT_MUTATION_LIKELIHOOD      = 0.8
 WEIGHT_MUTATION_RATE_UNIFORM    = 0.1
@@ -49,16 +47,15 @@ class Mutator:
                         genome.weight_low,
                         genome.weight_high)
                     edge.weight = perturbation
-        catch(genome)
         return genome
 
     def mutate_topology(self, genome):
         if np.random.uniform(0, 1, 1) < self.new_node_probability:
             self.add_node(genome)
-            catch(genome)
+
         if np.random.uniform(0, 1, 1) < self.new_edge_probability:
             self.add_edge(genome)
-            catch(genome)
+
         return genome
 
     def add_node(self, genome):
@@ -95,7 +92,6 @@ class Mutator:
         from_node = choice(genome.layers[from_layer])
         to_node = choice(genome.layers[to_layer])
         genome.add_edge(from_node, to_node)
-        catch(genome)
         return genome
 
     def mate(self, primary=None, secondary=None):
@@ -117,7 +113,6 @@ class Mutator:
             weight_low=primary.weight_low,
             weight_high=primary.weight_high,
             depth=primary.depth)
-        catch(new_genome)
         return new_genome
 
     def pair_genes(self, primary, secondary):

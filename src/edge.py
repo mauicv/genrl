@@ -1,5 +1,4 @@
 import itertools
-from src.util import catch
 
 
 class Edge:
@@ -41,7 +40,6 @@ class Edge:
         to_node = new_genome.layers[tn.layer_num][tn.layer_ind]
 
         edge = cls(from_node, to_node, edge.weight)
-        catch(new_genome)
         if new_genome.edges and new_genome.edges[-1].innov > edge.innov:
             raise ValueError('innovation numbers are out of order.')
         new_genome.edges.append(edge)

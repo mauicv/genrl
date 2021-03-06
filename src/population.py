@@ -39,7 +39,6 @@ class Population:
         self.mutation_without_crossover_rate = mutation_without_crossover_rate
         self.interspecies_mating_rate = interspecies_mating_rate
         self.species_member_survival_rate = species_member_survival_rate
-        self.centers = []
         self.species = {}
         self.genomes = []
 
@@ -90,6 +89,7 @@ class Population:
                 self.mutator.mutate_weights(new_genome)
                 self.mutator.mutate_topology(new_genome)
                 if random() > self.mutation_without_crossover_rate:
+                    other_genome = None
                     if random() < self.interspecies_mating_rate and len(self.species) > 1:
                         # select from other species
                         other_item = choice([item for _, item in self.species.items()])
@@ -97,8 +97,9 @@ class Population:
                             other_genome = choice([g for g in other_item['group'] if g is not selected_gene])
                     elif len(item['group']) > 2:
                         other_genome = choice([g for g in item['group'] if g is not selected_gene])
-                    secondary, primary = sorted([new_genome, other_genome], key=lambda g: g.fitness)
-                    new_genome = self.mutator.mate(primary, secondary)
+                    if other_genome:
+                        secondary, primary = sorted([new_genome, other_genome], key=lambda g: g.fitness)
+                        new_genome = self.mutator.mate(primary, secondary)
                 new_genomes.append(new_genome)
         self.genomes = new_genomes
 

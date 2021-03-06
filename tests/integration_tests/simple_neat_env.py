@@ -21,12 +21,11 @@ from src import generate_neat_metric
 
 def neat_test():
     mutator = Mutator()
-    population = Population(mutator)
     seed_genome = Genome.default()
-    population.populate(seed_genome=seed_genome)
+    population = Population(mutator=mutator, seed_genomes=[seed_genome])
     metric = generate_neat_metric()
     # test population
 
-    print(population.genomes)
+    # print(population.genomes)
     return False
 

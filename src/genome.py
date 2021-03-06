@@ -1,7 +1,7 @@
 """Genome class."""
 from src.edge import Edge
 from src.node import Node
-from src.util import sample_weight, catch, print_genome
+from src.util import sample_weight
 
 
 class Genome:
@@ -74,7 +74,6 @@ class Genome:
             edge = Edge(from_node, to_node, weight)
             new_genome.edges.append(edge)
             new_genome.edge_innovs.add((from_node.innov, to_node.innov))
-        catch(new_genome)
         return new_genome
 
     @classmethod
@@ -124,7 +123,6 @@ class Genome:
             new_genome.edge_innovs.add((
                 new_edge.from_node.innov,
                 new_edge.to_node.innov))
-        catch(genome)
         return new_genome
 
     def layer_edges_out(self, layer_num):
@@ -173,7 +171,6 @@ class Genome:
             self.edges = [e for e in self.edges if e.innov < edge.innov] + [edge] \
                 + [e for e in self.edges if e.innov > edge.innov]
         self.edge_innovs.add((from_node.innov, to_node.innov))
-        catch(self)
         return edge
 
     def __repr__(self):
