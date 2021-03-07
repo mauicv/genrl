@@ -38,15 +38,15 @@ def print_genome(genome):
     msg = "" if len(node_innov) == len(genome.nodes) else "(ERROR)"
     nodes, edges = genome.to_reduced_repr
     print(f' -------- nodes {msg} -------- ')
-    for (a, b, i, w) in nodes:
-        print((a, b), "innov:", i, "weight:", round(w, 2))
+    for (a, b, i, w, type) in nodes:
+        print('type: ', type, (a, b), "innov:", i, "weight:", round(w, 2))
     msg = "" if len(edge_innov) == len(genome.edges) else "(ERROR, inconsistent innov nums)"
     truth = True
     for e_1, e_2 in zip(genome.edges, genome.edges[1:]):
         truth = truth and e_1.innov < e_2.innov
     msg = msg + "" if truth else msg + "(ERROR, wrong innov order)"
     print(f' -------- edges {msg} -------- ')
-    for (_, _, i_1, _), (_, _, i_2, _), w, i in edges:
+    for (_, _, i_1, _, _), (_, _, i_2, _, _), w, i in edges:
         print(i_1, "->", i_2, "innov:", i, "weight:", round(w, 2))
     truth = True
     for e in genome.edges:

@@ -51,4 +51,6 @@ class Edge:
             self.from_node.to_reduced_repr,
             self.to_node.to_reduced_repr,
             self.weight,
-            self.innov)
+            self.innov,
+            # self.disabled
+        )

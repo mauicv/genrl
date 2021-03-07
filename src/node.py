@@ -7,7 +7,7 @@ class Node:
     innov_iter = itertools.count()
     registry = {}
 
-    def __init__(self, layer_num, layer_ind, weight):
+    def __init__(self, layer_num, layer_ind, weight, type='hidden'):
         innov = Node.registry.get((layer_num, layer_ind), None)
         innov = innov if innov is not None else next(Node.innov_iter)
         Node.registry[(layer_num, layer_ind)] = innov
@@ -17,6 +17,7 @@ class Node:
         self.weight = weight
         self.edges_out = []
         self.edges_in = []
+        self.type = type
 
 
     @classmethod
@@ -37,4 +38,4 @@ class Node:
 
     @property
     def to_reduced_repr(self):
-        return self.layer_num, self.layer_ind, self.innov, self.weight
+        return self.layer_num, self.layer_ind, self.innov, self.weight, self.type

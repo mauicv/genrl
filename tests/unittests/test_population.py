@@ -7,7 +7,7 @@ from random import random, choice
 from src.node import Node
 from src.edge import Edge
 import itertools
-from src.util import print_genome, equal_genome
+from src.util import equal_genome
 
 
 class TestPopulationClass(unittest.TestCase):

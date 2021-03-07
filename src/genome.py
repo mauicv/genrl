@@ -21,11 +21,10 @@ class Genome:
         self.weight_low = weight_low
         self.weight_high = weight_high
         self.edge_innovs = set()
-        # self.node_innovs = set()
 
-        self.inputs = [Node(0, i, 0)
+        self.inputs = [Node(0, i, 0, type='input')
                        for i in range(input_size)]
-        self.outputs = [Node(1 + depth, j, 0)
+        self.outputs = [Node(1 + depth, j, 0, type='output')
                         for j in range(output_size)]
         self.layers = None
         self.nodes = []
@@ -52,7 +51,7 @@ class Genome:
 
         layer_maxes = [0 for i in range(depth)]
         for node_gene in nodes_genes:
-            layer_num, layer_ind, _, weight = node_gene
+            layer_num, layer_ind, _, weight, _ = node_gene
             if layer_maxes[layer_num - 1] < layer_ind + 1:
                 layer_maxes[layer_num - 1] = layer_ind + 1
 
@@ -62,8 +61,8 @@ class Genome:
 
         nodes = []
         for node_gene in nodes_genes:
-            layer_num, layer_ind, innov, weight = node_gene
-            node = Node(layer_num, layer_ind, weight)
+            layer_num, layer_ind, innov, weight, type = node_gene
+            node = Node(layer_num, layer_ind, weight, type=type)
             nodes.append(node)
             layers[layer_num - 1][layer_ind] = node
 
@@ -71,9 +70,9 @@ class Genome:
 
         new_genome.nodes = nodes
         for from_node_reduced, to_node_reduced, weight, innov in edges:
-            from_layer_num, from_layer_ind, _, _ = from_node_reduced
+            from_layer_num, from_layer_ind, _, _, _ = from_node_reduced
             from_node = new_genome.layers[from_layer_num][from_layer_ind]
-            to_layer_num, to_layer_ind, _, _ = to_node_reduced
+            to_layer_num, to_layer_ind, _, _, _ = to_node_reduced
             to_node = new_genome.layers[to_layer_num][to_layer_ind]
             edge = Edge(from_node, to_node, weight)
             new_genome.edges.append(edge)

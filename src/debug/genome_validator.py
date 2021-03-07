@@ -16,3 +16,12 @@ def validate_genome(genome, *args, **kwargs):
     for n_1, n_2 in zip(genome.nodes, genome.nodes[1:]):
         if not n_1.innov < n_2.innov:
             raise ValueError('Node innovations are out of order.')
+
+    for n in genome.inputs:
+        if not n.type == 'input':
+            raise ValueError('Non input node in inputs.')
+
+    for n in genome.outputs:
+        if not n.type == 'output':
+            raise ValueError('Non output node in outputs.')
+
