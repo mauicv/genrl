@@ -77,8 +77,8 @@ python -m unittest discover tests; pyclean .
 - [x] Implement sort method on Population class
 - [x] Non unique genes ending up in species group?
 - [x] debug decorators for each class.
+- [x] Model has no input or outputs due to change in innov numbers.
 - [ ] Fix disabled edges issue
-- [ ] Model has no input or outputs due to change in innov numbers.
 - [ ] Implement NEAT algorithm test
 - [ ] Write validator for Model class
 

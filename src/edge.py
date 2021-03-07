@@ -7,14 +7,14 @@ class Edge:
     innov_iter = itertools.count()
     registry = {}
 
-    def __init__(self, from_node, to_node, weight):
+    def __init__(self, from_node, to_node, weight, active=True):
         innov = Edge.registry.get((from_node.innov, to_node.innov), None)
         innov = innov if innov is not None else next(Edge.innov_iter)
         Edge.registry[(from_node.innov, to_node.innov)] = innov
         self.innov = innov
         if to_node.layer_num - from_node.layer_num < 1:
             raise ValueError('Cannot connect edge to lower or same layer')
-        self.disabled = False
+        self.active = active
         self.from_node = from_node
         self.to_node = to_node
         self.weight = weight
@@ -52,5 +52,5 @@ class Edge:
             self.to_node.to_reduced_repr,
             self.weight,
             self.innov,
-            # self.disabled
+            self.active
         )

@@ -69,12 +69,12 @@ class Genome:
         new_genome.layers = [new_genome.inputs, *layers, new_genome.outputs]
 
         new_genome.nodes = nodes
-        for from_node_reduced, to_node_reduced, weight, innov in edges:
+        for from_node_reduced, to_node_reduced, weight, innov, active in edges:
             from_layer_num, from_layer_ind, _, _, _ = from_node_reduced
             from_node = new_genome.layers[from_layer_num][from_layer_ind]
             to_layer_num, to_layer_ind, _, _, _ = to_node_reduced
             to_node = new_genome.layers[to_layer_num][to_layer_ind]
-            edge = Edge(from_node, to_node, weight)
+            edge = Edge(from_node, to_node, weight, active)
             new_genome.edges.append(edge)
             new_genome.edge_innovs.add((from_node.innov, to_node.innov))
         return new_genome
@@ -141,7 +141,7 @@ class Genome:
         layer and are not disabled."""
 
         addmissable = lambda e: e.to_node.layer_num - e.from_node.layer_num \
-            > 1 and not e.disabled
+            > 1 and e.active
         return [edge for layer in self.layers
                 for node in layer
                 for edge in node.edges_out

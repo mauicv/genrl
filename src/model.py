@@ -24,10 +24,10 @@ class Model:
                           in nodes if from_layer == node_layer]
             from_edges = [(from_node_layer, from_node_layer_ind, to_node_layer, to_node_layer_ind, weight) for
                           (from_node_layer, from_node_layer_ind, _, _, _), (to_node_layer, to_node_layer_ind, _, _, _),
-                          weight, _ in edges if from_node_layer == from_layer]
+                          weight, _, active in edges if from_node_layer == from_layer and active]
             to_nodes = list(set((to_node_layer, to_node_layer_ind, bias) for
                                 (from_node_layer, _, _, _, _), (to_node_layer, to_node_layer_ind, _, bias, _),
-                                weight, _ in edges if from_node_layer == from_layer))
+                                weight, _, active in edges if from_node_layer == from_layer and active))
 
             for i, j, b in [*from_nodes, *to_nodes]:
                 cell = self.cells.get((i, j), None)

@@ -1,7 +1,7 @@
 """Class that acts on a genome or pair of genomes to mutate them."""
 
 import numpy as np
-from numpy.random import choice
+from numpy.random import choice, uniform
 from src.genome import Genome
 
 WEIGHT_MUTATION_LIKELIHOOD      = 0.8
@@ -67,7 +67,7 @@ class Mutator:
 
         # TODO: sometimes get_addmissable_edges returns emptylist. What should the behavour be in this case.
         edge = choice(genome.get_addmissable_edges())
-        edge.disabled = True
+        edge.active = False
         from_node, to_node = (edge.from_node, edge.to_node)
         layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))
         new_node = genome.add_node(layer_num)
@@ -105,6 +105,10 @@ class Mutator:
         edge_genes = self.pair_genes(
             primary.edges,
             secondary.edges)
+        for _,_,_,_,active in edge_genes:
+            if not active:
+                if uniform(0, 1) > self.gene_disable_rate:
+                    active = True
         new_genome = Genome.from_genes(
             node_genes,
             edge_genes,

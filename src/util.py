@@ -46,8 +46,8 @@ def print_genome(genome):
         truth = truth and e_1.innov < e_2.innov
     msg = msg + "" if truth else msg + "(ERROR, wrong innov order)"
     print(f' -------- edges {msg} -------- ')
-    for (_, _, i_1, _, _), (_, _, i_2, _, _), w, i in edges:
-        print(i_1, "->", i_2, "innov:", i, "weight:", round(w, 2))
+    for (_, _, i_1, _, _), (_, _, i_2, _, _), w, i, active in edges:
+        print(i_1, "->", i_2, "innov:", i, "active:", active, "weight:", round(w, 2))
     truth = True
     for e in genome.edges:
         truth = truth and (e.from_node.innov, e.to_node.innov) in genome.edge_innovs

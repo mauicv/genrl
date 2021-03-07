@@ -49,7 +49,7 @@ class TestMutatorClass(unittest.TestCase):
         m.add_node(g)
         self.assertEqual(len(g.nodes), num_of_nodes + 1)
         self.assertEqual(len(g.edges), num_of_edges + 2)
-        old_edge = [e for e in g.edges if e.disabled][0]
+        old_edge = [e for e in g.edges if not e.active][0]
         new_node = sorted(g.nodes, key=lambda n: n.innov)[-1]
         self.assertEqual(
             new_node.edges_in[0].from_node.layer_num,
@@ -91,7 +91,6 @@ class TestMutatorClass(unittest.TestCase):
         child_g = m.mate(primary=g1, secondary=g2)
 
         g1_nodes, g1_edges = g1.to_reduced_repr
-        # g2_nodes, g2_edges = g2.to_reduced_repr
         child_g_nodes, child_g_edges = child_g.to_reduced_repr
 
         self.assertEqual(g1_nodes, child_g_nodes)
@@ -101,5 +100,5 @@ class TestMutatorClass(unittest.TestCase):
         )
         self.assertEqual(
             {-1, 1},
-            {e[-2] for e in child_g_edges}
+            {e[-3] for e in child_g_edges}
         )

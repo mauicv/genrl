@@ -47,7 +47,6 @@ def test_neat_xor():
             c = xor(a, b)
             yield [a, b], c
 
-    # datagen = generate_data()
     for i in range(10):
         for g in p.genomes:
             print_genome(g)
