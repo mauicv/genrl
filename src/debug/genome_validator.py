@@ -24,4 +24,3 @@ def validate_genome(genome, *args, **kwargs):
     for n in genome.outputs:
         if not n.type == 'output':
             raise ValueError('Non output node in outputs.')
-

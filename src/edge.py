@@ -1,3 +1,4 @@
+from src.util import print_genome
 import itertools
 
 
@@ -34,6 +35,7 @@ class Edge:
 
         if len(new_genome.layers) - 1 < tn.layer_ind or \
                 len(new_genome.layers[tn.layer_num]) - 1 < tn.layer_ind:
+            print_genome(new_genome)
             raise ValueError('to_node does not exist on new_genome.')
 
         from_node = new_genome.layers[fn.layer_num][fn.layer_ind]

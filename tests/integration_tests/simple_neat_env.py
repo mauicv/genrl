@@ -18,21 +18,26 @@ from src import Model
 from src import BatchJob
 from src import generate_neat_metric
 from random import choice
-from src.util import print_genome
+from src.util import print_genome, print_population
+import numpy as np
+from tqdm import tqdm
 
 def test_neat_xor():
-    pop_size = 30
-    m = Mutator()
+    pop_size = 150
+    m = Mutator(
+        new_edge_probability=0.1,
+        new_node_probability=0.05
+    )
     g = Genome.default(
         input_size=2,
         output_size=1,
-        depth=2
+        depth=3
     )
     p = Population(
         population_size=pop_size,
         seed_genomes=[g],
         mutator=m,
-        delta=1
+        delta=3
     )
     d = generate_neat_metric()
 
@@ -40,25 +45,54 @@ def test_neat_xor():
         return bool(a) != bool(b)
 
     def generate_data(n):
-        for _ in range(n):
-            vals = [True, False]
-            a = choice(vals)
-            b = choice(vals)
-            c = xor(a, b)
-            yield [a, b], c
+        data = [
+            [[True, True], xor(True, True)],
+            [[True, False], xor(True, False)],
+            [[False, True], xor(False, True)],
+            [[False, False], xor(False, False)]
+        ]
+        for i in range(n):
+            yield data[i%4]
 
-    for i in range(10):
+    sln_count = 0
+    for i in tqdm(range(1000)):
         for g in p.genomes:
-            print_genome(g)
-            for inputs, output in generate_data(1):
-                model = Model(g.to_reduced_repr)
-                # print(model.cells)
-                pred = model(inputs)
+            fitness = 0
+            best_fitness = 0
+            model = Model(g.to_reduced_repr)
+            for inputs, output in generate_data(4):
+                pred = model(inputs)[0]
+                pred = pred > 0
+                fitness += pred == output
+                if fitness > best_fitness:
+                    best_fitness = fitness
+            g.fitness = fitness/4
+        if best_fitness == 4:
+            sln_count += 1
 
-                print('inputs:', inputs, 'output:', output, 'pred:', pred)
-        p.step(d)
+        if sln_count == 10:
+            break
 
+        p.step(metric=d)
 
-    # print(population.genomes)
-    return False
+    fitnesses = []
+    best_genome = None
+    best_fitness = 0
+    for genome in p.genomes:
+        fitness = 0
+        model = Model(genome.to_reduced_repr)
+        for inputs, output in generate_data(4):
+            pred = model(inputs)[0]
+            pred = pred > 0
+            fitness += pred == output
+        fitness = fitness / 4
+        if fitness > best_fitness:
+            best_fitness = fitness
+            best_genome = genome
+        fitnesses.append(fitness)
+    print()
+    print('best_fitness:', best_fitness)
+    print_population(p)
+    print_genome(best_genome)
+    return True
 

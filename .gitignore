@@ -7,3 +7,4 @@ pull_remote.sh
 dask-worker-space
 *pyc
 .idea
+error_log.txt

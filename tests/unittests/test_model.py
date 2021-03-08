@@ -48,6 +48,17 @@ class TestModelClass(unittest.TestCase):
     # @unittest.skip("Reduced rep is inccorect")
     def test_model_run(self):
         """Test correct propagation of cell states"""
+        # TODO: replace in below ds.
+        # in1 = (0, 0, -1, 0, 'input')
+        # in2 = (0, 1, -1, 0, 'input')
+        # l1n1 = (1, 0, 1, 1, 'hidden')
+        # l1n2 = (1, 1, 2, 0, 'hidden')
+        # l1n3 = (1, 2, 3, -1, 'hidden')
+        # l2n1 = (2, 0, 4, 0, 'hidden')
+        # l2n2 = (2, 1, 5, 1, 'hidden')
+        # l3n1 = (3, 0, -1, -1, 'output')
+        # l3n2 = (3, 1, -1, 0, 'output')
+
         model = Model(([
                             (0, 0, -1, 0, 'input'), (0, 1, -1, 0, 'input'),
                             (1, 0, 1, 1, 'hidden'), (1, 1, 2, 0, 'hidden'), (1, 2, 3, -1, 'hidden'),
@@ -55,7 +66,7 @@ class TestModelClass(unittest.TestCase):
                             (3, 0, -1, -1, 'output'), (3, 1, -1, 0, 'output')
                        ],
                        [
-                            ((0, 0, -1, 0, '_'), (3, 0, 1, 1, '_'), 10, 0, False),
+                            ((0, 0, -1, 0, '_'), (3, 0, -1, -1, '_'), 10, 0, False),
                             ((0, 0, -1, 0, '_'), (1, 0, 1, 1, '_'), 1, 0, True),
                             ((0, 0, -1, 0, '_'), (1, 1, 2, 0, '_'), -1, 1, True),
                             ((0, 1, -1, 0, '_'), (1, 1, 2, 0, '_'), -1, 2, True),
@@ -70,12 +81,12 @@ class TestModelClass(unittest.TestCase):
                             ((2, 1, 5, 1, '_'), (3, 0, -1, -1, '_'), 2, 11, True),
                             ((2, 1, 5, 1, '_'), (3, 1, -1, 0, '_'), -1, 12, True)
                        ]))
+
         # overwrite reset method so that we can inspect the run call
         model.reset = lambda : None
         self.assertEqual(model([1, 2]), [0.0, 4.0])
         for layer, target in zip(model.layers[1:],[[1, -1, 1], [-1, 1]]):
             self.assertEqual(target, [step(cell.acc + cell.b) for cell in layer.inputs])
-
 
     def test_model_reset(self):
         """Test cleanup after model call."""

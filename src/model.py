@@ -22,12 +22,21 @@ class Model:
         for from_layer in range(num_layer):
             from_nodes = [(node_layer, node_ind, bias) for node_layer, node_ind, _, bias, _
                           in nodes if from_layer == node_layer]
-            from_edges = [(from_node_layer, from_node_layer_ind, to_node_layer, to_node_layer_ind, weight) for
-                          (from_node_layer, from_node_layer_ind, _, _, _), (to_node_layer, to_node_layer_ind, _, _, _),
-                          weight, _, active in edges if from_node_layer == from_layer and active]
+            activate_weight = lambda w,a: w if a else 0
+            from_edges = [(from_node_layer,
+                           from_node_layer_ind,
+                           to_node_layer,
+                           to_node_layer_ind,
+                           activate_weight(weight, active))
+                for (from_node_layer, from_node_layer_ind, _, _, _),
+                    (to_node_layer, to_node_layer_ind, _, _, _),
+                    weight, _, active
+                in edges if from_node_layer == from_layer]
+
             to_nodes = list(set((to_node_layer, to_node_layer_ind, bias) for
-                                (from_node_layer, _, _, _, _), (to_node_layer, to_node_layer_ind, _, bias, _),
-                                weight, _, active in edges if from_node_layer == from_layer and active))
+                                (from_node_layer, _, _, _, _),
+                                (to_node_layer, to_node_layer_ind, _, bias, _),
+                                weight, _, active in edges if from_node_layer == from_layer))
 
             for i, j, b in [*from_nodes, *to_nodes]:
                 cell = self.cells.get((i, j), None)
@@ -41,6 +50,7 @@ class Model:
 
         self.inputs = [self.cells[(i, j)] for i, j, _, _, type in nodes if type == 'input']
         self.outputs = [self.cells[(i, j)] for i, j, _, _, type in nodes if type == 'output']
+
 
     def __call__(self, inputs):
         for cell, val in zip(self.inputs, inputs):

@@ -3,6 +3,8 @@
 import numpy as np
 from numpy.random import choice, uniform
 from src.genome import Genome
+from src.util import print_genome
+
 
 WEIGHT_MUTATION_LIKELIHOOD      = 0.8
 WEIGHT_MUTATION_RATE_UNIFORM    = 0.1
@@ -67,12 +69,12 @@ class Mutator:
 
         # TODO: sometimes get_addmissable_edges returns emptylist. What should the behavour be in this case.
         edge = choice(genome.get_addmissable_edges())
-        edge.active = False
         from_node, to_node = (edge.from_node, edge.to_node)
         layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))
         new_node = genome.add_node(layer_num)
         genome.add_edge(from_node, new_node)
         genome.add_edge(new_node, to_node)
+        edge.active = False
         return genome
 
     def add_edge(self, genome):
