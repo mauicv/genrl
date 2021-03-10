@@ -1,3 +1,4 @@
+import numpy as np
 from math import exp
 
 def step(x):
@@ -5,3 +6,6 @@ def step(x):
 
 def sigmoid(x, c=4.9):
     return 1/(1+exp(-c*x))
+
+def tanh(x):
+    np.tanh(x)

@@ -1,4 +1,6 @@
+import numpy as np
 import random
+import json
 
 
 def sample_weight(low, high):
@@ -59,6 +61,28 @@ def print_genome(genome):
 def print_population(population):
     for k, v in population.species.items():
         print('')
-        print(' --- ', k, ' --- ')
+        print(' --- species ', k, ' --- ')
         print('representative: ', v['repr'])
         print('size: ', len(v['group']))
+
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
+
+
+def save(genome, fname):
+    with open(fname, 'w') as file:
+        file.write(json.dumps(genome, cls=NpEncoder))
+
+
+def load(fname):
+    with open(fname, 'r') as file:
+        return json.loads(file.read())

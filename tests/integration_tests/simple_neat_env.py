@@ -15,12 +15,10 @@ from src import Genome
 from src import Population
 from src import Mutator
 from src import Model
-from src import BatchJob
 from src import generate_neat_metric
-from random import choice
 from src.util import print_genome, print_population
-import numpy as np
 from tqdm import tqdm
+
 
 def test_neat_xor():
     pop_size = 150

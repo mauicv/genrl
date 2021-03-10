@@ -78,9 +78,11 @@ python -m unittest discover tests; pyclean .
 - [x] Non unique genes ending up in species group?
 - [x] debug decorators for each class.
 - [x] Model has no input or outputs due to change in innov numbers.
-- [ ] Fix disabled edges issue
-- [ ] Implement NEAT algorithm test
-- [ ] Write validator for Model class
+- [x] Fix disabled edges issue
+- [x] Implement NEAT xor algorithm test
+- [x] Implement NEAT cartpole algorithm test
+- [x] Write validator for Model class
+- [ ] Implement NEAT bipedal-walker algorithm test
 
   
 - [ ] Sometimes get_addmissable_edges returns emptylist?
