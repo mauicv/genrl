@@ -82,10 +82,14 @@ python -m unittest discover tests; pyclean .
 - [x] Implement NEAT xor algorithm test
 - [x] Implement NEAT cartpole algorithm test
 - [x] Write validator for Model class
-- [ ] Implement NEAT bipedal-walker algorithm test
+- [x] Implement NEAT bipedal-walker algorithm test
+- [ ] Make metric a property of the population class rather than passing it as a parameter.
+- [ ] Add different weight initalization schemes
+- [ ] Integrate Batching
+- [ ] to_reduced_repr should be a method not a property
 
-  
 - [ ] Sometimes get_addmissable_edges returns emptylist?
 - [ ] Write documentation
 - [ ] Make factory function for different genome classes
 - [ ] Create `setup.py`
+- [ ] 

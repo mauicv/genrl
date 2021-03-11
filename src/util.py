@@ -78,11 +78,18 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 
-def save(genome, fname):
+def save(fname, data=None,):
+    old_data = load(fname)
+    old_data.append(data)
     with open(fname, 'w') as file:
-        file.write(json.dumps(genome, cls=NpEncoder))
+        if old_data:
+            file.write(json.dumps(data, cls=NpEncoder))
 
 
 def load(fname):
-    with open(fname, 'r') as file:
-        return json.loads(file.read())
+    try:
+        with open(fname, 'r') as file:
+            data = json.loads(file.read())
+    except FileNotFoundError:
+        return []
+    return data

@@ -11,13 +11,14 @@ Compatibility Distance:
 where E is excess and D is disjoint genes and W is the average weight
 differences of matching genes including disabled genes
 """
-
+from time import time
 from src.genome import Genome
 from src.metrics import generate_neat_metric
 from src.mutator import Mutator
 from random import choice, random
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.population_validator import validate_population
+import numpy as np
 
 POPULATION                      = 150
 DELTA                           = 3.0
@@ -36,7 +37,8 @@ class Population:
             interspecies_mating_rate=INTERSPECIES_MATING_RATE,
             species_member_survival_rate=SPECIES_MEMBER_SURVIVAL_RATE,
             seed_genomes=None,
-            mutator=Mutator()):
+            mutator=Mutator(),
+            speciation_active=True):
         self.population_size = population_size
         self.delta = delta
         self.mutation_without_crossover_rate = mutation_without_crossover_rate
@@ -44,6 +46,8 @@ class Population:
         self.species_member_survival_rate = species_member_survival_rate
         self.species = {}
         self.genomes = []
+        self.generation = 0
+        self.speciation_active = True
 
         self.mutator = mutator
         if not seed_genomes:
@@ -104,6 +108,7 @@ class Population:
                         secondary, primary = sorted([new_genome, other_genome], key=lambda g: g.fitness)
                         new_genome = self.mutator.mate(primary, secondary)
                 new_genomes.append(new_genome)
+        self.generation += 1
         self.genomes = new_genomes
 
     def speciate(self, metric=generate_neat_metric()):
@@ -131,3 +136,35 @@ class Population:
             group_fitness = sum([adj_fitness(g) for g in item['group']])
             item['group_fitness'] = group_fitness
             item['group'].sort(key=adj_fitness, reverse=True)
+            item['generation'] = self.generation
+
+    def print(self, metric=generate_neat_metric()):
+        """Returns data in string format on current generation."""
+        best_genome = max(self.genomes, key=lambda g: g.fitness)
+        worst_genome = min(self.genomes, key=lambda g: g.fitness)
+        data = {
+            'generation': self.generation,
+            'species_num': len(self.species),
+            'best_fitness': best_genome.fitness,
+            'best_genome': best_genome.to_reduced_repr,
+            'worst_fitness': worst_genome.fitness,
+            'worst_genome': worst_genome.to_reduced_repr,
+            'mean_fitness': np.mean([g.fitness for g in self.genomes]),
+            'groups': [],
+            'created_at': time()
+        }
+        if self.speciation_active:
+            for key, item in self.species.items():
+                if item['generation'] != self.generation:
+                    raise ValueError('current generation and species group generation are not the same!')
+                data['groups'].append({
+                    'id': key,
+                    'bests': [g.to_reduced_repr for g in item['group'][0:3]],
+                    'group_fitness': item['group_fitness'],
+                    'repr': item['repr'].to_reduced_repr,
+                    'partition': {
+                        key: metric(item['repr'], other_item['repr'])
+                        for key, other_item in self.species.items()
+                    }
+                })
+        return data

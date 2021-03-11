@@ -11,16 +11,10 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src import Genome
-from src import Population
-from src import Mutator
 from src import Model
-from src import generate_neat_metric
-from tqdm import tqdm
 import gym
 import numpy as np
-from src.batch import BatchJob
-from src.util import print_population, save, load
+from src.util import load
 
 
 def play(genome):
@@ -41,5 +35,5 @@ def play(genome):
 
 def play_bip_walker():
     data = load('save.txt')
-    play(data)
+    play(data[-1]['best_genome'])
     return True

@@ -16,17 +16,11 @@ from src import Population
 from src import Mutator
 from src import Model
 from src import generate_neat_metric
-from tqdm import tqdm
 import gym
 import numpy as np
-from src.batch import BatchJob
-from src.util import print_population, save
-import matplotlib.pyplot as plt
+from src.util import save
 
 
-# batch_job = BatchJob(num_processes=3)
-
-# @batch_job
 def compute_fitness(genome, render=False):
     model = Model(genome)
     env = gym.make("BipedalWalker-v3")
@@ -76,35 +70,23 @@ def test_bip_walker():
         c_3=3
     )
 
-    # for i in tqdm(range(10)):
-    #     genomes = [g.to_reduced_repr for g in p.genomes]
-    #     rewards = compute_fitness(genomes)
-    #     print(rewards)
+    save(fname='save.txt', data=None)
 
-    means = []
-    mins = []
-    maxs = []
-    for i in range(100):
-        best_fitness = 0
-        fitnesses = []
-        best_genome = p.genomes[0].to_reduced_repr
+    for i in range(3):
         for g in p.genomes:
             reward = compute_n_fitness(1, g.to_reduced_repr)
             g.fitness = reward
-            fitnesses.append(reward)
-            if reward > best_fitness:
-                best_fitness = reward
-                best_genome = g.to_reduced_repr
-        compute_fitness(best_genome)
-        p.step(metric=d)
-        fitnesses = np.array(fitnesses)
-        print('run:', i, 'best:', fitnesses.max(), 'worst:', fitnesses.min(), 'avg:', fitnesses.mean())
-        means.append(fitnesses.mean())
-        mins.append(fitnesses.min())
-        maxs.append(fitnesses.max())
-    plt.plot(np.array(maxs))
-    plt.show()
-    print_population(p)
-    compute_fitness(best_genome, True)
-    save(best_genome, 'save.txt')
+        p.speciate(metric=d)
+        data = p.print(metric=d)
+        p.evolve()
+        print_progress(data)
+        save(data, 'save.txt')
     return True
+
+
+def print_progress(data):
+    data_string = ''
+    for val in ['generation', 'best_fitness', 'worst_fitness', 'mean_fitness']:
+        data_string += f' {val}: {data[val]}'
+    print(data_string)
+

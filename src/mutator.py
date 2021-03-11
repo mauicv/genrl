@@ -99,7 +99,8 @@ class Mutator:
     def mate(self, primary=None, secondary=None):
         """Produces a child of the primary and secondary genomes.
 
-        Note that genome.nodes excludes input and output layers."""
+        Note that genome.nodes excludes input and output layers.
+        """
 
         node_genes = self.pair_genes(
             primary.nodes,
@@ -125,7 +126,8 @@ class Mutator:
         """For any list of genes with innov values, so edges or nodes we
         iterate through and chose one randomly when there exists a
         corresponding innov number and select the primary (fittest) gene when
-        a match doesn't exist."""
+        a match doesn't exist.
+        """
 
         i, j = (0, 0)
         selected_gene = []
