@@ -1,95 +1,63 @@
-## Genetic Algorithms
+## PyG
 
-Aim is to use genetic algorithms to do the bulk of the heavy lifting and traditional reinforcement learning methods to optimize at a later date. The process should be periodically human driven and from the data gathered from human selection process we can further derive the value function that the automated RL and Evolutionary Strategies use.
+PyG is a framework for running evolutionary aglorithms for 
+reinforcement learning. 
+See the [Documention](DOCUMENTATION.md)
 
-___
+### Example:
 
-#### Mutator Class:
+The following uses [NEAT](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) to solve openai 
+[cartpole environment](https://gym.openai.com/envs/CartPole-v1/)
 
-## use:
 
-```py
-from src.mutator import Mutator
-from src.genome import Genome
-genome = Genome.default()
-m = Mutator()
-new_genome = m.mutate_weights(genome)
-m.mutate_topology(new_genome)
+```python
+from src import Population
+from src import Mutator
+from src import generate_neat_metric
+from src import Model
+
+def compute_fitness(genome):
+    model = Model(genome)
+    env = gym.make("CartPole-v0")
+    state = env.reset()
+    fitness = 0
+    action_map = lambda a: 0 if a[0] <= 0 else 1
+    for _ in range(1000):
+        action = model(state)
+        action = action_map(action)
+        state, reward, done, _ = env.step(action)
+        fitness += reward
+        if done:
+            break
+
+    return fitness
+
+if __name__ == '__main__':
+    mutator = Mutator()
+    population = Population(mutator=mutator)
+    metric = generate_neat_metric()
+    for i in range(10):
+        for genome in population.genomes:
+            genome.fitness = compute_fitness(genome.to_reduced_repr)
+        population.step(metric=metric)
+
 ```
 
-Config:
-- c_1
-- c_2
-- c_3
-- delta
-- weight_mutation_likelyhood
-- weight_mutation_rate_random
-- weight_mutation_rate_uniform
-- gene_disable_rate
-- mutation_without_crossover_rate
-- insterspecies_mating_rate
-- new_node_probability
-- new_link_probability
-
-#### Genome class:
-
-Properties:
-- inputs: array of input nodes
-- outputs: array of output nodes
-- layers: number of available layers in which nodes can exist
-- input_edges:
-- layer_edges
-
-Mutations:
-
-1. **Node Mutation**:
-
-  *Def* (**Admissible edge**): an edge such that the from_node and to_node occupy layers more than a distance 1 apart.
-
-  When a node is added we randomly sample an admissible edge and then randomly sample an layer index in the range of layers the edge spans. After disabling the sampled edge we add a new node in the selected layer and then connect it with two new edges.
-
-2. **Edge Mutation**:
-
-  *Def* (**Admissible node pair**): A pair of nodes such that the index of the layer that the first node is in is less than the index of the layer the second node occupies.
-
-  When a edge is added we sample two layers without replacement and then order them. We then sample a node from each and add a new edge between them.
-
 ___
 
-## Resources:
+### Tests:
 
-1. [TensorFlow Tutorials](https://www.tensorflow.org/guide/intro_to_graphs)
-2. [NEAT in TensorFlow](https://github.com/crisbodnar/TensorFlow-NEAT/blob/master/tf_neat/adaptive_net.py)
+To run all unittests:
 
-___
-
-## Tests:
-
-To run all tests:
-
-```sh
-python -m unittest discover tests; pyclean .
+```shell
+python -m unittest discover tests/unit_tests; pyclean .
 ```
 
-## TODO:
+To run specific integration tests:
 
-- [x] Mock reset method in run model test
-- [x] Implement sort method on Population class
-- [x] Non unique genes ending up in species group?
-- [x] debug decorators for each class.
-- [x] Model has no input or outputs due to change in innov numbers.
-- [x] Fix disabled edges issue
-- [x] Implement NEAT xor algorithm test
-- [x] Implement NEAT cartpole algorithm test
-- [x] Write validator for Model class
-- [x] Implement NEAT bipedal-walker algorithm test
-- [ ] Make metric a property of the population class rather than passing it as a parameter.
-- [ ] Add different weight initalization schemes
-- [ ] Integrate Batching
-- [ ] to_reduced_repr should be a method not a property
+```shell
+python -m unittest discover tests/integration_tests; pyclean .
+```
 
-- [ ] Sometimes get_addmissable_edges returns emptylist?
-- [ ] Write documentation
-- [ ] Make factory function for different genome classes
-- [ ] Create `setup.py`
-- [ ] 
+___
+

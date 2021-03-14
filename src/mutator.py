@@ -35,6 +35,7 @@ class Mutator:
         self.new_edge_probability = new_edge_probability
 
     def mutate_weights(self, genome):
+        # TODO: This doesn't mutate node weights!!
         if np.random.uniform(0, 1, 1) < self.weight_mutation_likelihood:
             edges = genome.edges
             random_nums = np.random.uniform(0, 1, len(edges))
@@ -67,7 +68,6 @@ class Mutator:
         layer and then connect it with two new edges.
         """
 
-        # TODO: sometimes get_addmissable_edges returns emptylist. What should the behavour be in this case.
         edge = choice(genome.get_addmissable_edges())
         from_node, to_node = (edge.from_node, edge.to_node)
         layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))

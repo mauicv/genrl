@@ -1,7 +1,7 @@
 from src.activations import step
 import unittest
 from src.util import sample_weight
-from tests.unittests.factories import genome_factory
+from tests.unit_tests.factories import genome_factory
 from src.edge import Edge
 from src.node import Node
 from src.model import Model

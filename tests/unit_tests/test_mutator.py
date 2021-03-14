@@ -4,7 +4,7 @@ from src.genome import Genome
 from src.edge import Edge
 from src.node import Node
 from src.mutator import Mutator
-from tests.unittests.factories import genome_pair_factory
+from tests.unit_tests.factories import genome_pair_factory
 import itertools
 from random import random
 
