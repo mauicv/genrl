@@ -1,8 +1,8 @@
 import unittest
-from src.genome.genome import Genome
-from src.NEAT.population import NEATPopulation
-from src.NEAT.mutator import NEATMutator
-from src.NEAT.metric import generate_neat_metric
+from src import Genome
+from src import NEATPopulation
+from src import NEATMutator
+from src import generate_neat_metric
 from random import random, choice
 from src.genome.node import Node
 from src.genome.edge import Edge
@@ -20,9 +20,7 @@ class TestPopulationClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_populate(self):
-        m = NEATMutator()
-        g = Genome.default()
-        p = NEATPopulation(population_size=50, seed_genomes=[g], mutator=m)
+        p = NEATPopulation(population_size=50)
         for genome in p.genomes:
             if len(set(e.innov for e in genome.edges)) != len(genome.edges):
                 print(Edge.registry)
@@ -35,21 +33,19 @@ class TestPopulationClass(unittest.TestCase):
 
     def test_evolve(self):
         pop_size = 30
-        m = NEATMutator()
-        g = Genome.default()
         p = NEATPopulation(
             population_size=pop_size,
-            seed_genomes=[g],
-            mutator=m,
             delta=1
         )
+        m = NEATMutator()
         d = generate_neat_metric()
 
         for i in range(10):
             # the following for loop is a simulation of the env role out and fitness computation.
             for g in p.genomes:
                 g.fitness = random()
-            p.step(d)
+            p.speciate()
+            m(p)
 
         for key, item in p.species.items():
             self.assertEqual(len(set(item['group'])), len(item['group']))

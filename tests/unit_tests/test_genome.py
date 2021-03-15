@@ -43,7 +43,7 @@ class TestGenomeClass(unittest.TestCase):
         )
 
     def test_get_addmissable_edges(self):
-        g = Genome
+        g = Genome.default(input_size=2, output_size=3, depth=5)
         n2 = g.add_node(3)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])
@@ -61,7 +61,7 @@ class TestGenomeClass(unittest.TestCase):
             self.assertEqual(addmissable(e), True)
 
     def test_copy_genome(self):
-        g = Genome
+        g = Genome.default()
         n2 = g.add_node(3)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])
@@ -83,7 +83,7 @@ class TestGenomeClass(unittest.TestCase):
             self.assertEqual(edge_copy.innov, edge.innov)
 
     def test_from_genes_constructor(self):
-        g = Genome
+        g = Genome.default(input_size=2, output_size=3, depth=5)
         n2 = g.add_node(4)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])

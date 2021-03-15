@@ -5,7 +5,6 @@
 from time import time
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.population_validator import validate_population
-from src.populations.genome_seeders import curry_genome_seeder
 import numpy as np
 
 
@@ -15,8 +14,8 @@ class Population:
             self,
             delta=None,
             metric=None,
-            population_size=150,
-            genome_seeder=curry_genome_seeder()):
+            population_size=None,
+            genome_seeder=None):
         """Construct Population of genomes.
 
         Args:

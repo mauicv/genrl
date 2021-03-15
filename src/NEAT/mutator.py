@@ -3,7 +3,6 @@
 import numpy as np
 from numpy.random import choice
 from src.genome.genome import Genome
-from src.populations.population import Population
 from random import random
 from src.mutators.mutator import Mutator
 from src.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
@@ -44,12 +43,6 @@ class NEATMutator(Mutator):
 
         self.crossover = curry_crossover(gene_disable_rate)
 
-    def __call__(self, target):
-        if isinstance(target, Genome):
-            self.call_on_genome(target)
-        elif isinstance(target, Population):
-            self.call_on_population(target)
-
     def call_on_population(self, population):
         """Takes population of speciated genomes and evolves them into the next generation of genomes.
 
@@ -75,7 +68,7 @@ class NEATMutator(Mutator):
                 new_genome = self.call_on_genome(selected_gene)
                 if random() > self.mutation_without_crossover_rate:
                     other_genome = None
-                    if random() < population.interspecies_mating_rate and len(population.species) > 1:
+                    if random() < self.interspecies_mating_rate and len(population.species) > 1:
                         # select from other species
                         other_item = choice([item for _, item in population.species.items()])
                         if len(other_item['group']) > 2:

@@ -34,14 +34,13 @@ def compute_fitness(genome):
 
 
 if __name__ == '__main__':
-    mutator = Mutator()
-    population = Population(mutator=mutator)
-    metric = generate_neat_metric()
+    mutator = NEATMutator()
+    population = NEATPopulation()
     for i in range(10):
         for genome in population.genomes:
             genome.fitness = compute_fitness(genome.to_reduced_repr)
-        population.step(metric=metric)
-
+        population.speciate()
+        mutator(population)
 ```
 
 ___

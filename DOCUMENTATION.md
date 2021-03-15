@@ -12,26 +12,22 @@ function that computes the fitness of the each genome in the population.
 ```python
 from src import NEATPopulation
 from src import NEATMutator
-from src import generate_neat_metric
 from src import Model
 
 
-def compute_fitness(genome):
-    model = Model(genome)
+def compute_fitness(soln):
+    model = Model(soln)
     # compute fitness of model here
     return fitness
 
 
-mutator = Mutator()
-population = Population(mutator=mutator)
-metric = generate_neat_metric()
+mutator = NEATMutator()
+population = NEATPopulation()
 for i in range(10):
     for genome in population.genomes:
         genome.fitness = compute_fitness(genome.to_reduced_repr)
-    population.step(metric=metric)
-    # want to replace the above with: 
-    # population.speciate(metric=metric)
-    # mutator(population)
+    population.speciate()
+    mutator(population)
 
 ```
 

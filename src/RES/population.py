@@ -21,3 +21,4 @@ class RESPopulation(Population):
                          delta=None,
                          genome_seeder=genome_seeder,
                          metric=None)
+

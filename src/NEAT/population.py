@@ -16,7 +16,8 @@ from src.NEAT.metric import generate_neat_metric
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.population_validator import validate_population
 from src.populations.population import Population
-from src.populations.genome_seeders import default_genome_seeder
+from src.populations.genome_seeders import curry_genome_seeder
+from src.NEAT.mutator import NEATMutator
 
 
 @add_inst_validator(env="TESTING", validator=validate_population)
@@ -25,7 +26,7 @@ class NEATPopulation(Population):
             self,
             population_size=150,
             delta=3.0,
-            genome_seeder=default_genome_seeder,
+            genome_seeder=curry_genome_seeder(NEATMutator),
             metric=generate_neat_metric(1, 1, 3)):
         """Speciated Population of genomes used within the NEAT algorithm. Extends Population class.
 
