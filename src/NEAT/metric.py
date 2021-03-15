@@ -8,12 +8,8 @@ differences of matching genes including disabled genes.
 From NEAT paper http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
 """
 
-C_1 = 1.0
-C_2 = 1.0
-C_3 = 0.4
 
-
-def generate_gene_metric(c_1, c_2, c_3):
+def generate_gene_metric(c_1=1.0, c_2=1.0, c_3=0.4):
     def _compare_gene_difference(genes_1, genes_2):
         last_match = [0, 0]
         W, M, i, j = (0, 0, 0, 0)
@@ -36,7 +32,7 @@ def generate_gene_metric(c_1, c_2, c_3):
     return _compare_gene_difference
 
 
-def generate_neat_metric(c_1=C_1, c_2=C_2, c_3=C_3):
+def generate_neat_metric(c_1=1.0, c_2=1.0, c_3=0.4):
     gen_metric = generate_gene_metric(c_1, c_2, c_3)
 
     def metric(genome_1, genome_2):

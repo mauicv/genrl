@@ -9,12 +9,12 @@ See the [Documention](DOCUMENTATION.md)
 The following uses [NEAT](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) to solve openai 
 [cartpole environment](https://gym.openai.com/envs/CartPole-v1/)
 
-
 ```python
-from src import Population
-from src import Mutator
+from src import NEATPopulation
+from src import NEATMutator
 from src import generate_neat_metric
 from src import Model
+
 
 def compute_fitness(genome):
     model = Model(genome)
@@ -31,6 +31,7 @@ def compute_fitness(genome):
             break
 
     return fitness
+
 
 if __name__ == '__main__':
     mutator = Mutator()

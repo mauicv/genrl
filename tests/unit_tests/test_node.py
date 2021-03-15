@@ -1,6 +1,6 @@
 import unittest
-from src.edge import Edge
-from src.node import Node
+from src.genome.edge import Edge
+from src.genome.node import Node
 import itertools
 
 

@@ -1,7 +1,6 @@
 import unittest
-from src.edge import Edge
-from src.node import Node
-from src.population import Population
+from src.genome.edge import Edge
+from src.genome.node import Node
 import itertools
 from tests.unit_tests.factories import genome_pair_factory
 from src import generate_neat_metric

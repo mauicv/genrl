@@ -1,6 +1,6 @@
 """Genome class."""
-from src.edge import Edge
-from src.node import Node
+from src.genome.edge import Edge
+from src.genome.node import Node
 from src.util import sample_weight
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.genome_validator import validate_genome

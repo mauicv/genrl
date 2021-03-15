@@ -1,6 +1,6 @@
-from src.genome import Genome
-from src.edge import Edge
-from src.node import Node
+from src.genome.genome import Genome
+from src.genome.edge import Edge
+from src.genome.node import Node
 import itertools
 import numpy as np
 
@@ -19,7 +19,7 @@ def genome_pair_factory(
 
     np.random.seed(1)
 
-    g1 = Genome.default(input_size=2, output_size=3, depth=5)
+    g1 = Genome
     n1 = g1.add_node(4)
     g1.add_edge(g1.layers[0][0], n1)
     g1.add_edge(n1, g1.outputs[0])
@@ -28,7 +28,7 @@ def genome_pair_factory(
     g1.add_edge(g1.layers[0][1], n2)
     g1.add_edge(n2, g1.outputs[2])
 
-    g2 = Genome.copy(g1)
+    g2 = Genome
 
     n4 = g2.add_node(2)
     g2.add_edge(g2.layers[0][1], n4)
@@ -68,7 +68,7 @@ def genome_factory(
 
     np.random.seed(1)
 
-    g1 = Genome.default(input_size=2, output_size=3, depth=5)
+    g1 = Genome
     n1 = g1.add_node(4)
     g1.add_edge(g1.layers[0][0], n1)
     g1.add_edge(n1, g1.outputs[0])

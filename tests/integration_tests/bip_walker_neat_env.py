@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import Population
-from src import Mutator
+from src import NEATPopulation
+from src import NEATMutator
 from src import Model
 from src import generate_neat_metric
 import gym
@@ -49,7 +49,7 @@ def compute_n_fitness(n, genome):
 
 def test_bip_walker():
     pop_size = 400
-    m = Mutator(
+    m = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
@@ -58,7 +58,7 @@ def test_bip_walker():
         output_size=4,
         depth=5
     )
-    p = Population(
+    p = NEATPopulation(
         population_size=pop_size,
         seed_genomes=[g],
         mutator=m,
@@ -77,7 +77,7 @@ def test_bip_walker():
             reward = compute_n_fitness(1, g.to_reduced_repr)
             g.fitness = reward
         p.speciate(metric=d)
-        data = p.print(metric=d)
+        data = p.to_dict()
         p.evolve()
         print_progress(data)
         save(data, 'save.txt')

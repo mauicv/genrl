@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import Population
-from src import Mutator
+from src import NEATPopulation
+from src import NEATMutator
 from src import Model
 from src import generate_neat_metric
 from src.util import print_genome, print_population
@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 def test_neat_xor():
     pop_size = 150
-    m = Mutator(
+    m = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
@@ -31,7 +31,7 @@ def test_neat_xor():
         output_size=1,
         depth=3
     )
-    p = Population(
+    p = NEATPopulation(
         population_size=pop_size,
         seed_genomes=[g],
         mutator=m,

@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import Population
-from src import Mutator
+from src import NEATPopulation
+from src import NEATMutator
 from src import Model
 from src import generate_neat_metric
 from tqdm import tqdm
@@ -57,7 +57,7 @@ def compute_n_fitness(n, genome):
 
 def test_cart_pole():
     pop_size = 1000
-    m = Mutator(
+    m = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
@@ -66,7 +66,7 @@ def test_cart_pole():
         output_size=1,
         depth=5
     )
-    p = Population(
+    p = NEATPopulation(
         population_size=pop_size,
         seed_genomes=[g],
         mutator=m,

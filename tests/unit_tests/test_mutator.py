@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-from src.genome import Genome
-from src.edge import Edge
-from src.node import Node
-from src.mutator import Mutator
+from src.genome.genome import Genome
+from src.genome.edge import Edge
+from src.genome.node import Node
+from src.NEAT.mutator import NEATMutator
 from tests.unit_tests.factories import genome_pair_factory
 import itertools
 from random import random
@@ -33,7 +33,7 @@ class TestMutatorClass(unittest.TestCase):
                                     [random() for _ in range(10)]]):
                 g = Genome.default(input_size=2, output_size=3, depth=5)
                 m_g = Genome.copy(g)
-                m = Mutator()
+                m = NEATMutator()
                 m.mutate_weights(m_g)
 
         self.assertEqual(m_g.edges[0].weight, NEW_UNIFORM_WEIGHT)
@@ -45,8 +45,8 @@ class TestMutatorClass(unittest.TestCase):
         g = Genome.default(input_size=2, output_size=3, depth=5)
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
-        m = Mutator()
-        m.add_node(g)
+        m = NEATMutator()
+        add_node(g)
         self.assertEqual(len(g.nodes), num_of_nodes + 1)
         self.assertEqual(len(g.edges), num_of_edges + 2)
         old_edge = [e for e in g.edges if not e.active][0]
@@ -68,8 +68,8 @@ class TestMutatorClass(unittest.TestCase):
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
         greatest_edge_innov = sorted(g.edges, key=lambda n: n.innov)[-1].innov
-        m = Mutator()
-        m.add_edge(g)
+        m = NEATMutator()
+        add_edge(g)
         self.assertEqual(len(g.nodes), num_of_nodes)
         self.assertEqual(len(g.edges), num_of_edges + 1)
         new_edge = sorted(g.edges, key=lambda n: n.innov)[-1]
@@ -87,7 +87,7 @@ class TestMutatorClass(unittest.TestCase):
         for edge in g2.edges:
             edge.weight = -1
 
-        m = Mutator()
+        m = NEATMutator()
         child_g = m.mate(primary=g1, secondary=g2)
 
         g1_nodes, g1_edges = g1.to_reduced_repr

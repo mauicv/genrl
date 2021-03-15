@@ -1,11 +1,11 @@
 import unittest
-from src.genome import Genome
-from src.population import Population
-from src.mutator import Mutator
-from src.metrics import generate_neat_metric
+from src.genome.genome import Genome
+from src.NEAT.population import NEATPopulation
+from src.NEAT.mutator import NEATMutator
+from src.NEAT.metric import generate_neat_metric
 from random import random, choice
-from src.node import Node
-from src.edge import Edge
+from src.genome.node import Node
+from src.genome.edge import Edge
 import itertools
 from src.util import equal_genome
 
@@ -20,9 +20,9 @@ class TestPopulationClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_populate(self):
-        m = Mutator()
+        m = NEATMutator()
         g = Genome.default()
-        p = Population(population_size=50, seed_genomes=[g], mutator=m)
+        p = NEATPopulation(population_size=50, seed_genomes=[g], mutator=m)
         for genome in p.genomes:
             if len(set(e.innov for e in genome.edges)) != len(genome.edges):
                 print(Edge.registry)
@@ -35,9 +35,9 @@ class TestPopulationClass(unittest.TestCase):
 
     def test_evolve(self):
         pop_size = 30
-        m = Mutator()
+        m = NEATMutator()
         g = Genome.default()
-        p = Population(
+        p = NEATPopulation(
             population_size=pop_size,
             seed_genomes=[g],
             mutator=m,

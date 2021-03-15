@@ -7,18 +7,20 @@ them for different use cases.
 #### Simple NEAT example:
 
 The default behaviour implements a NEAT algorithm. The user is left to define a 
-function that computes the fitness of the each genome in the population.  
+function that computes the fitness of the each genome in the population.
 
 ```python
-from src import Population
-from src import Mutator
+from src import NEATPopulation
+from src import NEATMutator
 from src import generate_neat_metric
 from src import Model
+
 
 def compute_fitness(genome):
     model = Model(genome)
     # compute fitness of model here
     return fitness
+
 
 mutator = Mutator()
 population = Population(mutator=mutator)
