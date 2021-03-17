@@ -19,7 +19,7 @@ def curry_genome_seeder(mutator, seed_genomes=None):
     if not seed_genomes:
         seed_genomes = [Genome.default()]
 
-    if not isinstance(mutator, Mutator):
+    if not issubclass(mutator, Mutator):
         raise ValueError('mutator param must be of type Mutator')
 
     def genome_seeder(n):
