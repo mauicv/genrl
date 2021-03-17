@@ -6,7 +6,7 @@ from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.genome_validator import validate_genome
 
 
-@add_inst_validator(env="", validator=validate_genome)
+@add_inst_validator(env="TESTING", validator=validate_genome)
 class Genome:
     """Genome."""
     def __init__(

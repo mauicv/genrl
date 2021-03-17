@@ -14,30 +14,35 @@ sys.path.insert(0, DIR)  # noqa
 from src import Genome
 from src import NEATPopulation
 from src import NEATMutator
+from src import curry_genome_seeder
 from src import Model
 from src import generate_neat_metric
 from src.util import print_genome, print_population
 from tqdm import tqdm
 
 
-def test_neat_xor():
+def neat_xor_example():
     pop_size = 150
-    m = NEATMutator(
+    mutator = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
-    g = Genome.default(
+    seed_genome = Genome.default(
         input_size=2,
         output_size=1,
         depth=3
     )
-    p = NEATPopulation(
-        population_size=pop_size,
-        seed_genomes=[g],
-        mutator=m,
-        delta=3
+    seeder = curry_genome_seeder(
+        mutator=mutator,
+        seed_genomes=[seed_genome]
     )
-    d = generate_neat_metric()
+    metric = generate_neat_metric()
+    population = NEATPopulation(
+        population_size=pop_size,
+        delta=3,
+        genome_seeder=seeder,
+        metric=metric
+    )
 
     def xor(a, b):
         return bool(a) != bool(b)
@@ -53,30 +58,31 @@ def test_neat_xor():
             yield data[i%4]
 
     sln_count = 0
-    for i in tqdm(range(1000)):
-        for g in p.genomes:
+    for _ in tqdm(range(1000)):
+        for genome in population.genomes:
             fitness = 0
             best_fitness = 0
-            model = Model(g.to_reduced_repr)
+            model = Model(genome.to_reduced_repr)
             for inputs, output in generate_data(4):
                 pred = model(inputs)[0]
                 pred = pred > 0
                 fitness += pred == output
                 if fitness > best_fitness:
                     best_fitness = fitness
-            g.fitness = fitness/4
+            genome.fitness = fitness/4
         if best_fitness == 4:
             sln_count += 1
 
         if sln_count == 10:
             break
 
-        p.step(metric=d)
+        population.speciate()
+        mutator(population)
 
-    fitnesses = []
+    fitness_scores = []
     best_genome = None
     best_fitness = 0
-    for genome in p.genomes:
+    for genome in population.genomes:
         fitness = 0
         model = Model(genome.to_reduced_repr)
         for inputs, output in generate_data(4):
@@ -87,10 +93,10 @@ def test_neat_xor():
         if fitness > best_fitness:
             best_fitness = fitness
             best_genome = genome
-        fitnesses.append(fitness)
+        fitness_scores.append(fitness)
     print()
     print('best_fitness:', best_fitness)
-    print_population(p)
+    print_population(population)
     print_genome(best_genome)
     return True
 

@@ -56,7 +56,7 @@ python -m unittest discover tests/unit_tests; pyclean .
 To run specific integration tests:
 
 ```shell
-python -m unittest discover tests/integration_tests; pyclean .
+python -m unittest discover tests/examples; pyclean .
 ```
 
 ___

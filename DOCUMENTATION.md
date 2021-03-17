@@ -1,13 +1,15 @@
 ## PGY DOCUMENTATION:
 
-The library exposes a set of objects that can be combined to implement evolutionary 
-algorithms. Specific object methods can be overwritten in order to extend 
-them for different use cases.
+The intent of this library is to expose a set of objects that can be easily combined 
+to implement evolutionary algorithms.
 
 #### Simple NEAT example:
 
-The default behaviour implements a NEAT algorithm. The user is left to define a 
-function that computes the fitness of the each genome in the population.
+The following implements a NEAT algorithm. The user is left to define a function that 
+computes the fitness of each genome in the population. The model is a graph object
+corresponding to the expression of The genome. `model(inputs)` will run the computation
+across all the nodes and edges and return an array. In this case the genome defaults to
+assuming input and output arrays of size 2. 
 
 ```python
 from src import NEATPopulation
@@ -33,52 +35,64 @@ for i in range(10):
 
 ___
 
-### Objects:
+### API:
 
-There are four main objects
+The core API is made up of 4 main objects:
 
 | Param | Description |
 | --- | ----------- |
-| Population | Holds a collection of genomes. Can be initialized or speciated with custom functionality |
-| Mutator | Defines the mutation step. Applied to a population to get the next generation. |
-| Genome | Individual genome structure. |
-| Model | Neural Network Expression of a Genome |
-
+| Population | Holds a collection of genomes. Supports speciation if needed.|
+| Mutator | Defines the mutation step. Applied to a population to get the next generation. `call_on_genome` and `call_on_population` must be overriden|
+| Genome | Individual genome structure. Holds a record of nodes and edges making up the network and the order in which innovation there evolutionary innovation occured. |
+| Model | Neural Network Expression of a Genome. Genomes can't run computation themselves but can be mapped to a simpler representation which passed to a Model will generate the expression of that Genome. |
 
 ___
 
 
-## Population
+#### src.Population
+
+Holds a population of genomes. If `metric` and `delta` parameters are defined then the method
+`speciate` will evolve the collection of genomes into seperate species within `delta` of each 
+other in the defined `metric` function. 
 
 ```python
 import src
 
 population = src.Population(
-    population_size=150, 
-    delta=3.0,
-    mutation_without_crossover_rate=0.25,
-    interspecies_mating_rate=0.001,
-    species_member_survival_rate=0.2,
-    seed_genomes=None,
-    mutator=src.Mutator(),
-    speciation_active=True)
+    population_size=None,
+    metric=None,
+    delta=None,
+    genome_seeder=None
+)
 ```
 | Param | Description |
 | --- | ----------- |
-| population_size | ... |
-| mutation_without_crossover_rate | ... |
-| interspecies_mating_rate | ... |
-| species_member_survival_rate | ... |
-| seed_genomes | ... |
-| mutator | ... |
-| speciation_active | ... |
+| population_size | An integer number giving the size of the total Population. |
+| metric | Function that takes two genomes and returns the distance between them. The metric is used to partition the genomes into species. If None then no speciation will take place. |
+| delta | A float number that defines the minimum distance two genomes require to be apart before there sorted into different species. Set to None if single species is desired (no speciation). |
+| genome_seeder | An iterable of genomes that will be used to generate the initial population. |
 
-TODO:
-- Implement as interface
-- Add population initialisation function.
-- Speciate method should be overwriteable
-- Evolve should be the mutator `__call__` method.
+___
 
+#### src.curry_genome_seeder
+
+Returns a generator function that takes a parameter `n` and returns `n` Genomes. The genomes
+are cyclically drawn from the list of `seed_genomes` and mutated by the `mutator`. 
+
+```python
+import src
+
+src.curry_genome_seeder(
+    mutator=None, 
+    seed_genomes=None)
+```
+
+| Param | Description |
+| --- | ----------- |
+| seed_genomes | List of genomes that will be copied and mutated. |
+| mutator | Defined mutator object that acts on genomes. |
+
+__Returns__: function _(Genome generator function)_
 
 ___
 

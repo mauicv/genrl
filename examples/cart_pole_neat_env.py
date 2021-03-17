@@ -16,19 +16,14 @@ from src import NEATPopulation
 from src import NEATMutator
 from src import Model
 from src import generate_neat_metric
-from tqdm import tqdm
+from src import curry_genome_seeder
 import gym
 import numpy as np
-from src.batch import BatchJob
 from src.util import print_population
 import matplotlib.pyplot as plt
 
 
-# batch_job = BatchJob(num_processes=3)
-
-# @batch_job
 def compute_fitness(genome, render=False):
-    # print(genome)
     model = Model(genome)
     env = gym.make("CartPole-v0")
     state = env.reset()
@@ -55,52 +50,54 @@ def compute_n_fitness(n, genome):
     return fitness/n
 
 
-def test_cart_pole():
+def neat_cart_pole():
     pop_size = 1000
-    m = NEATMutator(
+    mutator = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
-    g = Genome.default(
+    seed_genome = Genome.default(
         input_size=4,
         output_size=1,
         depth=5
     )
-    p = NEATPopulation(
-        population_size=pop_size,
-        seed_genomes=[g],
-        mutator=m,
-        delta=4
+    seeder = curry_genome_seeder(
+        mutator=mutator,
+        seed_genomes=[seed_genome]
     )
-    d = generate_neat_metric(
+    metric = generate_neat_metric(
         c_1=1,
         c_2=1,
         c_3=3
     )
-
-    # for i in tqdm(range(10)):
-    #     genomes = [g.to_reduced_repr for g in p.genomes]
-    #     rewards = compute_fitness(genomes)
-    #     print(rewards)
+    population = NEATPopulation(
+        population_size=pop_size,
+        genome_seeder=seeder,
+        delta=4,
+        metric=metric
+    )
 
     train_data = []
     for i in range(10):
-        best_fitness = 0
-        fitnesses = []
-        for g in p.genomes:
-            reward = compute_n_fitness(5, g.to_reduced_repr)
-            g.fitness = reward
-            fitnesses.append(reward)
-            if reward > best_fitness:
-                best_fitness = reward
-                best_genome = g.to_reduced_repr
-        compute_fitness(best_genome)
-        p.step(metric=d)
-        fitnesses = np.array(fitnesses)
-        print('run:', i, 'best:', fitnesses.max(), 'worst: ', fitnesses.min(), 'avg:', fitnesses.mean())
-        train_data.append(fitnesses.mean())
+        for genome in population.genomes:
+            reward = compute_n_fitness(5, genome.to_reduced_repr)
+            genome.fitness = reward
+        population.speciate()
+        data = population.to_dict()
+        print_progress(data)
+        mutator(population)
+        train_data.append(data["mean_fitness"])
+
     plt.plot(np.array(train_data))
     plt.show()
-    print_population(p)
-    compute_fitness(best_genome, True)
+    print_population(population)
+    score = compute_fitness(data['best_genome'], True)
+    print(f'best_fitness: {score}')
     return True
+
+
+def print_progress(data):
+    data_string = ''
+    for val in ['generation', 'best_fitness', 'worst_fitness', 'mean_fitness']:
+        data_string += f' {val}: {data[val]}'
+    print(data_string)

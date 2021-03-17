@@ -6,6 +6,7 @@ from time import time
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.population_validator import validate_population
 import numpy as np
+from inspect import isgeneratorfunction
 
 
 @add_inst_validator(env="TESTING", validator=validate_population)
@@ -42,7 +43,9 @@ class Population:
         self.genomes = []
         self.generation = 0
         self.metric = metric
-        self.genomes = [genome for genome in genome_seeder(population_size)]
+        genome_seeder = genome_seeder(population_size) \
+            if isgeneratorfunction(genome_seeder) else genome_seeder
+        self.genomes = [genome for genome in genome_seeder]
 
     def speciate(self):
         self.species[1] = {

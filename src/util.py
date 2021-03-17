@@ -78,7 +78,7 @@ class NpEncoder(json.JSONEncoder):
             return super(NpEncoder, self).default(obj)
 
 
-def save(fname, data=None,):
+def save(fname, data=None):
     old_data = load(fname)
     old_data.append(data)
     with open(fname, 'w') as file:

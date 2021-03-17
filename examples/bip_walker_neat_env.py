@@ -16,6 +16,7 @@ from src import NEATPopulation
 from src import NEATMutator
 from src import Model
 from src import generate_neat_metric
+from src import curry_genome_seeder
 import gym
 import numpy as np
 from src.util import save
@@ -47,40 +48,43 @@ def compute_n_fitness(n, genome):
     return fitness/n
 
 
-def test_bip_walker():
+def neat_bipedal_walker():
     pop_size = 400
-    m = NEATMutator(
+    mutator = NEATMutator(
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
-    g = Genome.default(
+    genome = Genome.default(
         input_size=24,
         output_size=4,
         depth=5
     )
-    p = NEATPopulation(
-        population_size=pop_size,
-        seed_genomes=[g],
-        mutator=m,
-        delta=4
+    seeder = curry_genome_seeder(
+        mutator=mutator,
+        seed_genomes=[genome]
     )
-    d = generate_neat_metric(
+    metric = generate_neat_metric(
         c_1=1,
         c_2=1,
         c_3=3
     )
+    population = NEATPopulation(
+        population_size=pop_size,
+        delta=4,
+        genome_seeder=seeder,
+        metric=metric
+    )
 
-    save(fname='save.txt', data=None)
-
-    for i in range(3):
-        for g in p.genomes:
+    for i in range(10):
+        for g in population.genomes:
             reward = compute_n_fitness(1, g.to_reduced_repr)
             g.fitness = reward
-        p.speciate(metric=d)
-        data = p.to_dict()
-        p.evolve()
+        population.speciate()
+        data = population.to_dict()
+        mutator(population)
+
         print_progress(data)
-        save(data, 'save.txt')
+    compute_fitness(data['best_genome'], render=True)
     return True
 
 
