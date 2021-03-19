@@ -1,9 +1,17 @@
 """Genome class."""
+from itertools import chain
 from src.genome.edge import Edge
 from src.genome.node import Node
 from src.util import sample_weight
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.genome_validator import validate_genome
+
+
+# define Python user-defined exceptions
+class DimensionMismatchError(Exception):
+    """Thrown when arrays of different sizes are member wise operated on."""
+    def __init__(self, message):
+        self.message = message
 
 
 @add_inst_validator(env="TESTING", validator=validate_genome)
@@ -128,6 +136,21 @@ class Genome:
                 new_edge.to_node.innov))
         return new_genome
 
+    def update_weights(self, weights):
+        """updates the node and edge weights.
+
+        Accepts a list of weights of length len(self.nodes) + len(self.edges). Where the first len(self.nodes)
+        of the list update the genome node weights and the second len(self.edges) of the list update the
+        edge weights.
+        """
+        if len(weights) != len(self.nodes) + len(self.edges):
+            err_msg = f'Error attempting to update {len(self.nodes)} node weights and {len(self.edges)} edge weights'
+            err_msg += f' with {len(weights)} update weights. Dimensions do not match.'
+            raise DimensionMismatchError(err_msg)
+        for weight, target in zip(weights, chain(self.nodes, self.edges)):
+            # print(weight, target.weight)
+            target.weight = weight
+
     def layer_edges_out(self, layer_num):
         return [edge for node in self.layers[layer_num]
                 for edge in node.edges_out]
@@ -135,6 +158,9 @@ class Genome:
     def layer_edges_in(self, layer_num):
         return [edge for node in self.layers[layer_num]
                 for edge in node.edges_in]
+
+    def values(self):
+        return self.fitness, [item.weight for item in chain(self.nodes, self.edges)]
 
     def get_addmissable_edges(self):
         """Addmissable edges are defined as those that span more than one

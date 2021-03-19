@@ -1,7 +1,8 @@
 import unittest
-from src.genome.genome import Genome
+from src.genome.genome import Genome, DimensionMismatchError
 from src.genome.edge import Edge
 from src.genome.node import Node
+from random import random
 import itertools
 
 
@@ -82,6 +83,18 @@ class TestGenomeClass(unittest.TestCase):
             self.assertNotEqual(edge_copy, edge)
             self.assertEqual(edge_copy.innov, edge.innov)
 
+    def test_update_weights_error(self):
+        g = Genome.default(input_size=2, output_size=3, depth=5)
+        with self.assertRaises(DimensionMismatchError):
+            g.update_weights([0 for _ in range(len(g.edges) + len(g.nodes) - 1)])
+
+    def test_update_weights(self):
+        g = Genome.default(input_size=2, output_size=3, depth=5)
+        update_vector = [random() for _ in range(len(g.edges) + len(g.nodes))]
+        g.update_weights(update_vector)
+        updated_weights = [target.weight for target in itertools.chain(g.nodes, g.edges)]
+        self.assertEqual(update_vector, updated_weights)
+
     def test_from_genes_constructor(self):
         g = Genome.default(input_size=2, output_size=3, depth=5)
         n2 = g.add_node(4)
@@ -112,3 +125,4 @@ class TestGenomeClass(unittest.TestCase):
             [edge.to_reduced_repr for edge in g_2.edges],
             [edge.to_reduced_repr for edge in g.edges]
         )
+

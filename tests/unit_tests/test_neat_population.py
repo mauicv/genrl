@@ -33,24 +33,25 @@ class TestPopulationClass(unittest.TestCase):
 
     def test_evolve(self):
         pop_size = 30
-        p = NEATPopulation(
+        metric = generate_neat_metric()
+        population = NEATPopulation(
             population_size=pop_size,
-            delta=1
+            delta=1,
+            metric=metric
         )
-        m = NEATMutator()
-        d = generate_neat_metric()
+        mutator = NEATMutator()
 
         for i in range(10):
             # the following for loop is a simulation of the env role out and fitness computation.
-            for g in p.genomes:
+            for g in population.genomes:
                 g.fitness = random()
-            p.speciate()
-            m(p)
+            population.speciate()
+            mutator(population)
 
-        for key, item in p.species.items():
+        for key, item in population.species.items():
             self.assertEqual(len(set(item['group'])), len(item['group']))
             test_genome = choice(item['group'])
-            metric_dist = d(test_genome, item['repr'])
-            self.assertLess(metric_dist, p.delta)
+            metric_dist = metric(test_genome, item['repr'])
+            self.assertLess(metric_dist, population.delta)
             if metric_dist == 0:
                 self.assertTrue(equal_genome(test_genome, item['repr']))

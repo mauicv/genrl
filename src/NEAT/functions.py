@@ -96,17 +96,22 @@ def curry_crossover(gene_disable_rate):
 
         Note that genome.nodes excludes input and output layers.
         """
-
         node_genes = pair_genes(
             primary.nodes,
             secondary.nodes)
         edge_genes = pair_genes(
             primary.edges,
             secondary.edges)
-        for _, _, _, _, active in edge_genes:
-            if not active:
-                if uniform(0, 1) > gene_disable_rate:
-                    active = True
+
+        def activate_disabled(edge):
+            (a, b, c, d, active) = edge
+            if active:
+                return edge
+            if uniform(0, 1) > gene_disable_rate:
+                edge = (a, b, c, d, True)
+            return edge
+
+        edge_genes = [activate_disabled(edge) for edge in edge_genes]
         new_genome = Genome.from_genes(
             node_genes,
             edge_genes,

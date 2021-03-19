@@ -3,6 +3,9 @@ from src.genome.edge import Edge
 from src.genome.node import Node
 import itertools
 import numpy as np
+from src.RES.mutator import RESMutator
+from src.RES.population import RESPopulation
+from src.populations.genome_seeders import curry_genome_seeder
 
 
 def default_gen():
@@ -94,3 +97,29 @@ def genome_factory(
         node.weight = w
 
     return g1
+
+def setup_simple_res_env():
+    genome = Genome.default(
+        input_size=1,
+        output_size=1
+    )
+
+    weights_len = len(genome.edges) + len(genome.nodes)
+    init_mu = np.random.uniform(-3, 3, weights_len)
+
+    mutator = RESMutator(
+        initial_mu=init_mu,
+        std_dev=0.1,
+        alpha=1
+    )
+
+    seeder = curry_genome_seeder(
+        mutator=mutator,
+        seed_genomes=[genome]
+    )
+
+    population = RESPopulation(
+        population_size=1000,
+        genome_seeder=seeder
+    )
+    return population, mutator, init_mu

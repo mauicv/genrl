@@ -26,7 +26,7 @@ class NEATPopulation(Population):
             self,
             population_size=150,
             delta=3.0,
-            genome_seeder=curry_genome_seeder(NEATMutator),
+            genome_seeder=curry_genome_seeder(NEATMutator()),
             metric=generate_neat_metric(1, 1, 3)):
         """Speciated Population of genomes used within the NEAT algorithm. Extends Population class.
 

@@ -13,10 +13,11 @@ from inspect import isgeneratorfunction
 class Population:
     def __init__(
             self,
+            genome_seeder,
+            population_size,
             delta=None,
             metric=None,
-            population_size=None,
-            genome_seeder=None):
+    ):
         """Construct Population of genomes.
 
         Args:

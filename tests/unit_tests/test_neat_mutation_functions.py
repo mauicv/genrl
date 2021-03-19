@@ -3,7 +3,6 @@ from unittest.mock import patch
 from src.genome.genome import Genome
 from src.genome.edge import Edge
 from src.genome.node import Node
-from src.NEAT.mutator import NEATMutator
 from src.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
 from tests.unit_tests.factories import genome_pair_factory
 import itertools
@@ -107,3 +106,18 @@ class TestMutatorClass(unittest.TestCase):
             {-1, 1},
             {e[-3] for e in child_g_edges}
         )
+
+    # TODO: fix
+    @unittest.skip("stochastic element needs removed")
+    def test_mate_mutation_disabled_edges(self):
+        """Test disabled edges reactivated."""
+
+        g1, g2 = genome_pair_factory()
+        for edge in g1.edges:
+            edge.weight = 1
+        for edge in g2.edges:
+            edge.weight = -1
+
+        crossover_fn = curry_crossover(gene_disable_rate=0.75)
+        child_g = crossover_fn(primary=g1, secondary=g2)
+        assert 1 == 0
