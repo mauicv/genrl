@@ -20,7 +20,7 @@ class RESMutator(Mutator):
       ValueError: If initial_mu is not a non-empty list or mu and std_dev not the
         same size
     """
-    def __init__(self, initial_mu, std_dev, alpha=0.01):
+    def __init__(self, initial_mu, std_dev, alpha=0.0001):
         super().__init__()
         if not isinstance(initial_mu, list) and not isinstance(initial_mu, np.ndarray):
             raise ValueError('initial_mu must be a list or numpy array')

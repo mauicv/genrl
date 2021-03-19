@@ -1,7 +1,7 @@
 import click
 from examples.xor_neat_example import neat_xor_example
-from examples.cart_pole_neat_env import neat_cart_pole
-from examples.bip_walker_neat_env import neat_bipedal_walker
+from examples.cart_pole_NEAT import neat_cart_pole
+from examples.bip_walker_NEAT import neat_bipedal_walker
 
 
 @click.group()

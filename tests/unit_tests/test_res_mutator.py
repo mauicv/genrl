@@ -14,7 +14,7 @@ from src import Genome
 from tests.unit_tests.factories import setup_simple_res_env
 
 
-class TestMutatorClass(unittest.TestCase):
+class TestRESMutatorClass(unittest.TestCase):
     """Test methods assoicated to Mutator class."""
 
     def setUp(self):

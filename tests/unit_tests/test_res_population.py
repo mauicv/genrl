@@ -9,7 +9,7 @@ from numpy.random import normal
 from tests.unit_tests.factories import setup_simple_res_env
 
 
-class TestMutatorClass(unittest.TestCase):
+class TestRESPopulationClass(unittest.TestCase):
     """Test methods assoicated to Mutator class."""
 
     def setUp(self):
