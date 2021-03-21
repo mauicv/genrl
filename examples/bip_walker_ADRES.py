@@ -11,24 +11,23 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src.genome.factories import dense
-from src import RESPopulation
-from src import RESMutator
+from src.RES.population import RESPopulation
+from src.RES.mutator import ADRESMutator
 from src import Model
 from src import curry_genome_seeder
 import gym
 import numpy as np
+from src.genome.factories import dense
 
 
 def compute_fitness(genome, render=False):
     model = Model(genome)
-    env = gym.make("CartPole-v0")
+    env = gym.make("BipedalWalker-v3")
     state = env.reset()
     fitness = 0
-    action_map = lambda a: 0 if a[0] <= 0 else 1
-    for _ in range(1000):
+    for _ in range(200):
         action = model(state)
-        action = action_map(action)
+        action = np.tanh(np.array(action))
         state, reward, done, _ = env.step(action)
         fitness += reward
         if render:
@@ -47,20 +46,19 @@ def compute_n_fitness(n, genome):
     return fitness/n
 
 
-def cart_pole_res_example():
+def bipedal_walker_RES():
     genome = dense(
-        input_size=4,
-        output_size=1,
-        layer_dims=[2, 2, 2]
+        input_size=24,
+        output_size=4,
+        layer_dims=[5, 5, 5]
     )
 
     weights_len = len(genome.edges) + len(genome.nodes)
     init_mu = np.random.uniform(-1, 1, weights_len)
 
-    mutator = RESMutator(
+    mutator = ADRESMutator(
         initial_mu=init_mu,
-        std_dev=0.1,
-        alpha=0.05
+        std_dev=0.5,
     )
 
     seeder = curry_genome_seeder(
@@ -69,25 +67,28 @@ def cart_pole_res_example():
     )
 
     population = RESPopulation(
-        population_size=50,
+        population_size=210,
         genome_seeder=seeder
     )
 
-    for i in range(100):
-        fitness = 0
-        for genome in population.genomes:
-            fitness = compute_n_fitness(3, genome.to_reduced_repr)
-            genome.fitness = fitness
-            if fitness == 200:
-                break
-        if fitness == 200:
-            break
+    for i in range(20):
+        for g in population.genomes:
+            reward = compute_n_fitness(1, g.to_reduced_repr)
+            g.fitness = reward
         data = population.to_dict()
         mutator(population)
-        print(f'generation: {i}, mean score: {data["mean_fitness"]}, best score: {data["best_fitness"]}')
-    data = population.to_dict()
+
+        print_progress(data)
     compute_fitness(data['best_genome'], render=True)
+    return True
+
+
+def print_progress(data):
+    data_string = ''
+    for val in ['generation', 'best_fitness', 'worst_fitness', 'mean_fitness']:
+        data_string += f' {val}: {data[val]}'
+    print(data_string)
 
 
 if __name__ == '__main__':
-    cart_pole_res_example()
+    bipedal_walker_RES()

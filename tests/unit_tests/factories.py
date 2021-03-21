@@ -3,7 +3,7 @@ from src.genome.edge import Edge
 from src.genome.node import Node
 import itertools
 import numpy as np
-from src.RES.mutator import RESMutator
+from src.RES.mutator import RESMutator, ADRESMutator
 from src.RES.population import RESPopulation
 from src.populations.genome_seeders import curry_genome_seeder
 
@@ -98,7 +98,7 @@ def genome_factory(
 
     return g1
 
-def setup_simple_res_env():
+def setup_simple_res_env(mutator_type=RESMutator):
     genome = Genome.default(
         input_size=1,
         output_size=1
@@ -107,11 +107,17 @@ def setup_simple_res_env():
     weights_len = len(genome.edges) + len(genome.nodes)
     init_mu = np.random.uniform(-3, 3, weights_len)
 
-    mutator = RESMutator(
-        initial_mu=init_mu,
-        std_dev=0.1,
-        alpha=1
-    )
+    if mutator_type == RESMutator:
+        mutator = mutator_type(
+            initial_mu=init_mu,
+            std_dev=0.1,
+            alpha=1
+        )
+    elif mutator_type == ADRESMutator:
+        mutator = mutator_type(
+            initial_mu=init_mu,
+            std_dev=0.1
+        )
 
     seeder = curry_genome_seeder(
         mutator=mutator,

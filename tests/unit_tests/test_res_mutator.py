@@ -6,11 +6,8 @@ from src.genome.node import Node
 from tests.unit_tests.factories import genome_factory
 import itertools
 from src.RES.mutator import RESMutator
-from src.RES.population import RESPopulation
-from src.populations.genome_seeders import curry_genome_seeder
 import numpy as np
 from numpy.random import normal
-from src import Genome
 from tests.unit_tests.factories import setup_simple_res_env
 
 

@@ -13,7 +13,7 @@ sys.path.insert(0, DIR)  # noqa
 
 from src.genome.factories import dense
 from src import RESPopulation
-from src import RESMutator
+from src.RES.mutator import ADRESMutator
 from src import Model
 from src import curry_genome_seeder
 import gym
@@ -57,10 +57,9 @@ def cart_pole_res_example():
     weights_len = len(genome.edges) + len(genome.nodes)
     init_mu = np.random.uniform(-1, 1, weights_len)
 
-    mutator = RESMutator(
+    mutator = ADRESMutator(
         initial_mu=init_mu,
-        std_dev=0.1,
-        alpha=0.05
+        std_dev=0.1
     )
 
     seeder = curry_genome_seeder(
@@ -78,13 +77,12 @@ def cart_pole_res_example():
         for genome in population.genomes:
             fitness = compute_n_fitness(3, genome.to_reduced_repr)
             genome.fitness = fitness
-            if fitness == 200:
-                break
         if fitness == 200:
             break
         data = population.to_dict()
         mutator(population)
         print(f'generation: {i}, mean score: {data["mean_fitness"]}, best score: {data["best_fitness"]}')
+
     data = population.to_dict()
     compute_fitness(data['best_genome'], render=True)
 
