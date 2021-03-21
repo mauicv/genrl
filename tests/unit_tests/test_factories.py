@@ -4,6 +4,7 @@ from src.genome.node import Node
 import itertools
 from src.genome.factories import dense
 import numpy as np
+from src.util import print_genome
 
 
 class TestGenomeFactories(unittest.TestCase):
@@ -21,9 +22,9 @@ class TestGenomeFactories(unittest.TestCase):
         from src.populations.genome_seeders import curry_genome_seeder
 
         genome = dense(
-            input_size=4,
+            input_size=1,
             output_size=1,
-            layer_dims=[10, 10, 10]
+            layer_dims=[4]
         )
 
         weights_len = len(genome.edges) + len(genome.nodes)
@@ -41,6 +42,6 @@ class TestGenomeFactories(unittest.TestCase):
         )
 
         RESPopulation(
-            population_size=10,
+            population_size=1,
             genome_seeder=seeder
         )

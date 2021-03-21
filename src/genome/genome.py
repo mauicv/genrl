@@ -5,6 +5,7 @@ from src.genome.node import Node
 from src.util import sample_weight
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.genome_validator import validate_genome
+from src.util import print_genome
 
 
 # define Python user-defined exceptions
@@ -130,7 +131,13 @@ class Genome:
                  for node in genome.nodes]
         new_genome.nodes = nodes
         for edge in genome.edges:
-            new_edge = Edge.copy(edge, new_genome)
+            try:
+                new_edge = Edge.copy(edge, new_genome)
+            except Exception as err:
+                print_genome(genome)
+                print_genome(new_genome)
+                print(edge.to_node.innov)
+                raise err
             new_genome.edge_innovs.add((
                 new_edge.from_node.innov,
                 new_edge.to_node.innov))

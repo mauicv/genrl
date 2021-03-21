@@ -33,7 +33,7 @@ class Edge:
                 len(new_genome.layers[fn.layer_num]) - 1 < fn.layer_ind:
             raise ValueError('from_node does not exist on new_genome.')
 
-        if len(new_genome.layers) - 1 < tn.layer_ind or \
+        if len(new_genome.layers) - 1 < tn.layer_num or \
                 len(new_genome.layers[tn.layer_num]) - 1 < tn.layer_ind:
             raise ValueError('to_node does not exist on new_genome.')
 

@@ -50,7 +50,7 @@ def bipedal_walker_RES():
     genome = dense(
         input_size=24,
         output_size=4,
-        layer_dims=[5, 5, 5]
+        layer_dims=[20]
     )
 
     weights_len = len(genome.edges) + len(genome.nodes)
@@ -59,7 +59,7 @@ def bipedal_walker_RES():
     mutator = RESMutator(
         initial_mu=init_mu,
         std_dev=0.5,
-        alpha=0.2
+        alpha=1
     )
 
     seeder = curry_genome_seeder(
@@ -68,7 +68,7 @@ def bipedal_walker_RES():
     )
 
     population = RESPopulation(
-        population_size=210,
+        population_size=400,
         genome_seeder=seeder
     )
 
@@ -78,7 +78,6 @@ def bipedal_walker_RES():
             g.fitness = reward
         data = population.to_dict()
         mutator(population)
-
         print_progress(data)
     compute_fitness(data['best_genome'], render=True)
     return True
