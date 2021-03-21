@@ -19,7 +19,7 @@ from src import generate_neat_metric
 from src import curry_genome_seeder
 import gym
 import numpy as np
-from src.util import save
+from src.datastore import DataStore
 
 
 def compute_fitness(genome, render=False):
@@ -75,16 +75,17 @@ def neat_bipedal_walker():
         metric=metric
     )
 
-    for i in range(10):
+    ds = DataStore(name='bip_walker_NEAT_data')
+
+    for i in range(500):
         for g in population.genomes:
             reward = compute_n_fitness(1, g.to_reduced_repr)
             g.fitness = reward
         population.speciate()
         data = population.to_dict()
         mutator(population)
-
+        ds.save(data)
         print_progress(data)
-    compute_fitness(data['best_genome'], render=True)
     return True
 
 
@@ -94,3 +95,6 @@ def print_progress(data):
         data_string += f' {val}: {data[val]}'
     print(data_string)
 
+
+if __name__ == "__main__":
+    neat_bipedal_walker()

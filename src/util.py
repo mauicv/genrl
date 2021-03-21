@@ -65,31 +65,3 @@ def print_population(population):
         print('representative: ', v['repr'])
         print('size: ', len(v['group']))
 
-
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        else:
-            return super(NpEncoder, self).default(obj)
-
-
-def save(fname, data=None):
-    old_data = load(fname)
-    old_data.append(data)
-    with open(fname, 'w') as file:
-        if old_data:
-            file.write(json.dumps(data, cls=NpEncoder))
-
-
-def load(fname):
-    try:
-        with open(fname, 'r') as file:
-            data = json.loads(file.read())
-    except FileNotFoundError:
-        return []
-    return data

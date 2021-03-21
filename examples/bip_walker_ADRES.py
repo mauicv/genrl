@@ -18,6 +18,7 @@ from src import curry_genome_seeder
 import gym
 import numpy as np
 from src.genome.factories import dense
+from src.datastore import DataStore
 
 
 def compute_fitness(genome, render=False):
@@ -46,11 +47,11 @@ def compute_n_fitness(n, genome):
     return fitness/n
 
 
-def bipedal_walker_RES():
+def bipedal_walker_ADRES():
     genome = dense(
         input_size=24,
         output_size=4,
-        layer_dims=[5, 5, 5]
+        layer_dims=[20]
     )
 
     weights_len = len(genome.edges) + len(genome.nodes)
@@ -67,19 +68,20 @@ def bipedal_walker_RES():
     )
 
     population = RESPopulation(
-        population_size=210,
+        population_size=400,
         genome_seeder=seeder
     )
 
-    for i in range(20):
+    ds = DataStore(name='bip_walker_ADRES_data')
+
+    for i in range(500):
         for g in population.genomes:
             reward = compute_n_fitness(1, g.to_reduced_repr)
             g.fitness = reward
         data = population.to_dict()
         mutator(population)
-
+        ds.save(data)
         print_progress(data)
-    compute_fitness(data['best_genome'], render=True)
     return True
 
 

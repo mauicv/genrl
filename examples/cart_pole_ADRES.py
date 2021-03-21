@@ -49,11 +49,10 @@ def compute_n_fitness(n, genome):
 
 def cart_pole_res_example():
     genome = dense(
-        input_size=24,
-        output_size=4,
-        layer_dims=[20]
+        input_size=4,
+        output_size=1,
+        layer_dims=[2, 2, 2]
     )
-
 
     weights_len = len(genome.edges) + len(genome.nodes)
     init_mu = np.random.uniform(-1, 1, weights_len)
