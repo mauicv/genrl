@@ -4,7 +4,6 @@ from src.genome.node import Node
 import itertools
 from src.genome.factories import dense
 import numpy as np
-from src.util import print_genome
 
 
 class TestGenomeFactories(unittest.TestCase):
@@ -17,8 +16,8 @@ class TestGenomeFactories(unittest.TestCase):
         Edge.registry = {}
 
     def test_dense(self):
-        from src.RES.population import RESPopulation
-        from src.RES.mutator import RESMutator
+        from src.algorithms.RES.population import RESPopulation
+        from src.algorithms.RES.mutator import RESMutator
         from src.populations.genome_seeders import curry_genome_seeder
 
         genome = dense(

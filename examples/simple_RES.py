@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import RESPopulation
-from src import RESMutator
+from src.algorithms.RES.population import RESPopulation
+from src.algorithms.RES.mutator import RESMutator
 from src import curry_genome_seeder
 import numpy as np
 

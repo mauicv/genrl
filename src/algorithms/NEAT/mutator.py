@@ -5,7 +5,7 @@ from numpy.random import choice
 from src.genome.genome import Genome
 from random import random
 from src.mutators.mutator import Mutator
-from src.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
+from src.algorithms.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
 
 
 class NEATMutator(Mutator):

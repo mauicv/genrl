@@ -3,8 +3,8 @@ from src.genome.edge import Edge
 from src.genome.node import Node
 import itertools
 import numpy as np
-from src.RES.mutator import RESMutator, ADRESMutator
-from src.RES.population import RESPopulation
+from src.algorithms import RESMutator, ADRESMutator
+from src.algorithms import RESPopulation
 from src.populations.genome_seeders import curry_genome_seeder
 
 

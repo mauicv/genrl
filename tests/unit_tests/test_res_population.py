@@ -2,8 +2,6 @@ import unittest
 from src.genome.edge import Edge
 from src.genome.node import Node
 import itertools
-from src.RES.mutator import RESMutator
-from src.RES.population import RESPopulation
 import numpy as np
 from numpy.random import normal
 from tests.unit_tests.factories import setup_simple_res_env

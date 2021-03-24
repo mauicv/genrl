@@ -1,7 +1,6 @@
 import unittest
-from src import Genome
-from src import NEATPopulation
-from src import NEATMutator
+from src.algorithms import NEATPopulation
+from src.algorithms import NEATMutator
 from src import generate_neat_metric
 from random import random, choice
 from src.genome.node import Node

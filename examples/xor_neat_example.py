@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import NEATPopulation
-from src import NEATMutator
+from src.algorithms.NEAT.population import NEATPopulation
+from src.algorithms.NEAT.mutator import NEATMutator
 from src import curry_genome_seeder
 from src import Model
 from src import generate_neat_metric
@@ -55,9 +55,10 @@ def neat_xor_example():
             [[False, False], xor(False, False)]
         ]
         for i in range(n):
-            yield data[i%4]
+            yield data[i % 4]
 
     sln_count = 0
+    best_fitness = None
     for _ in tqdm(range(1000)):
         for genome in population.genomes:
             fitness = 0
@@ -100,3 +101,6 @@ def neat_xor_example():
     print_genome(best_genome)
     return True
 
+
+if __name__ == "__main__":
+    neat_xor_example()

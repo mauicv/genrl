@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import NEATPopulation
-from src import NEATMutator
+from src.algorithms.NEAT.population import NEATPopulation
+from src.algorithms.NEAT.mutator import NEATMutator
 from src import Model
 from src import generate_neat_metric
 from src import curry_genome_seeder

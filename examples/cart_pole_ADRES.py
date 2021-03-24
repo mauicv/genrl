@@ -13,7 +13,7 @@ sys.path.insert(0, DIR)  # noqa
 
 from src.genome.factories import dense
 from src import RESPopulation
-from src.RES.mutator import ADRESMutator
+from src.algorithms.RES.mutator import ADRESMutator
 from src import Model
 from src import curry_genome_seeder
 import gym

@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src import Genome
-from src import NEATPopulation
-from src import NEATMutator
+from src.algorithms.NEAT.population import NEATPopulation
+from src.algorithms.NEAT.mutator import NEATMutator
 from src import Model
 from src import generate_neat_metric
 from src import curry_genome_seeder
@@ -78,7 +78,7 @@ def neat_cart_pole():
     )
 
     train_data = []
-    for i in range(10):
+    for i in range(5):
         for genome in population.genomes:
             reward = compute_n_fitness(5, genome.to_reduced_repr)
             genome.fitness = reward
@@ -101,3 +101,7 @@ def print_progress(data):
     for val in ['generation', 'best_fitness', 'worst_fitness', 'mean_fitness']:
         data_string += f' {val}: {data[val]}'
     print(data_string)
+
+
+if __name__ == "__main__":
+    neat_cart_pole()

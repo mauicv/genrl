@@ -3,7 +3,7 @@ from unittest.mock import patch
 from src.genome.genome import Genome
 from src.genome.edge import Edge
 from src.genome.node import Node
-from src.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
+from src.algorithms.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
 from tests.unit_tests.factories import genome_pair_factory
 import itertools
 from random import random
