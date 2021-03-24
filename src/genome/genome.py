@@ -146,6 +146,8 @@ class Genome:
     def update_weights(self, weights):
         """updates the node and edge weights.
 
+        TODO: make a setter on weights property
+
         Accepts a list of weights of length len(self.nodes) + len(self.edges). Where the first len(self.nodes)
         of the list update the genome node weights and the second len(self.edges) of the list update the
         edge weights.
@@ -166,8 +168,12 @@ class Genome:
         return [edge for node in self.layers[layer_num]
                 for edge in node.edges_in]
 
+    @property
+    def weights(self):
+        return [item.weight for item in chain(self.nodes, self.edges)]
+
     def values(self):
-        return self.fitness, [item.weight for item in chain(self.nodes, self.edges)]
+        return self.fitness, self.weights
 
     def get_addmissable_edges(self):
         """Addmissable edges are defined as those that span more than one

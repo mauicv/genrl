@@ -13,38 +13,11 @@ sys.path.insert(0, DIR)  # noqa
 
 from src.algorithms.RES.population import RESPopulation
 from src.algorithms.RES.mutator import RESMutator
-from src import Model
 from src import curry_genome_seeder
-import gym
 import numpy as np
 from src.genome.factories import dense
 from src.datastore import DataStore
-
-
-def compute_fitness(genome, render=False):
-    model = Model(genome)
-    env = gym.make("BipedalWalker-v3")
-    state = env.reset()
-    fitness = 0
-    for _ in range(200):
-        action = model(state)
-        action = np.tanh(np.array(action))
-        state, reward, done, _ = env.step(action)
-        fitness += reward
-        if render:
-            env.render()
-
-        if done:
-            break
-
-    return fitness
-
-
-def compute_n_fitness(n, genome):
-    fitness = 0
-    for i in range(n):
-        fitness += compute_fitness(genome)
-    return fitness/n
+from examples.utils import build_env, make_counter_fn, run_env
 
 
 def bipedal_walker_RES():
@@ -75,10 +48,16 @@ def bipedal_walker_RES():
 
     ds = DataStore(name='bip_walker_RES_data')
 
+    assign_population_fitness = build_env(
+        env_name='BipedalWalker-v3',
+        num_steps=200,
+        repetition=1)
+    counter_fn = make_counter_fn()
+
     for i in range(500):
-        for g in population.genomes:
-            reward = compute_n_fitness(1, g.to_reduced_repr)
-            g.fitness = reward
+        success = assign_population_fitness(population)
+        if success and counter_fn():
+            break
         data = population.to_dict()
         mutator(population)
         print_progress(data)

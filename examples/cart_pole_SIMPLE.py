@@ -1,8 +1,4 @@
-"""Example Implementation of NEAT algorithm from
-see http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf
-
-Note: The we use restricted networks in the sense all edges point forwards.
-"""
+"""Example Implementation of SIMPLE-ES algorithm from"""
 
 
 import sys
@@ -12,27 +8,22 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from src.genome.factories import dense
-from src.algorithms.RES.population import RESPopulation
-from src.algorithms.RES.mutator import RESMutator
+from src.algorithms.SIMPLE.population import SIMPLEPopulation
+from src.algorithms.SIMPLE.mutator import SIMPLEMutator
 from src import curry_genome_seeder
-import numpy as np
 from examples.utils import build_env, run_env, make_counter_fn
 
 
-def cart_pole_res_example():
+def cart_pole_simple_example():
     genome = dense(
         input_size=4,
         output_size=1,
         layer_dims=[2, 2, 2]
     )
 
-    weights_len = len(genome.edges) + len(genome.nodes)
-    init_mu = np.random.uniform(-1, 1, weights_len)
-
-    mutator = RESMutator(
-        initial_mu=init_mu,
+    mutator = SIMPLEMutator(
         std_dev=0.1,
-        alpha=0.05
+        survival_rate=0.1
     )
 
     seeder = curry_genome_seeder(
@@ -40,7 +31,7 @@ def cart_pole_res_example():
         seed_genomes=[genome]
     )
 
-    population = RESPopulation(
+    population = SIMPLEPopulation(
         population_size=50,
         genome_seeder=seeder
     )
@@ -55,9 +46,8 @@ def cart_pole_res_example():
         data = population.to_dict()
         mutator(population)
         print(f'generation: {i}, mean score: {data["mean_fitness"]}, best score: {data["best_fitness"]}')
-    data = population.to_dict()
-    run_env(data['best_genome'], env_name='CartPole-v0', render=True)
+    run_env(data['best_genome'])
 
 
 if __name__ == '__main__':
-    cart_pole_res_example()
+    cart_pole_simple_example()

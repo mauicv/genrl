@@ -16,6 +16,7 @@ from src.algorithms.RES.population import RESPopulation
 from src.algorithms.RES.mutator import ADRESMutator
 from src import curry_genome_seeder
 import numpy as np
+from examples.utils import build_simple_env
 
 
 def simple_adres_example():
@@ -43,19 +44,12 @@ def simple_adres_example():
     )
 
     target_mu = np.random.uniform(-3, 3, len(init_mu))
+    assign_population_fitness = build_simple_env(target_mu)
 
-    losses = []
     for i in range(100):
-        for genome in population.genomes:
-            # fitness is symmetrically allocated.
-            _, ws = genome.values()
-            ws = np.array(ws)
-            fitness = 1 / np.power(target_mu - ws, 2).sum()
-            genome.fitness = fitness
-
+        assign_population_fitness(population)
         mutator(population)
         loss = np.linalg.norm(mutator.mu - target_mu)
-        losses.append(loss)
         print(f'generation: {i}, loss: {loss}')
 
 

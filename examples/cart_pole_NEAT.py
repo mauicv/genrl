@@ -14,40 +14,9 @@ sys.path.insert(0, DIR)  # noqa
 from src import Genome
 from src.algorithms.NEAT.population import NEATPopulation
 from src.algorithms.NEAT.mutator import NEATMutator
-from src import Model
 from src import generate_neat_metric
 from src import curry_genome_seeder
-import gym
-import numpy as np
-from src.util import print_population
-import matplotlib.pyplot as plt
-
-
-def compute_fitness(genome, render=False):
-    model = Model(genome)
-    env = gym.make("CartPole-v0")
-    state = env.reset()
-    fitness = 0
-    action_map = lambda a: 0 if a[0] <= 0 else 1
-    for _ in range(1000):
-        action = model(state)
-        action = action_map(action)
-        state, reward, done, _ = env.step(action)
-        fitness += reward
-        if render:
-            env.render()
-
-        if done:
-            break
-
-    return fitness
-
-
-def compute_n_fitness(n, genome):
-    fitness = 0
-    for i in range(n):
-        fitness += compute_fitness(genome)
-    return fitness/n
+from examples.utils import build_env, run_env, make_counter_fn
 
 
 def neat_cart_pole():
@@ -77,21 +46,19 @@ def neat_cart_pole():
         metric=metric
     )
 
-    train_data = []
+    assign_population_fitness = build_env()
+    counter_fn = make_counter_fn()
+
     for i in range(5):
-        for genome in population.genomes:
-            reward = compute_n_fitness(5, genome.to_reduced_repr)
-            genome.fitness = reward
+        success = assign_population_fitness(population)
+        if success and counter_fn():
+            break
         population.speciate()
         data = population.to_dict()
         print_progress(data)
         mutator(population)
-        train_data.append(data["mean_fitness"])
 
-    plt.plot(np.array(train_data))
-    plt.show()
-    print_population(population)
-    score = compute_fitness(data['best_genome'], True)
+    score = run_env(data['best_genome'], env_name='CartPole-v0', render=True)
     print(f'best_fitness: {score}')
     return True
 

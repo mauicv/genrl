@@ -3,7 +3,7 @@ from src.genome.edge import Edge
 from src.genome.node import Node
 import itertools
 import numpy as np
-from src.algorithms import RESMutator, ADRESMutator
+from src.algorithms import RESMutator, ADRESMutator, SIMPLEMutator
 from src.algorithms import RESPopulation
 from src.populations.genome_seeders import curry_genome_seeder
 
@@ -117,6 +117,11 @@ def setup_simple_res_env(mutator_type=RESMutator):
         mutator = mutator_type(
             initial_mu=init_mu,
             std_dev=0.1
+        )
+    elif mutator_type == SIMPLEMutator:
+        mutator = mutator_type(
+            std_dev=0.01,
+            survival_rate=0.1
         )
 
     seeder = curry_genome_seeder(

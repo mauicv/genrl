@@ -14,37 +14,9 @@ sys.path.insert(0, DIR)  # noqa
 from src.genome.factories import dense
 from src import RESPopulation
 from src.algorithms.RES.mutator import ADRESMutator
-from src import Model
 from src import curry_genome_seeder
-import gym
 import numpy as np
-
-
-def compute_fitness(genome, render=False):
-    model = Model(genome)
-    env = gym.make("CartPole-v0")
-    state = env.reset()
-    fitness = 0
-    action_map = lambda a: 0 if a[0] <= 0 else 1
-    for _ in range(1000):
-        action = model(state)
-        action = action_map(action)
-        state, reward, done, _ = env.step(action)
-        fitness += reward
-        if render:
-            env.render()
-
-        if done:
-            break
-
-    return fitness
-
-
-def compute_n_fitness(n, genome):
-    fitness = 0
-    for i in range(n):
-        fitness += compute_fitness(genome)
-    return fitness/n
+from examples.utils import build_env, run_env, make_counter_fn
 
 
 def cart_pole_res_example():
@@ -72,19 +44,18 @@ def cart_pole_res_example():
         genome_seeder=seeder
     )
 
+    assign_population_fitness = build_env()
+    counter_fn = make_counter_fn()
     for i in range(100):
-        fitness = 0
-        for genome in population.genomes:
-            fitness = compute_n_fitness(3, genome.to_reduced_repr)
-            genome.fitness = fitness
-        if fitness == 200:
+        success = assign_population_fitness(population)
+        if success and counter_fn():
             break
         data = population.to_dict()
         mutator(population)
         print(f'generation: {i}, mean score: {data["mean_fitness"]}, best score: {data["best_fitness"]}')
 
     data = population.to_dict()
-    compute_fitness(data['best_genome'], render=True)
+    run_env(data['best_genome'], render=True, env_name='CartPole-v0')
 
 
 if __name__ == '__main__':

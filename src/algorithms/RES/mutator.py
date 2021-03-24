@@ -58,14 +58,8 @@ class RESMutator(Mutator):
         population.generation += 1
 
     def call_on_genome(self, genome):
-        try:
-            new_weights = np.random.normal(loc=self.mu, scale=self.std_dev)
-            genome.update_weights(new_weights)
-        except Exception as err:
-            print(err)
-            print(self.mu)
-            print(genome)
-            raise Exception
+        new_weights = np.random.normal(loc=self.mu, scale=self.std_dev)
+        genome.update_weights(new_weights)
 
 
 class ADRESMutator(RESMutator):
