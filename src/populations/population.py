@@ -58,19 +58,19 @@ class Population:
             assigned_group = False
             for key, item in self.species.items():
                 if self.delta is None or self.metric is None or \
-                            self.metric(genome, item['repr']) < self.delta:
+                        self.metric(genome, item['repr']) < self.delta:
                     assigned_group = True
                     self.species[key]['group'].append(genome)
                     break
             if not assigned_group:
-                self.species[len(self.species)+1] = {
+                self.species[len(self.species) + 1] = {
                     'repr': genome,
                     'group': [genome]
                 }
 
         for key, item in self.species.items():
             group_size = len(item['group'])
-            adj_fitness = lambda x: x.fitness/group_size
+            adj_fitness = lambda x: x.fitness / group_size
             group_fitness = sum([adj_fitness(g) for g in item['group']])
             item['group_fitness'] = group_fitness
             item['group'].sort(key=adj_fitness, reverse=True)

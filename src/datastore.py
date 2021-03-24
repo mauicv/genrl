@@ -42,3 +42,9 @@ class DataStore:
         fname = os.path.join(self.dirname, str(index))
         with open(fname, 'r') as file:
             return json.loads(file.read())
+
+    def generations(self):
+        for file_name in sorted(os.listdir(self.dirname), key=lambda fn_str: int(fn_str)):
+            file_name = os.path.join(self.dirname, file_name)
+            with open(file_name, 'r') as file:
+                yield json.loads(file.read())
