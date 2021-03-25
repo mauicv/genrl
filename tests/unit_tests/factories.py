@@ -1,8 +1,11 @@
-from src.genome import Genome
-from src.edge import Edge
-from src.node import Node
+from src.genome.edge import Edge
+from src.genome.node import Node
 import itertools
 import numpy as np
+from src.algorithms import RESMutator, ADRESMutator, SIMPLEMutator
+from src.algorithms import RESPopulation
+from src.populations.genome_seeders import curry_genome_seeder
+from src.genome.factories import minimal, copy
 
 
 def default_gen():
@@ -19,7 +22,7 @@ def genome_pair_factory(
 
     np.random.seed(1)
 
-    g1 = Genome.default(input_size=2, output_size=3, depth=5)
+    g1 = minimal(input_size=2, output_size=3, depth=5)
     n1 = g1.add_node(4)
     g1.add_edge(g1.layers[0][0], n1)
     g1.add_edge(n1, g1.outputs[0])
@@ -28,7 +31,7 @@ def genome_pair_factory(
     g1.add_edge(g1.layers[0][1], n2)
     g1.add_edge(n2, g1.outputs[2])
 
-    g2 = Genome.copy(g1)
+    g2 = copy(g1)
 
     n4 = g2.add_node(2)
     g2.add_edge(g2.layers[0][1], n4)
@@ -68,7 +71,7 @@ def genome_factory(
 
     np.random.seed(1)
 
-    g1 = Genome.default(input_size=2, output_size=3, depth=5)
+    g1 = minimal(input_size=2, output_size=3, depth=5)
     n1 = g1.add_node(4)
     g1.add_edge(g1.layers[0][0], n1)
     g1.add_edge(n1, g1.outputs[0])
@@ -94,3 +97,41 @@ def genome_factory(
         node.weight = w
 
     return g1
+
+
+def setup_simple_res_env(mutator_type=None):
+    genome = minimal(
+        input_size=1,
+        output_size=1
+    )
+
+    weights_len = len(genome.edges) + len(genome.nodes)
+    init_mu = np.random.uniform(-3, 3, weights_len)
+
+    if mutator_type == RESMutator:
+        mutator = mutator_type(
+            initial_mu=init_mu,
+            std_dev=0.1,
+            alpha=1
+        )
+    elif mutator_type == ADRESMutator:
+        mutator = mutator_type(
+            initial_mu=init_mu,
+            std_dev=0.1
+        )
+    else:
+        mutator = SIMPLEMutator(
+            std_dev=0.01,
+            survival_rate=0.1
+        )
+
+    seeder = curry_genome_seeder(
+        mutator=mutator,
+        seed_genomes=[genome]
+    )
+
+    population = RESPopulation(
+        population_size=1000,
+        genome_seeder=seeder
+    )
+    return population, mutator, init_mu

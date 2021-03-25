@@ -1,12 +1,11 @@
 import unittest
-from src.genome import Genome
-from src.edge import Edge
-from src.node import Node
+from src.genome.factories import minimal
+from src.genome.edge import Edge
+from src.genome.node import Node
 import itertools
 
 
 class TestEdgeClass(unittest.TestCase):
-    """Test methods assoicated to Genome class."""
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
@@ -15,7 +14,6 @@ class TestEdgeClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_edge_init(self):
-        """Test edge init."""
 
         n = Node(0, 0, 0)
         m = Node(0, 1, 0)
@@ -31,10 +29,8 @@ class TestEdgeClass(unittest.TestCase):
         self.assertEqual(e.to_node, k)
 
     def test_edge_copy(self):
-        """Test edge can be copied onto a new genome."""
-
-        g1 = Genome.default(input_size=1, output_size=1, depth=1)
-        g2 = Genome.default(input_size=1, output_size=1, depth=1)
+        g1 = minimal(input_size=1, output_size=1, depth=1)
+        g2 = minimal(input_size=1, output_size=1, depth=1)
 
         n = g1.add_node(1)
         g2.add_node(1)
@@ -50,10 +46,11 @@ class TestEdgeClass(unittest.TestCase):
         self.assertLess(abs(ne.weight - e1.weight), mutation_rate)
 
     def test_edge_copy_err(self):
-        """Test copy edge throws correct error if node doesn't exist on
-        new_genome."""
-        g1 = Genome.default(input_size=1, output_size=1, depth=1)
-        g2 = Genome.default(input_size=1, output_size=1, depth=1)
+        # Test copy edge throws correct error if node doesn't exist on
+        # new_genome.
+
+        g1 = minimal(input_size=1, output_size=1, depth=1)
+        g2 = minimal(input_size=1, output_size=1, depth=1)
 
         n = g1.add_node(1)
 

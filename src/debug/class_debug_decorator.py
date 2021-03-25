@@ -33,9 +33,9 @@ def print_all(cls_inst, *args, **kwargs):
 
 def decorator(func, validator):
     @functools.wraps(func)
-    def new_method(cls_inst, *args, **kwargs):
-        ret_val = func(cls_inst, *args, **kwargs)
-        validator(cls_inst, *args, **kwargs)
+    def new_method(*args, **kwargs):
+        ret_val = func(*args, **kwargs)
+        validator(*args, **kwargs)
         return ret_val
     return new_method
 
