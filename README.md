@@ -1,8 +1,9 @@
-## PyG
+## pygrl
 
-PyG is a framework for running evolutionary aglorithms for 
-reinforcement learning. 
-See the [Documention](DOCUMENTATION.md)
+pygrl is a simple framework for running genetic aglorithms for 
+reinforcement learning.
+
+__NOTE__: pygrl is currently in development.
 
 ### Example:
 
@@ -43,6 +44,9 @@ if __name__ == '__main__':
         mutator(population)
 ```
 
+To see other examples using NEAT, REINFORCE-ES or other algorithms applied to some openai
+gym environments see examples.
+
 ___
 
 ### Tests:
@@ -53,11 +57,7 @@ To run all unittests:
 python -m unittest discover tests/unit_tests; pyclean .
 ```
 
-To run specific integration tests:
-
-```shell
-python -m unittest discover tests/examples; pyclean .
-```
-
 ___
+
+
 
