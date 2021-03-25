@@ -81,7 +81,7 @@ def add_node(genome):
     layer and then connect it with two new edges.
     """
 
-    edge = choice(genome.get_addmissable_edges())
+    edge = choice(genome.get_admissible_edges())
     from_node, to_node = (edge.from_node, edge.to_node)
     layer_num = choice(range(from_node.layer_num + 1, to_node.layer_num))
     new_node = genome.add_node(layer_num)

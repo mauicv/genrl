@@ -28,19 +28,19 @@ class TestGenomeClass(unittest.TestCase):
             self.assertEqual(len(g.layer_edges_in(layer_num)), 0)
             self.assertEqual(len(g.layer_edges_out(layer_num)), 0)
 
-        self.assertEqual(len(g.get_addmissable_edges()), 5)
+        self.assertEqual(len(g.get_admissible_edges()), 5)
         addmissable = lambda e: e.to_node.layer_num - e.from_node.layer_num > 1
-        for e in g.get_addmissable_edges():
+        for e in g.get_admissible_edges():
             self.assertEqual(addmissable(e), True)
 
     def test_update_weights_error(self):
         g = minimal(input_size=2, output_size=3, depth=5)
         with self.assertRaises(DimensionMismatchError):
-            g.update_weights([0 for _ in range(len(g.edges) + len(g.nodes) - 1)])
+            g.weights = [0 for _ in range(len(g.edges) + len(g.nodes) - 1)]
 
     def test_update_weights(self):
         g = minimal(input_size=2, output_size=3, depth=5)
         update_vector = [random() for _ in range(len(g.edges) + len(g.nodes))]
-        g.update_weights(update_vector)
+        g.weights = update_vector
         updated_weights = [target.weight for target in itertools.chain(g.nodes, g.edges)]
         self.assertEqual(update_vector, updated_weights)

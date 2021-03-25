@@ -43,4 +43,4 @@ class SIMPLEMutator(Mutator):
 
     def call_on_genome(self, genome):
         new_weights = np.random.normal(loc=genome.weights, scale=self.std_dev)
-        genome.update_weights(new_weights)
+        genome.weights = new_weights

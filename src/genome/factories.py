@@ -1,3 +1,5 @@
+"""Factory methods for building specific genome architectures or copying genomes."""
+
 from src.genome.genome import Genome
 from src.genome.node import Node
 from src.genome.edge import Edge
@@ -11,6 +13,41 @@ def from_genes(
         weight_low=-2,
         weight_high=2,
         depth=3):
+    """Reconstructs a Genome class from the return value
+    to_reduced_repr called on an instance of a Genome class.
+
+    :param nodes_genes: First member of genome.to_reduced_repr,
+        list of node properties and indices tuples. Takes form:
+
+        [(layer_num, layer_ind, innov, weight, type), ...]
+
+        where layer number is the genome layer index, layer_ind
+        is the index in the layer, innov is the innovation number.
+        weight is the node bias and type is one of 'input',
+        'hidden' or 'output'.
+    :param edges: Second member of genome.to_reduced_repr,
+        tuple of edge properties and indices. Takes form:
+
+        [(
+            from_node.to_reduced_repr,
+            to_node.to_reduced_repr,
+            weight,
+            innov,
+            active
+        ), ...]
+
+        where from_node.to_reduced_repr and
+        to_node.to_reduced_repr take the same form as an
+        individual node in node_genes. weight is the
+        edge weight, innov it's innovation number and
+        active is True or False.
+    :param input_size: Number of input nodes
+    :param output_size: Number of output nodes
+    :param weight_low: Maximum weight on node and edges
+    :param weight_high: Minimum weight on node and edges
+    :param depth: Number of layers in network.
+    :return: Constructed genome.
+    """
 
     new_genome = Genome(
         input_size=input_size,
@@ -56,6 +93,17 @@ def minimal(
         weight_low=-2,
         weight_high=2,
         depth=3):
+    """ Builds a minimal genome with specified inputs and
+    outputs, weight bounds, depth and one connected node in
+    the first layer.
+
+    :param input_size: Number of input nodes
+    :param output_size: Number of output nodes
+    :param weight_low: Maximum weight on node and edges
+    :param weight_high: Minimum weight on node and edges
+    :param depth: Number of layers in network.
+    :return: Constructed genome.
+    """
 
     genome = Genome(
         input_size=input_size,
@@ -79,8 +127,20 @@ def dense(
         output_size=2,
         weight_low=-2,
         weight_high=2,
-        layer_dims=(5, 5, 5)
-        ):
+        layer_dims=(5, 5, 5)):
+    """ Builds a densely connected genome with specified
+    inputs and outputs, weight bounds and depth with every
+    node in one layer connected to every node in the
+    subsequent layer.
+
+
+    :param input_size: Number of input nodes
+    :param output_size: Number of output nodes
+    :param weight_low: Maximum weight on node and edges
+    :param weight_high: Minimum weight on node and edges
+    :param layer_dims: Tuple of layer dimensions
+    :return: Constructed genome.
+    """
 
     genome = Genome(
         input_size=input_size,
@@ -108,6 +168,11 @@ def dense(
 
 
 def copy(genome):
+    """Deep copy of genome instance.
+
+    :param genome: Instance of Genome class
+    :return: Copied instance of Genome glass
+    """
     new_genome = Genome(
         input_size=len(genome.inputs),
         output_size=len(genome.outputs),
