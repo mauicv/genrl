@@ -6,7 +6,7 @@ TODO:
     - Implement tf_model_from_gene https://github.com/crisbodnar/TensorFlow-NEAT/blob/master/tf_neat/recurrent_net.py
 """
 import numpy as np
-from src.activations import step
+from src.util.activations import step
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.model_validator import validate_model
 

@@ -19,7 +19,6 @@ class Test:
 
 
 class TestClassValidator(unittest.TestCase):
-    """Test methods associated to Population class."""
     def testClassValidator(self):
         t = Test(1)
         t.set_value(5)

@@ -1,11 +1,9 @@
 import unittest
-from src.math import vector_decomp
+from src.util.math import vector_decomp
 import math
 
 
 class TestUtilMethods(unittest.TestCase):
-    """Test math functions."""
-
     def test_vector_decomp(self):
         o = [1, 1, 0]
         v = [0, 0, 1]

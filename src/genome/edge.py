@@ -1,4 +1,3 @@
-from src.util import print_genome
 import itertools
 
 

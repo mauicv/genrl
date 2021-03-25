@@ -5,7 +5,7 @@ from src.populations.population import Population
 from src.mutators.mutator import Mutator
 from numpy.random import normal
 import numpy as np
-from src.math import vector_decomp
+from src.util.math import vector_decomp
 
 
 class RESMutator(Mutator):

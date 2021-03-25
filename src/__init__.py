@@ -8,4 +8,4 @@ from src.algorithms.RES.population import RESPopulation
 from src.algorithms.NEAT.metric import generate_neat_metric
 
 from src.model.model import Model
-from src.batch import BatchJob
+from src.util.batch import BatchJob

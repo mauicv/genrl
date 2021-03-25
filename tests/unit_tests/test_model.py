@@ -1,6 +1,6 @@
-from src.activations import step
+from src.util.activations import step
 import unittest
-from src.util import sample_weight
+from src.util.util import sample_weight
 from tests.unit_tests.factories import genome_factory
 from src.genome.edge import Edge
 from src.genome.node import Node
@@ -9,7 +9,6 @@ import itertools
 
 
 class TestModelClass(unittest.TestCase):
-    """Test methods assoicated to Genome class."""
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
@@ -18,7 +17,6 @@ class TestModelClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_model_init(self):
-        """Test model __init__ function."""
         def weight_gen():
             while True:
                 yield sample_weight(-2, 2)
@@ -47,7 +45,6 @@ class TestModelClass(unittest.TestCase):
 
     # @unittest.skip("Reduced rep is inccorect")
     def test_model_run(self):
-        """Test correct propagation of cell states"""
         # TODO: replace in below ds.
         # in1 = (0, 0, -1, 0, 'input')
         # in2 = (0, 1, -1, 0, 'input')
@@ -89,7 +86,6 @@ class TestModelClass(unittest.TestCase):
             self.assertEqual(target, [step(cell.acc + cell.b) for cell in layer.inputs])
 
     def test_model_reset(self):
-        """Test cleanup after model call."""
         g = genome_factory()
         model = Model(g.to_reduced_repr)
         model([1, 2])

@@ -16,8 +16,8 @@ from src.algorithms.RES.mutator import RESMutator
 from src import curry_genome_seeder
 import numpy as np
 from src.genome.factories import dense
-from src.datastore import DataStore
-from examples.utils import build_env, make_counter_fn, run_env
+from src.util.datastore import DataStore
+from examples.utils import build_env, make_counter_fn
 
 
 def bipedal_walker_RES():

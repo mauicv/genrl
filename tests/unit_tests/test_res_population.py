@@ -8,8 +8,6 @@ from tests.unit_tests.factories import setup_simple_res_env
 
 
 class TestRESPopulationClass(unittest.TestCase):
-    """Test methods assoicated to Mutator class."""
-
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
@@ -18,8 +16,6 @@ class TestRESPopulationClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_res_rank_ordering(self):
-        """Test RES mutator correctly works on population."""
-
         population, mutator, init_mu = setup_simple_res_env()
         target_mu = np.random.uniform(-3, 3, len(init_mu))
 

@@ -6,11 +6,10 @@ from random import random, choice
 from src.genome.node import Node
 from src.genome.edge import Edge
 import itertools
-from src.util import equal_genome
+from src.util.util import equal_genome
 
 
 class TestPopulationClass(unittest.TestCase):
-    """Test methods associated to Population class."""
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()

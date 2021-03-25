@@ -17,7 +17,7 @@ from src.algorithms.NEAT.mutator import NEATMutator
 from src import curry_genome_seeder
 from src import Model
 from src import generate_neat_metric
-from src.util import print_genome, print_population
+from src.util.util import print_genome, print_population
 from tqdm import tqdm
 
 

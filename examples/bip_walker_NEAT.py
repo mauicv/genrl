@@ -15,7 +15,7 @@ from src.algorithms.NEAT.population import NEATPopulation
 from src.algorithms.NEAT.mutator import NEATMutator
 from src import generate_neat_metric
 from src import curry_genome_seeder
-from src.datastore import DataStore
+from src.util.datastore import DataStore
 from examples.utils import build_env, make_counter_fn
 from src.genome.factories import minimal
 

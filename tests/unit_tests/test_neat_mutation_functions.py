@@ -5,13 +5,12 @@ from src.genome.edge import Edge
 from src.genome.node import Node
 from src.algorithms.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
 from tests.unit_tests.factories import genome_pair_factory
+from src.genome.factories import copy
 import itertools
 from random import random
 
 
 class TestMutatorClass(unittest.TestCase):
-    """Test methods assoicated to Mutator class."""
-
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
@@ -21,13 +20,11 @@ class TestMutatorClass(unittest.TestCase):
 
     @unittest.skip("stochastic element needs removed")
     def test_genome_weight_mutation(self):
-        """Test mutator acts correctly on genomes weights."""
-
-        NEW_UNIFORM_WEIGHT = 0.5
+        new_uniform_weight = 0.5
         with patch('numpy.random.uniform',
                    side_effect=[0.1, *[0.95, 0.4, 0.95,
                                 *[random() for _ in range(10)]],
-                                NEW_UNIFORM_WEIGHT,
+                                new_uniform_weight,
                                 *[random() for _ in range(10)]]):
             with patch('numpy.random.normal',
                        side_effect=[[0.1], [0.4],
@@ -42,12 +39,10 @@ class TestMutatorClass(unittest.TestCase):
                 )
                 mutate_weights(m_g)
 
-        self.assertEqual(m_g.edges[0].weight, NEW_UNIFORM_WEIGHT)
+        self.assertEqual(m_g.edges[0].weight, new_uniform_weight)
         self.assertEqual(g.edges[1].weight + 0.1, m_g.edges[1].weight)
 
     def test_add_node_mutation(self):
-        """Test mutator correctly adds nodes to genome."""
-
         g = minimal(input_size=2, output_size=3, depth=5)
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
@@ -67,8 +62,6 @@ class TestMutatorClass(unittest.TestCase):
 
     @unittest.skip("stochastic element needs removed")
     def test_add_edge_mutation(self):
-        """Test mutator correctly adds nodes to genome."""
-
         g = minimal(input_size=2, output_size=3, depth=5)
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
@@ -83,8 +76,6 @@ class TestMutatorClass(unittest.TestCase):
             new_edge.from_node.layer_num)
 
     def test_mate_mutation(self):
-        """Test genomes are correctly combined when mated."""
-
         g1, g2 = genome_pair_factory()
         for edge in g1.edges:
             edge.weight = 1
@@ -110,8 +101,6 @@ class TestMutatorClass(unittest.TestCase):
     # TODO: fix
     @unittest.skip("stochastic element needs removed")
     def test_mate_mutation_disabled_edges(self):
-        """Test disabled edges reactivated."""
-
         g1, g2 = genome_pair_factory()
         for edge in g1.edges:
             edge.weight = 1
@@ -120,4 +109,3 @@ class TestMutatorClass(unittest.TestCase):
 
         crossover_fn = curry_crossover(gene_disable_rate=0.75)
         child_g = crossover_fn(primary=g1, secondary=g2)
-        assert 1 == 0

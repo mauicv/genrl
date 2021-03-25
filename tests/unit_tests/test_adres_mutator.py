@@ -10,7 +10,6 @@ from tests.unit_tests.factories import setup_simple_res_env
 
 
 class TestADRESMutatorClass(unittest.TestCase):
-    """Test methods associated to Mutator class."""
 
     def setUp(self):
         # reset innovation number
@@ -20,8 +19,6 @@ class TestADRESMutatorClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_ADRES_mutator_on_population(self):
-        """Test ADRES mutator correctly works on population."""
-
         population, mutator, init_mu = setup_simple_res_env(mutator_type=ADRESMutator)
         target_mu = np.random.uniform(-3, 3, len(init_mu))
 

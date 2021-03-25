@@ -10,8 +10,6 @@ from tests.unit_tests.factories import setup_simple_res_env
 
 
 class TestSIMPLEMutatorClass(unittest.TestCase):
-    """Test methods assoicated to Mutator class."""
-
     def setUp(self):
         # reset innovation number
         Node.innov_iter = itertools.count()
@@ -20,7 +18,6 @@ class TestSIMPLEMutatorClass(unittest.TestCase):
         Edge.registry = {}
 
     def test_simple_mutator_on_genome(self):
-        """Test SIMPLE mutator correctly works on genome."""
         genome = genome_factory()
         mutator = SIMPLEMutator(
             std_dev=0.01,
@@ -32,11 +29,6 @@ class TestSIMPLEMutatorClass(unittest.TestCase):
         self.assertLess(difference, 0.06)
 
     def test_simple_mutator_on_population(self):
-        """Test SIMPLE mutator correctly works on population.
-
-        TODO: hard to test...
-        """
-
         population, mutator, init_mu = \
             setup_simple_res_env(mutator_type=SIMPLEMutator)
         target_mu = np.random.uniform(-3, 3, len(init_mu))
