@@ -1,8 +1,3 @@
-"""SIMPLE-ES Algorithm
-
-orders the population by fitness and retains the top survival_rate
-"""
-
 from src.genome.factories import copy
 from src.genome.genome import Genome
 from src.populations.population import Population
@@ -14,6 +9,9 @@ import numpy as np
 class SIMPLEMutator(Mutator):
     def __init__(self, std_dev, survival_rate):
         """ SIMPLE-ES algorithm mutator.
+
+        Orders the population by fitness and retains the top by
+        specified survival_rate.
 
         :param std_dev: The standard deviation of the normal distribution.
         :param survival_rate: The proportion of population members that survive.
@@ -29,8 +27,16 @@ class SIMPLEMutator(Mutator):
             self.call_on_population(target)
 
     def call_on_population(self, population):
+        """Mutate Population.
+
+        sorts genomes by fitness, removes any past a certain cutoff.
+        Randomly samples from the remaining genomes and mutates them
+        until the population is compelte again.
+
+        :param population: Population Object being mutated
+        :return: None
+        """
         genomes = sorted(population.genomes, key=lambda g: g.fitness, reverse=True)
-        # print([g.fitness for g in population.genomes])
         cutoff = int(self.survival_rate * population.population_size)
         genomes = genomes[0: cutoff]
         population.genomes = [*genomes]
@@ -42,5 +48,13 @@ class SIMPLEMutator(Mutator):
         population.generation += 1
 
     def call_on_genome(self, genome):
+        """Mutate Genome.
+
+        perturbs genomes weights by a value sampled from a normal
+        distribution.
+
+        :param genome: Genome to mutate.
+        :return: None
+        """
         new_weights = np.random.normal(loc=genome.weights, scale=self.std_dev)
         genome.weights = new_weights

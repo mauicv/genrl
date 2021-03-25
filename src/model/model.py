@@ -1,9 +1,7 @@
 """Model.py
 
-Transforms Genome object into a graph structure.
-
-TODO:
-    - Implement tf_model_from_gene https://github.com/crisbodnar/TensorFlow-NEAT/blob/master/tf_neat/recurrent_net.py
+Transforms Genome object into a graph structure that can
+run computation.
 """
 import numpy as np
 from src.util.activations import step
@@ -13,7 +11,31 @@ from src.debug.model_validator import validate_model
 
 @add_inst_validator(env='TESTING', validator=validate_model)
 class Model:
+    """Model class that acts as the expression of a genome.
+
+    Genomes by themselves are inert but can be trasnformed
+    into models using Model(genome.to_reduced_repr). We use
+    this pattern becuase genome.to_reduced_repr is
+    serializable and so can be easily passed to different
+    processes or across networks.
+    """
+
     def __init__(self, genes):
+        """ Build Model Instance.
+
+        :param genes: Reduced representation of a genome.
+            Looks like:
+            (
+                [(layer_num, layer_ind, innov, weight, type), ...],
+                [(
+                    from_node.to_reduced_repr,
+                    to_node.to_reduced_repr,
+                    weight,
+                    innov,
+                    active
+                ), ...]
+            )
+        """
         nodes, edges = genes
         num_layer = max([layer for layer, _, _, _, _ in nodes])
         self.cells = {}
@@ -53,6 +75,17 @@ class Model:
 
 
     def __call__(self, inputs):
+        """ Computes model output given input.
+
+        Applies matrix multiplication to each layer states, offsets
+        the next layer inputs by there node biases and then activates
+        and the nodes according to the activation function:
+
+            1/(1+exp(-c*x))
+
+        :param inputs: list of float values.
+        :return: list of float values
+        """
         for cell, val in zip(self.inputs, inputs):
             cell.acc = val
         self.layers[0].run(activation=lambda x:x)
@@ -63,11 +96,37 @@ class Model:
         return output
 
     def reset(self):
+        """Clears accumulated values after network call.
+
+        :return: None
+        """
         for _, cell in self.cells.items():
             cell.acc = 0
 
 class Layer:
+    """Layer class.
+
+    Models are made up of layers are parts of the overall Model
+    function. They first take input and compute activate signals
+    for each node (Here called cell) and then perform the matrix
+    multiplication operation associated to the edge weights.
+    Thus the output of the layer is the next layers input.
+
+    Note that edge connections aren't nesseserily just between
+    adjacent layers in the model. An edge might skip layers so
+    when the layer performs its computation it changes all cells
+    connected to this layer by an edge.
+    """
     def __init__(self, dims, cells, edges):
+        """ Build Layer object.
+
+        :param dims: length 2 tuple giveing the number of layer
+            inputs and outputs.
+        :param cells: all cells derived from Nodes that lie in this
+            genome layer.
+        :param edges: all edges connected with a from_node in this
+            layer.
+        """
         self.edges = edges
         self.mat = np.zeros(dims)
         input_dim, output_dim = dims
@@ -85,13 +144,29 @@ class Layer:
             self.mat[input_cells_map[(fn_i, fn_j)], output_cells_map[(tn_i, tn_j)]] = w
 
     def run(self, activation=step):
+        """Performs layer computation and updates relevent Model cells.
+
+        :param activation: function taking float and returning float.
+        :return: None
+        """
         input_vals = np.array([activation(cell.acc + cell.b) for cell in self.inputs])
         output_vals = self.mat.T @ input_vals
         for val, cell in zip(output_vals, self.outputs):
             cell.acc += val
 
 class Cell:
+    """Cells Object.
+
+    Used only to store accumulated values of layer outputs as each layer
+    is run.
+    """
     def __init__(self, i, j, b):
+        """ Build Cell object.
+
+        :param i: layer_num
+        :param j: layer_ind
+        :param b: bias weight
+        """
         self.i = i
         self.j = j
         self.b = b

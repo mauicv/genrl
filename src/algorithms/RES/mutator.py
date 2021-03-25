@@ -1,5 +1,3 @@
-"""Class that acts on a genome or pair of genomes to mutate them using the REINFORCE-ES algorithm."""
-
 from src.genome.genome import Genome
 from src.populations.population import Population
 from src.mutators.mutator import Mutator
@@ -11,6 +9,11 @@ from src.util.math import vector_decomp
 class RESMutator(Mutator):
     def __init__(self, initial_mu, std_dev, alpha=0.0001):
         """ REINFORCE-ES algorithm mutator.
+
+        see:
+            - https://openai.com/blog/evolution-strategies/
+            - https://blog.otoro.net/2017/10/29/visual-evolution-strategies/
+            - https://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf
 
         :param initial_mu: The initial mean for the normal distribution from which
             we sample new genomes.
@@ -39,6 +42,11 @@ class RESMutator(Mutator):
             self.call_on_population(target)
 
     def compute_derivative(self, targets):
+        """Computes the derivative estimate from the population.
+
+        :param targets: list of genomes in population.
+        :return: list or numpy array corresponding to gradient
+        """
         grad_pi = np.zeros_like(self.mu, dtype='float64')
         for target in targets:
             f, z = target.values()
@@ -49,6 +57,13 @@ class RESMutator(Mutator):
         self.mu = [d+m for d, m in zip(diff, self.mu)]
 
     def call_on_population(self, population, apply_rank_transform=True):
+        """
+
+        :param population: RESPopulation being mutated
+        :param apply_rank_transform: Rank transform (normalization step)
+            before mutating.
+        :return: None
+        """
         if apply_rank_transform:
             population.rank_transform()
         derivative = self.compute_derivative(population.genomes)
@@ -58,12 +73,31 @@ class RESMutator(Mutator):
         population.generation += 1
 
     def call_on_genome(self, genome):
+        """Mutate genome.
+
+        Samples a new set of genome weights from normal distribution
+        centered at mu.
+
+        :param genome: Genome being mutated.
+        :return: None
+        """
         new_weights = np.random.normal(loc=self.mu, scale=self.std_dev)
         genome.weights = new_weights
 
 
 class ADRESMutator(RESMutator):
     def __init__(self, initial_mu, std_dev):
+        """ADRESMutator object.
+
+        **Experimental**
+
+        Same as RESMutator but instead of updating in direction of gradient
+        instead selects the best performing genome in gradient direction.
+
+        :param initial_mu: The initial mean for the normal distribution from which
+            we sample new genomes.
+        :param std_dev: The standard deviation of the normal distribution.
+        """
         super().__init__(initial_mu, std_dev)
 
     def compute_genome_preference(self, genome, derivative):

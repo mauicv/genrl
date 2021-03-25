@@ -33,6 +33,7 @@ def generate_gene_metric(c_1=1.0, c_2=1.0, c_3=0.4):
 
 
 def generate_neat_metric(c_1=1.0, c_2=1.0, c_3=0.4):
+    """Builds a metric on reduced representation of genomes."""
     gen_metric = generate_gene_metric(c_1, c_2, c_3)
 
     def metric(genome_1, genome_2):

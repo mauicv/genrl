@@ -1,6 +1,5 @@
 import numpy as np
 from numpy.random import choice, uniform
-from src.genome.genome import Genome
 from src.genome.factories import from_genes
 
 
@@ -12,6 +11,21 @@ def curry_weight_mutator(
         weight_low=-2,
         weight_high=2,
         ):
+    """Creates function that acts on nodes or edges to mutate
+    them.
+
+    :param weight_mutation_likelihood: Given a node or edge this
+        is the likelihood that targets weight is mutated.
+    :param weight_mutation_rate_random: Likelihood of normal
+        distribution perturbation of weight.
+    :param weight_mutation_variance: Variance of normal distribution
+        used to perturb weights.
+    :param weight_mutation_rate_uniform: Likelihood of uniform
+        distribution perturbation of weight.
+    :param weight_low: uniform distribution lower bound
+    :param weight_high: uniform distribution upper bound
+    :return: Function that acts on Nodes or Edges to mutate them.
+    """
     def weight_adj(target):
         if np.random.uniform(0, 1, 1) < weight_mutation_likelihood:
             if np.random.uniform(0, 1, 1) < weight_mutation_rate_random:
@@ -28,10 +42,19 @@ def curry_weight_mutator(
 
 
 def pair_genes(primary, secondary):
-    """For any list of genes with innov values, so edges or nodes we
+    """Crossover function
+
+    For any list of genes with innov values (edges or nodes) we
     iterate through and chose one randomly when there exists a
     corresponding innov number and select the primary (fittest) gene when
     a match doesn't exist.
+
+    :param primary: Edges or nodes belonging to genome with
+        greater fitness than secondary.
+    :param secondary: Edges or nodes belonging to genome with
+        lesser fitness than primary.
+    :return: List of selected reduced representation edges or
+        nodes.
     """
 
     i, j = (0, 0)
@@ -58,9 +81,14 @@ def pair_genes(primary, secondary):
 
 
 def add_edge(genome):
-    """When a edge is added we sample two layers without replacement and
+    """Random edge mutation on genome.
+
+    When a edge is added we sample two layers without replacement and
     then order them. We then sample a node from each and add a new edge
     between them.
+
+    :param genome: Genome being mutated.
+    :return: Genome being mutated.
     """
 
     non_empty_layers = [layer_num for layer_num in
@@ -75,10 +103,15 @@ def add_edge(genome):
 
 
 def add_node(genome):
-    """When a node is added we randomly sample an admissible edge and then
+    """Random Node mutation.
+
+    When a node is added we randomly sample an admissible edge and then
     randomly sample an layer index in the range of layers the edge spans.
     After disabling the sampled edge we add a new node in the selected
     layer and then connect it with two new edges.
+
+    :param genome: Genome being mutated.
+    :return: Genome being mutated.
     """
 
     edge = choice(genome.get_admissible_edges())
@@ -92,6 +125,17 @@ def add_node(genome):
 
 
 def curry_crossover(gene_disable_rate):
+    """Creates a crossover function.
+
+    Creates a crossover function that takes a more fit and less
+    fit genome, pairs there edge and node genes and selects one
+    from each at random. If a disabled edge is selected it's
+    reactivated with 1 - gene_disable_rate probability.
+
+    :param gene_disable_rate: Likelihood of disabled gene staying
+        inactive.
+    :return: New genome with parents primary and secondary.
+    """
     def crossover(primary=None, secondary=None):
         """Produces a child of the primary and secondary genomes.
 

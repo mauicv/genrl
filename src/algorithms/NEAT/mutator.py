@@ -1,5 +1,3 @@
-"""Class that acts on a genome or pair of genomes to mutate them using the neat algorithm."""
-
 import numpy as np
 from numpy.random import choice
 from src.genome.factories import copy
@@ -24,6 +22,27 @@ class NEATMutator(Mutator):
             weight_low=-2,
             weight_high=2,
             ):
+        """build NEATMutator object that acts on NEATPopulation objects.
+
+        :param weight_mutation_likelihood: Given a node or edge this
+            is the likelihood that targets weight is mutated.
+        :param weight_mutation_rate_random: Likelihood of normal
+            distribution perturbation of weight.
+        :param weight_mutation_variance: Variance of normal distribution
+            used to perturb weights.
+        :param mutation_without_crossover_rate: Likelihood of just
+            weight or topological mutation occurring without crossover.
+        :param interspecies_mating_rate: Likelihood of crossover between
+            two species.
+        :param species_member_survival_rate: Proportion of species
+            members that survive yeah generation.
+        :param gene_disable_rate: Likelihood of disabled gene staying
+            inactive.
+        :param new_node_probability: Likelihood of new node mutation.
+        :param new_edge_probability: Likelihood of new edge mutation.
+        :param weight_low: uniform distribution lower bound
+        :param weight_high: uniform distribution upper bound
+        """
         super().__init__()
         self.gene_disable_rate = gene_disable_rate
         self.new_node_probability = new_node_probability
@@ -50,9 +69,12 @@ class NEATMutator(Mutator):
         - Then we keep only the top species_member_survival_rate of each generation.
         - for each group
             - we put the top performing genome into the new populations
-            - randomly draw Genomes from the remaining top performing genomes and apply mutations/pairing until the
-            rest of the groups population share is taken up.
+            - randomly draw Genomes from the remaining top performing
+                genomes and apply mutations/pairing until the rest of the
+                groups population share is taken up.
 
+        :param population: NEATPopulation object
+        :return: None
         """
         total_group_fitness_sum = sum([item['group_fitness'] for key, item in population.species.items()])
         new_genomes = []
@@ -83,6 +105,13 @@ class NEATMutator(Mutator):
         population.genomes = new_genomes
 
     def call_on_genome(self, genome):
+        """Action on genome.
+
+        Only performs weight and topological mutations.
+
+        :param genome: Genome to copy and mutate.
+        :return: New genome.
+        """
         new_genome = copy(genome)
         new_genome.fitness = genome.fitness
 

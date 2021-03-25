@@ -1,17 +1,3 @@
-"""NEAT Population Class.
-
-The distance measure δ allows us to speciate using a compatibility threshold
-δt. An ordered list of species is maintained. In each generation, genomes are
-sequentially placed into species.
-
-Compatibility Distance:
-
-δ = c_1*E/N + c_2*D/N + c3 · W.
-
-where E is excess and D is disjoint genes and W is the average weight
-differences of matching genes including disabled genes
-"""
-
 from src.algorithms.NEAT.metric import generate_neat_metric
 from src.debug.class_debug_decorator import add_inst_validator
 from src.debug.population_validator import validate_population
@@ -34,6 +20,16 @@ class NEATPopulation(Population):
           - The distance metric allows us to speciate using a compatibility threshold
           delta. An ordered list of species is maintained. In each generation, genomes are
           sequentially placed into species.
+
+        :param genome_seeder: An iterable of genomes that will be used to generate the
+            initial population.
+        :param population_size: An integer number giving the size of the total Population.
+        :param delta: A float number that defines the minimum distance two genomes require
+            to be apart before there sorted into different species. Set to None if
+            single species is desired (no speciation).
+        :param metric: Function that takes two genomes and returns the distance between them.
+            The metric is used to partition the genomes into species. If None then no
+            speciation will take place.
         """
         super().__init__(population_size=population_size,
                          delta=delta,
