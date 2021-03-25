@@ -105,3 +105,28 @@ def dense(
                 genome.add_edge(node_1, node_2)
 
     return genome
+
+
+def copy(genome):
+    new_genome = Genome(
+        input_size=len(genome.inputs),
+        output_size=len(genome.outputs),
+        weight_low=genome.weight_low,
+        weight_high=genome.weight_high,
+        depth=genome.depth)
+    layers = [[Node.copy(node) for node in layer]
+              for layer in genome.layers[1:-1]]
+    new_genome.layers = [
+        new_genome.inputs,
+        *layers,
+        new_genome.outputs
+    ]
+    nodes = [new_genome.layers[node.layer_num][node.layer_ind]
+             for node in genome.nodes]
+    new_genome.nodes = nodes
+    for edge in genome.edges:
+        new_edge = Edge.copy(edge, new_genome)
+        new_genome.edge_innovs.add((
+            new_edge.from_node.innov,
+            new_edge.to_node.innov))
+    return new_genome

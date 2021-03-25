@@ -1,4 +1,4 @@
-from src.genome.genome import Genome
+from src.genome.factories import minimal, copy
 from src.mutators.mutator import Mutator
 
 
@@ -17,7 +17,7 @@ def curry_genome_seeder(mutator, seed_genomes=None):
       ValueError: mutator param must be of type Mutator
     """
     if not seed_genomes:
-        seed_genomes = [Genome.default()]
+        seed_genomes = [minimal()]
 
     if not issubclass(type(mutator), Mutator):
         raise ValueError('Mutator param must be of type Mutator')
@@ -26,7 +26,7 @@ def curry_genome_seeder(mutator, seed_genomes=None):
         count = 0
         while count < n:
             for seed_genome in seed_genomes:
-                genome = Genome.copy(seed_genome)
+                genome = copy(seed_genome)
                 mutator(genome)
                 yield genome
                 count += 1

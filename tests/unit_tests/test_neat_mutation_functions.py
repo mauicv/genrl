@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.genome.genome import Genome
+from src.genome.factories import minimal
 from src.genome.edge import Edge
 from src.genome.node import Node
 from src.algorithms.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
@@ -32,8 +32,8 @@ class TestMutatorClass(unittest.TestCase):
             with patch('numpy.random.normal',
                        side_effect=[[0.1], [0.4],
                                     [random() for _ in range(10)]]):
-                g = Genome.default(input_size=2, output_size=3, depth=5)
-                m_g = Genome.copy(g)
+                g = minimal(input_size=2, output_size=3, depth=5)
+                m_g = copy(g)
                 mutate_weights = curry_weight_mutator(
                     weight_mutation_likelihood=0.8,
                     weight_mutation_rate_random=0.1,
@@ -48,7 +48,7 @@ class TestMutatorClass(unittest.TestCase):
     def test_add_node_mutation(self):
         """Test mutator correctly adds nodes to genome."""
 
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
         add_node(g)
@@ -69,7 +69,7 @@ class TestMutatorClass(unittest.TestCase):
     def test_add_edge_mutation(self):
         """Test mutator correctly adds nodes to genome."""
 
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         num_of_nodes = len(g.nodes)
         num_of_edges = len(g.edges)
         greatest_edge_innov = sorted(g.edges, key=lambda n: n.innov)[-1].innov

@@ -3,6 +3,7 @@
 orders the population by fitness and retains the top survival_rate
 """
 
+from src.genome.factories import copy
 from src.genome.genome import Genome
 from src.populations.population import Population
 from src.mutators.mutator import Mutator
@@ -35,7 +36,7 @@ class SIMPLEMutator(Mutator):
         population.genomes = [*genomes]
         new_genomes = np.random.choice(genomes, population.population_size - cutoff)
         for genome in new_genomes:
-            new_genome = Genome.copy(genome)
+            new_genome = copy(genome)
             self.call_on_genome(new_genome)
             population.genomes.append(new_genome)
         population.generation += 1

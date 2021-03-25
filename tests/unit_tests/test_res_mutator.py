@@ -61,7 +61,8 @@ class TestRESMutatorClass(unittest.TestCase):
     def test_res_mutator_on_population(self):
         """Test RES mutator correctly works on population."""
 
-        population, mutator, init_mu = setup_simple_res_env()
+        population, mutator, init_mu = \
+            setup_simple_res_env(mutator_type=RESMutator)
         target_mu = np.random.uniform(-3, 3, len(init_mu))
 
         for genome in population.genomes:

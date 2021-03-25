@@ -1,9 +1,11 @@
 import unittest
-from src.genome.genome import Genome, DimensionMismatchError
+from src.genome.genome import DimensionMismatchError
 from src.genome.edge import Edge
 from src.genome.node import Node
 from random import random
 import itertools
+from src.genome.factories import minimal, copy
+from src.genome.factories import from_genes
 
 
 class TestGenomeClass(unittest.TestCase):
@@ -21,7 +23,7 @@ class TestGenomeClass(unittest.TestCase):
         New instance of genome contains specified number of input and output
         nodes plus a single connecting node in the middle.
         """
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
 
         # Check correct nodes
         self.assertEqual(len(g.inputs), 2)
@@ -44,7 +46,7 @@ class TestGenomeClass(unittest.TestCase):
         )
 
     def test_get_addmissable_edges(self):
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         n2 = g.add_node(3)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])
@@ -62,11 +64,11 @@ class TestGenomeClass(unittest.TestCase):
             self.assertEqual(addmissable(e), True)
 
     def test_copy_genome(self):
-        g = Genome.default()
+        g = minimal()
         n2 = g.add_node(3)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])
-        g_copy = Genome.copy(g)
+        g_copy = copy(g)
         self.assertNotEqual(g_copy, g)
         for node_copy, node in zip(g_copy.nodes, g.nodes):
             self.assertEqual(node_copy.innov, node.innov)
@@ -84,19 +86,19 @@ class TestGenomeClass(unittest.TestCase):
             self.assertEqual(edge_copy.innov, edge.innov)
 
     def test_update_weights_error(self):
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         with self.assertRaises(DimensionMismatchError):
             g.update_weights([0 for _ in range(len(g.edges) + len(g.nodes) - 1)])
 
     def test_update_weights(self):
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         update_vector = [random() for _ in range(len(g.edges) + len(g.nodes))]
         g.update_weights(update_vector)
         updated_weights = [target.weight for target in itertools.chain(g.nodes, g.edges)]
         self.assertEqual(update_vector, updated_weights)
 
     def test_from_genes_constructor(self):
-        g = Genome.default(input_size=2, output_size=3, depth=5)
+        g = minimal(input_size=2, output_size=3, depth=5)
         n2 = g.add_node(4)
         g.add_edge(g.layers[0][0], n2)
         g.add_edge(n2, g.outputs[0])
@@ -109,7 +111,7 @@ class TestGenomeClass(unittest.TestCase):
 
         edges = [e.to_reduced_repr for e in g.edges]
         nodes = [n.to_reduced_repr for n in g.nodes]
-        g_2 = Genome.from_genes(
+        g_2 = from_genes(
             nodes,
             edges,
             input_size=2,

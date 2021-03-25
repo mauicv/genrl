@@ -11,7 +11,7 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src import Genome
+from src.genome.factories import minimal
 from src.algorithms.RES.population import RESPopulation
 from src.algorithms.RES.mutator import RESMutator
 from src import curry_genome_seeder
@@ -20,7 +20,7 @@ from examples.utils import build_simple_env
 
 
 def simple_res_example():
-    genome = Genome.default(
+    genome = minimal(
         input_size=1,
         output_size=1
     )

@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.random import choice, uniform
 from src.genome.genome import Genome
+from src.genome.factories import from_genes
 
 
 def curry_weight_mutator(
@@ -112,7 +113,7 @@ def curry_crossover(gene_disable_rate):
             return edge
 
         edge_genes = [activate_disabled(edge) for edge in edge_genes]
-        new_genome = Genome.from_genes(
+        new_genome = from_genes(
             node_genes,
             edge_genes,
             input_size=len(primary.inputs),

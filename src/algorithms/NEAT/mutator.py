@@ -2,7 +2,7 @@
 
 import numpy as np
 from numpy.random import choice
-from src.genome.genome import Genome
+from src.genome.factories import copy
 from random import random
 from src.mutators.mutator import Mutator
 from src.algorithms.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
@@ -61,7 +61,7 @@ class NEATMutator(Mutator):
             survival_prop = int(len(item['group']) * self.species_member_survival_rate)
             survival_prop = 5 if survival_prop < 5 else survival_prop
             item['group'] = item['group'][:survival_prop]
-            best_performer = Genome.copy(item['group'][0])
+            best_performer = copy(item['group'][0])
             new_genomes.append(best_performer)
             for _ in range(pop_prop - 1):
                 selected_gene = choice(item['group'])
@@ -83,7 +83,7 @@ class NEATMutator(Mutator):
         population.genomes = new_genomes
 
     def call_on_genome(self, genome):
-        new_genome = Genome.copy(genome)
+        new_genome = copy(genome)
         new_genome.fitness = genome.fitness
 
         for edge in new_genome.edges:

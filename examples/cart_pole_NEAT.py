@@ -11,7 +11,7 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src import Genome
+from src.genome.factories import minimal
 from src.algorithms.NEAT.population import NEATPopulation
 from src.algorithms.NEAT.mutator import NEATMutator
 from src import generate_neat_metric
@@ -25,7 +25,7 @@ def neat_cart_pole():
         new_edge_probability=0.1,
         new_node_probability=0.05
     )
-    seed_genome = Genome.default(
+    seed_genome = minimal(
         input_size=4,
         output_size=1,
         depth=5
