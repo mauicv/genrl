@@ -1,9 +1,9 @@
-## pygrl
+## genrl
 
-pygrl is a simple framework for running genetic aglorithms for 
+genrl is a simple framework for running genetic aglorithms for 
 reinforcement learning.
 
-__NOTE__: pygrl is currently in development.
+__NOTE__: genrl is currently in development.
 
 ### Example:
 
