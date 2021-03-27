@@ -1,6 +1,6 @@
 from time import time
-from src.debug.class_debug_decorator import add_inst_validator
-from src.debug.population_validator import validate_population
+from gerel.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.population_validator import validate_population
 import numpy as np
 from inspect import isgeneratorfunction
 

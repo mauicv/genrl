@@ -1,9 +1,9 @@
 import unittest
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 import itertools
 from tests.unit_tests.factories import genome_pair_factory
-from src import generate_neat_metric
+from gerel.algorithms.NEAT.metric import generate_neat_metric
 
 
 class TestMetrics(unittest.TestCase):

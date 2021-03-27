@@ -1,5 +1,5 @@
 import unittest
-from src.util.util import sample_weight
+from gerel.util.util import sample_weight
 from unittest.mock import patch
 import random
 

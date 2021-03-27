@@ -8,3 +8,6 @@ dask-worker-space
 *pyc
 .idea
 error_log.txt
+dist
+build
+gerel/*.egg-info

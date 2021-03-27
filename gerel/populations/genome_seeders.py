@@ -1,5 +1,5 @@
-from src.genome.factories import minimal, copy
-from src.mutators.mutator import Mutator
+from gerel.genome.factories import minimal, copy
+from gerel.mutators.mutator import Mutator
 
 
 def curry_genome_seeder(mutator, seed_genomes=None):

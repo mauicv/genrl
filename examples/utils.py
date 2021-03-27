@@ -1,5 +1,5 @@
 import numpy as np
-from src import Model
+from gerel.model.model import Model
 import gym
 
 

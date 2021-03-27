@@ -1,5 +1,5 @@
 import unittest
-from src.util.math import vector_decomp
+from gerel.util.math import vector_decomp
 import math
 
 

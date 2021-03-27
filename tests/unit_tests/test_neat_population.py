@@ -1,12 +1,12 @@
 import unittest
-from src.algorithms import NEATPopulation
-from src.algorithms import NEATMutator
-from src import generate_neat_metric
+from gerel.algorithms.NEAT.population import NEATPopulation
+from gerel.algorithms.NEAT.mutator import NEATMutator
+from gerel.algorithms.NEAT.metric import generate_neat_metric
 from random import random, choice
-from src.genome.node import Node
-from src.genome.edge import Edge
+from gerel.genome.node import Node
+from gerel.genome.edge import Edge
 import itertools
-from src.util.util import equal_genome
+from gerel.util.util import equal_genome
 
 
 class TestPopulationClass(unittest.TestCase):

@@ -1,10 +1,10 @@
 """Genome class."""
 from itertools import chain
-from src.genome.edge import Edge
-from src.genome.node import Node
-from src.util.util import sample_weight
-from src.debug.class_debug_decorator import add_inst_validator
-from src.debug.genome_validator import validate_genome
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
+from gerel.util.util import sample_weight
+from gerel.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.genome_validator import validate_genome
 
 
 class DimensionMismatchError(Exception):

@@ -1,4 +1,4 @@
-from src.model.model import Model
+from gerel.model.model import Model
 import gym
 import numpy as np
 import matplotlib.pyplot as plt

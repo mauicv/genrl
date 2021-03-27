@@ -1,8 +1,8 @@
 """Factory methods for building specific genome architectures or copying genomes."""
 
-from src.genome.genome import Genome
-from src.genome.node import Node
-from src.genome.edge import Edge
+from gerel.genome.genome import Genome
+from gerel.genome.node import Node
+from gerel.genome.edge import Edge
 
 
 def from_genes(

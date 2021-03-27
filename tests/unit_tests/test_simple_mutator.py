@@ -1,9 +1,9 @@
 import unittest
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 from tests.unit_tests.factories import genome_factory
 import itertools
-from src.algorithms import SIMPLEMutator
+from gerel.algorithms.SIMPLE.mutator import SIMPLEMutator
 import numpy as np
 from numpy.random import normal
 from tests.unit_tests.factories import setup_simple_res_env

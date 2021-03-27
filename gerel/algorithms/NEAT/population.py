@@ -1,9 +1,9 @@
-from src.algorithms.NEAT.metric import generate_neat_metric
-from src.debug.class_debug_decorator import add_inst_validator
-from src.debug.population_validator import validate_population
-from src.populations.population import Population
-from src.populations.genome_seeders import curry_genome_seeder
-from src.algorithms.NEAT.mutator import NEATMutator
+from gerel.algorithms.NEAT.metric import generate_neat_metric
+from gerel.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.population_validator import validate_population
+from gerel.populations.population import Population
+from gerel.populations.genome_seeders import curry_genome_seeder
+from gerel.algorithms.NEAT.mutator import NEATMutator
 
 
 @add_inst_validator(env="TESTING", validator=validate_population)

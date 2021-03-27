@@ -1,9 +1,9 @@
-from src.genome.genome import Genome
-from src.populations.population import Population
-from src.mutators.mutator import Mutator
+from gerel.genome.genome import Genome
+from gerel.populations.population import Population
+from gerel.mutators.mutator import Mutator
 from numpy.random import normal
 import numpy as np
-from src.util.math import vector_decomp
+from gerel.util.math import vector_decomp
 
 
 class RESMutator(Mutator):

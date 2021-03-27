@@ -11,11 +11,11 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src.genome.factories import minimal
-from src.algorithms.NEAT.population import NEATPopulation
-from src.algorithms.NEAT.mutator import NEATMutator
-from src import generate_neat_metric
-from src import curry_genome_seeder
+from gerel.genome.factories import minimal
+from gerel.algorithms.NEAT.population import NEATPopulation
+from gerel.algorithms.NEAT.mutator import NEATMutator
+from gerel.algorithms.NEAT.metric import generate_neat_metric
+from gerel.populations.genome_seeders import curry_genome_seeder
 from examples.utils import build_env, run_env, make_counter_fn
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.random import choice, uniform
-from src.genome.factories import from_genes
+from gerel.genome.factories import from_genes
 
 
 def curry_weight_mutator(

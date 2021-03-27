@@ -1,8 +1,8 @@
 import unittest
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 import itertools
-from src.genome.factories import dense, minimal, copy, from_genes
+from gerel.genome.factories import dense, minimal, copy, from_genes
 import numpy as np
 
 
@@ -15,9 +15,9 @@ class TestGenomeFactories(unittest.TestCase):
         Edge.registry = {}
 
     def test_dense_factory(self):
-        from src.algorithms.RES.population import RESPopulation
-        from src.algorithms.RES.mutator import RESMutator
-        from src.populations.genome_seeders import curry_genome_seeder
+        from gerel.algorithms.RES.population import RESPopulation
+        from gerel.algorithms.RES.mutator import RESMutator
+        from gerel.populations.genome_seeders import curry_genome_seeder
 
         genome = dense(
             input_size=1,

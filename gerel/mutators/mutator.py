@@ -4,8 +4,8 @@ The call_on_population and call_on_genome methods are
 expected to be overwritten.
 """
 
-from src.genome.genome import Genome
-from src.populations.population import Population
+from gerel.genome.genome import Genome
+from gerel.populations.population import Population
 
 
 class Mutator:

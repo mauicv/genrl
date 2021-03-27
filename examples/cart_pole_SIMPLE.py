@@ -7,10 +7,10 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src.genome.factories import dense
-from src.algorithms.SIMPLE.population import SIMPLEPopulation
-from src.algorithms.SIMPLE.mutator import SIMPLEMutator
-from src import curry_genome_seeder
+from gerel.genome.factories import dense
+from gerel.algorithms.SIMPLE.population import SIMPLEPopulation
+from gerel.algorithms.SIMPLE.mutator import SIMPLEMutator
+from gerel.populations.genome_seeders import curry_genome_seeder
 from examples.utils import build_env, run_env, make_counter_fn
 
 

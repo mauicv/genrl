@@ -1,10 +1,10 @@
-from src.util.activations import step
+from gerel.util.activations import step
+from gerel.util.util import sample_weight
 import unittest
-from src.util.util import sample_weight
 from tests.unit_tests.factories import genome_factory
-from src.genome.edge import Edge
-from src.genome.node import Node
-from src.model.model import Model
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
+from gerel.model.model import Model
 import itertools
 
 

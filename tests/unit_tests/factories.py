@@ -1,11 +1,12 @@
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 import itertools
 import numpy as np
-from src.algorithms import RESMutator, ADRESMutator, SIMPLEMutator
-from src.algorithms import RESPopulation
-from src.populations.genome_seeders import curry_genome_seeder
-from src.genome.factories import minimal, copy
+from gerel.algorithms.RES.mutator import RESMutator, ADRESMutator
+from gerel.algorithms.SIMPLE.mutator import SIMPLEMutator
+from gerel.algorithms.RES.population import RESPopulation
+from gerel.populations.genome_seeders import curry_genome_seeder
+from gerel.genome.factories import minimal, copy
 
 
 def default_gen():

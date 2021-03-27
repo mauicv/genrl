@@ -6,7 +6,7 @@ sys.path.insert(0, DIR)  # noqa
 
 import gym
 import time
-from src import BatchJob
+from gerel.util.batch import BatchJob
 
 
 def cart_pole(data):

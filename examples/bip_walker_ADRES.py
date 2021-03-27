@@ -11,12 +11,12 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from src.algorithms.RES.population import RESPopulation
-from src.algorithms.RES.mutator import ADRESMutator
-from src import curry_genome_seeder
+from gerel.algorithms.RES.population import RESPopulation
+from gerel.algorithms.RES.mutator import ADRESMutator
+from gerel.populations.genome_seeders import curry_genome_seeder
 import numpy as np
-from src.genome.factories import dense
-from src.util.datastore import DataStore
+from gerel.genome.factories import dense
+from gerel.util.datastore import DataStore
 from examples.utils import build_env, make_counter_fn
 
 

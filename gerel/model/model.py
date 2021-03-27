@@ -4,9 +4,9 @@ Transforms Genome object into a graph structure that can
 run computation.
 """
 import numpy as np
-from src.util.activations import step
-from src.debug.class_debug_decorator import add_inst_validator
-from src.debug.model_validator import validate_model
+from gerel.util.activations import step
+from gerel.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.model_validator import validate_model
 
 
 @add_inst_validator(env='TESTING', validator=validate_model)

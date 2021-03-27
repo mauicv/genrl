@@ -1,6 +1,6 @@
-from src.debug.class_debug_decorator import add_inst_validator
-from src.debug.population_validator import validate_population
-from src.populations.population import Population
+from gerel.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.population_validator import validate_population
+from gerel.populations.population import Population
 
 
 @add_inst_validator(env="TESTING", validator=validate_population)

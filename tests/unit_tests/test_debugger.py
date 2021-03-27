@@ -1,5 +1,5 @@
 import unittest
-from src.debug.class_debug_decorator import add_inst_validator
+from gerel.debug.class_debug_decorator import add_inst_validator
 
 MSG = 'value greater than ten'
 

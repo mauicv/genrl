@@ -1,7 +1,7 @@
-from src.genome.factories import copy
-from src.genome.genome import Genome
-from src.populations.population import Population
-from src.mutators.mutator import Mutator
+from gerel.genome.factories import copy
+from gerel.genome.genome import Genome
+from gerel.populations.population import Population
+from gerel.mutators.mutator import Mutator
 from numpy.random import normal
 import numpy as np
 

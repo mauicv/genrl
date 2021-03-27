@@ -1,7 +1,7 @@
 import unittest
-from src.genome.factories import minimal
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.factories import minimal
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 import itertools
 
 

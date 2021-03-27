@@ -1,9 +1,9 @@
 import numpy as np
 from numpy.random import choice
-from src.genome.factories import copy
+from gerel.genome.factories import copy
 from random import random
-from src.mutators.mutator import Mutator
-from src.algorithms.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
+from gerel.mutators.mutator import Mutator
+from gerel.algorithms.NEAT.functions import curry_weight_mutator, curry_crossover, add_node, add_edge
 
 
 class NEATMutator(Mutator):

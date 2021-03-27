@@ -1,10 +1,10 @@
 import unittest
-from src.genome.genome import DimensionMismatchError
-from src.genome.edge import Edge
-from src.genome.node import Node
+from gerel.genome.genome import DimensionMismatchError
+from gerel.genome.edge import Edge
+from gerel.genome.node import Node
 from random import random
 import itertools
-from src.genome.factories import minimal
+from gerel.genome.factories import minimal
 
 
 class TestGenomeClass(unittest.TestCase):
