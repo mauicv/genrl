@@ -48,3 +48,22 @@ class DataStore:
             file_name = os.path.join(self.dirname, file_name)
             with open(file_name, 'r') as file:
                 yield json.loads(file.read())
+
+    @property
+    def num_generations(self):
+        return len(os.listdir(self.dirname))
+
+    @property
+    def last_generation_id(self):
+        return max(os.listdir(self.dirname))
+
+    @property
+    def best_generation(self):
+        best_fitness = None
+        best_generation = 0
+        for gen_id in os.listdir(self.dirname):
+            data = self.load(gen_id)
+            if not best_fitness or data['best_fitness'] > best_fitness:
+                best_fitness = data['best_fitness']
+                best_generation = data
+        return best_generation

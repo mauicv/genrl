@@ -73,7 +73,6 @@ class Model:
         self.inputs = [self.cells[(i, j)] for i, j, _, _, type in nodes if type == 'input']
         self.outputs = [self.cells[(i, j)] for i, j, _, _, type in nodes if type == 'output']
 
-
     def __call__(self, inputs):
         """ Computes model output given input.
 
@@ -102,6 +101,7 @@ class Model:
         """
         for _, cell in self.cells.items():
             cell.acc = 0
+
 
 class Layer:
     """Layer class.
@@ -153,6 +153,7 @@ class Layer:
         output_vals = self.mat.T @ input_vals
         for val, cell in zip(output_vals, self.outputs):
             cell.acc += val
+
 
 class Cell:
     """Cells Object.
