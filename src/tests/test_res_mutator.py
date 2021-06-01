@@ -3,12 +3,12 @@ from unittest.mock import patch
 import unittest
 from gerel.genome.edge import Edge
 from gerel.genome.node import Node
-from tests.unit_tests.factories import genome_factory
+from tests.factories import genome_factory
 import itertools
 from gerel.algorithms.RES.mutator import RESMutator
 import numpy as np
 from numpy.random import normal
-from tests.unit_tests.factories import setup_simple_res_env
+from tests.factories import setup_simple_res_env
 
 
 class TestRESMutatorClass(unittest.TestCase):

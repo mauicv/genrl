@@ -12,8 +12,8 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from gerel.genome.factories import minimal
-from gerel.algorithms.RES.population import RESPopulation
 from gerel.algorithms.RES.mutator import RESMutator
+from gerel.algorithms.RES.population import RESPopulation
 from gerel.populations.genome_seeders import curry_genome_seeder
 import numpy as np
 from examples.utils import build_simple_env

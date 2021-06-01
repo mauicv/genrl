@@ -11,42 +11,43 @@ import os
 DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
-from gerel.algorithms.RES.population import RESPopulation
-from gerel.algorithms.RES.mutator import RESMutator
+from gerel.algorithms.NEAT.population import NEATPopulation
+from gerel.algorithms.NEAT.mutator import NEATMutator
+from gerel.algorithms.NEAT.metric import generate_neat_metric
 from gerel.populations.genome_seeders import curry_genome_seeder
-import numpy as np
-from gerel.genome.factories import dense
 from gerel.util.datastore import DataStore
+from gerel.genome.factories import minimal
 from examples.utils import build_env, make_counter_fn
 
 
-def bipedal_walker_RES():
-    genome = dense(
+def neat_bipedal_walker():
+    pop_size = 400
+    mutator = NEATMutator(
+        new_edge_probability=0.1,
+        new_node_probability=0.05
+    )
+    genome = minimal(
         input_size=24,
         output_size=4,
-        layer_dims=[20]
+        depth=5
     )
-
-    weights_len = len(genome.edges) + len(genome.nodes)
-    init_mu = np.random.uniform(-1, 1, weights_len)
-
-    mutator = RESMutator(
-        initial_mu=init_mu,
-        std_dev=0.5,
-        alpha=1
-    )
-
     seeder = curry_genome_seeder(
         mutator=mutator,
         seed_genomes=[genome]
     )
-
-    population = RESPopulation(
-        population_size=400,
-        genome_seeder=seeder
+    metric = generate_neat_metric(
+        c_1=1,
+        c_2=1,
+        c_3=3
+    )
+    population = NEATPopulation(
+        population_size=pop_size,
+        delta=4,
+        genome_seeder=seeder,
+        metric=metric
     )
 
-    ds = DataStore(name='bip_walker_RES_data')
+    ds = DataStore(name='bip_walker_NEAT_data')
 
     assign_population_fitness = build_env(
         env_name='BipedalWalker-v3',
@@ -58,10 +59,11 @@ def bipedal_walker_RES():
         success = assign_population_fitness(population)
         if success and counter_fn():
             break
+        population.speciate()
         data = population.to_dict()
         mutator(population)
-        print_progress(data)
         ds.save(data)
+        print_progress(data)
     return True
 
 
@@ -72,5 +74,5 @@ def print_progress(data):
     print(data_string)
 
 
-if __name__ == '__main__':
-    bipedal_walker_RES()
+if __name__ == "__main__":
+    neat_bipedal_walker()

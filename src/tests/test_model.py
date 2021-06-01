@@ -1,11 +1,12 @@
 from gerel.util.activations import step
 from gerel.util.util import sample_weight
 import unittest
-from tests.unit_tests.factories import genome_factory
+from tests.factories import genome_factory
 from gerel.genome.edge import Edge
 from gerel.genome.node import Node
 from gerel.model.model import Model
 import itertools
+from gerel.util.activations import build_leaky_relu, tanh
 
 
 class TestModelClass(unittest.TestCase):
@@ -20,6 +21,7 @@ class TestModelClass(unittest.TestCase):
         def weight_gen():
             while True:
                 yield sample_weight(-2, 2)
+
         def bias_gen():
             while True:
                 yield sample_weight(-2, 2)
@@ -80,9 +82,9 @@ class TestModelClass(unittest.TestCase):
                        ]))
 
         # overwrite reset method so that we can inspect the run call
-        model.reset = lambda : None
+        model.reset = lambda: None
         self.assertEqual(model([1, 2]), [0.0, 4.0])
-        for layer, target in zip(model.layers[1:],[[1, -1, 1], [-1, 1]]):
+        for layer, target in zip(model.layers[1:], [[1, -1, 1], [-1, 1]]):
             self.assertEqual(target, [step(cell.acc + cell.b) for cell in layer.inputs])
 
     def test_model_reset(self):
@@ -91,3 +93,36 @@ class TestModelClass(unittest.TestCase):
         model([1, 2])
         for _, cell in model.cells.items():
             self.assertEqual(cell.acc, 0)
+
+    def test_model_mismatch_err(self):
+        g = genome_factory()
+        model = Model(
+            g.to_reduced_repr,
+            layer_activations=[step for _ in range(6)]
+        )
+        self.assertEqual(len([layer.activation for layer in model.layers]), 6)
+
+        with self.assertRaises(Exception) as context:
+            model = Model(
+                g.to_reduced_repr,
+                layer_activations=[step for _ in range(5)]
+            )
+
+        MSG = 'Mismatch in number of activation functions and layers'
+        self.assertEqual(MSG, str(context.exception))
+
+    def test_model_activation_fns(self):
+        g = genome_factory()
+        leaky_relu = build_leaky_relu(0.1)
+        model = Model(
+            g.to_reduced_repr,
+            layer_activations=[
+                lambda x: -x,
+                leaky_relu,
+                lambda x: x,
+                lambda x: x,
+                lambda x: x,
+                lambda x: x
+            ]
+        )
+        self.assertEqual(model([2, 2]), [-1.3, -1.3, -2.3])

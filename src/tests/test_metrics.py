@@ -2,7 +2,7 @@ import unittest
 from gerel.genome.edge import Edge
 from gerel.genome.node import Node
 import itertools
-from tests.unit_tests.factories import genome_pair_factory
+from tests.factories import genome_pair_factory
 from gerel.algorithms.NEAT.metric import generate_neat_metric
 
 

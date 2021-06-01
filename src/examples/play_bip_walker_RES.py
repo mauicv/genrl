@@ -1,3 +1,9 @@
+import sys
+import os
+
+DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
+sys.path.insert(0, DIR)  # noqa
+
 from gerel.model.model import Model
 import gym
 import numpy as np
@@ -26,13 +32,13 @@ def compute_fitness(genome, render=False):
 
 
 def run_trained_RES_bip_walker_example():
-    with open('../assets/RES_bip_walk_train_logs.csv', 'r') as train_logs:
+    with open('src/assets/RES_bip_walk_train_logs.csv', 'r') as train_logs:
         reader = csv.reader(train_logs)
         next(reader)
         plt.plot([float(best) for _, best, _, _ in reader])
         plt.show()
 
-    with open('../assets/RES_bip_walk_soln.json', 'r') as soln_file:
+    with open('src/assets/RES_bip_walk_soln.json', 'r') as soln_file:
         best_genome = json.loads(soln_file.read())
         compute_fitness(best_genome, render=True)
 

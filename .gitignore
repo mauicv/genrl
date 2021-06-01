@@ -10,4 +10,4 @@ dask-worker-space
 error_log.txt
 dist
 build
-gerel/*.egg-info
+*.egg-info

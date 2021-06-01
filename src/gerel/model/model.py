@@ -13,14 +13,14 @@ from gerel.debug.model_validator import validate_model
 class Model:
     """Model class that acts as the expression of a genome.
 
-    Genomes by themselves are inert but can be trasnformed
+    Genomes by themselves are inert but can be transformed
     into models using Model(genome.to_reduced_repr). We use
     this pattern becuase genome.to_reduced_repr is
     serializable and so can be easily passed to different
     processes or across networks.
     """
 
-    def __init__(self, genes):
+    def __init__(self, genes, activation=step, layer_activations=None):
         """ Build Model Instance.
 
         :param genes: Reduced representation of a genome.
@@ -41,10 +41,17 @@ class Model:
         self.cells = {}
         self.layers = []
 
+        if layer_activations and len(layer_activations) != num_layer:
+            raise ValueError('Mismatch in number of activation functions and layers')
+
+        if not layer_activations:
+            # first activation function defaults to identity mapping
+            layer_activations = [lambda x: x, *[activation for layer in range(num_layer - 1)]]
+
         for from_layer in range(num_layer):
             from_nodes = [(node_layer, node_ind, bias) for node_layer, node_ind, _, bias, _
                           in nodes if from_layer == node_layer]
-            activate_weight = lambda w,a: w if a else 0
+            activate_weight = lambda w, a: w if a else 0
             from_edges = [(from_node_layer,
                            from_node_layer_ind,
                            to_node_layer,
@@ -67,7 +74,11 @@ class Model:
                     self.cells[(i, j)] = cell
 
             dims = (len(from_nodes), len(to_nodes))
-            layer = Layer(dims, self.cells, from_edges)
+            layer = Layer(
+                dims,
+                self.cells,
+                from_edges,
+                activation=layer_activations[from_layer])
             self.layers.append(layer)
 
         self.inputs = [self.cells[(i, j)] for i, j, _, _, type in nodes if type == 'input']
@@ -87,9 +98,10 @@ class Model:
         """
         for cell, val in zip(self.inputs, inputs):
             cell.acc = val
-        self.layers[0].run(activation=lambda x:x)
-        for layer in self.layers[1:]:
+
+        for layer in self.layers:
             layer.run()
+
         output = [cell.acc + cell.b for cell in self.outputs]
         self.reset()
         return output
@@ -117,7 +129,7 @@ class Layer:
     when the layer performs its computation it changes all cells
     connected to this layer by an edge.
     """
-    def __init__(self, dims, cells, edges):
+    def __init__(self, dims, cells, edges, activation=step):
         """ Build Layer object.
 
         :param dims: length 2 tuple giveing the number of layer
@@ -127,6 +139,7 @@ class Layer:
         :param edges: all edges connected with a from_node in this
             layer.
         """
+        self.activation = activation
         self.edges = edges
         self.mat = np.zeros(dims)
         input_dim, output_dim = dims
@@ -143,13 +156,13 @@ class Layer:
                 self.outputs.append(cells[(tn_i, tn_j)])
             self.mat[input_cells_map[(fn_i, fn_j)], output_cells_map[(tn_i, tn_j)]] = w
 
-    def run(self, activation=step):
+    def run(self):
         """Performs layer computation and updates relevent Model cells.
 
         :param activation: function taking float and returning float.
         :return: None
         """
-        input_vals = np.array([activation(cell.acc + cell.b) for cell in self.inputs])
+        input_vals = np.array([self.activation(cell.acc + cell.b) for cell in self.inputs])
         output_vals = self.mat.T @ input_vals
         for val, cell in zip(output_vals, self.outputs):
             cell.acc += val

@@ -6,7 +6,7 @@ import itertools
 from gerel.algorithms.RES.mutator import ADRESMutator
 import numpy as np
 from numpy.random import normal
-from tests.unit_tests.factories import setup_simple_res_env
+from tests.factories import setup_simple_res_env
 
 
 class TestADRESMutatorClass(unittest.TestCase):

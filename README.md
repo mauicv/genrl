@@ -7,7 +7,7 @@ _NOTE_: GeReL is in development.
 
 ### Example:
 
-The following uses [REINFORCE-ES](https://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf) to solve openai 
+The following uses [REINFORCE-ES](https://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf) to solve openai
 [cartpole environment](https://gym.openai.com/envs/CartPole-v1/)
 
 ```python
@@ -85,10 +85,7 @@ ___
 To run all unittests:
 
 ```shell
-python -m unittest discover tests/unit_tests; pyclean .
+nosetests
 ```
 
 ___
-
-
-

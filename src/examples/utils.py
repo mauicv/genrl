@@ -1,3 +1,9 @@
+import sys
+import os
+
+DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
+sys.path.insert(0, DIR)  # noqa
+
 import numpy as np
 from gerel.model.model import Model
 import gym

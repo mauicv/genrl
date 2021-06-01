@@ -12,15 +12,15 @@ DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))  # noqa
 sys.path.insert(0, DIR)  # noqa
 
 from gerel.algorithms.RES.population import RESPopulation
-from gerel.algorithms.RES.mutator import ADRESMutator
+from gerel.algorithms.RES.mutator import RESMutator
 from gerel.populations.genome_seeders import curry_genome_seeder
-import numpy as np
 from gerel.genome.factories import dense
 from gerel.util.datastore import DataStore
 from examples.utils import build_env, make_counter_fn
+import numpy as np
 
 
-def bipedal_walker_ADRES():
+def bipedal_walker_RES():
     genome = dense(
         input_size=24,
         output_size=4,
@@ -30,9 +30,10 @@ def bipedal_walker_ADRES():
     weights_len = len(genome.edges) + len(genome.nodes)
     init_mu = np.random.uniform(-1, 1, weights_len)
 
-    mutator = ADRESMutator(
+    mutator = RESMutator(
         initial_mu=init_mu,
         std_dev=0.5,
+        alpha=1
     )
 
     seeder = curry_genome_seeder(
@@ -45,7 +46,7 @@ def bipedal_walker_ADRES():
         genome_seeder=seeder
     )
 
-    ds = DataStore(name='bip_walker_ADRES_data')
+    ds = DataStore(name='bip_walker_RES_data')
 
     assign_population_fitness = build_env(
         env_name='BipedalWalker-v3',
@@ -59,8 +60,8 @@ def bipedal_walker_ADRES():
             break
         data = population.to_dict()
         mutator(population)
-        ds.save(data)
         print_progress(data)
+        ds.save(data)
     return True
 
 
@@ -72,4 +73,4 @@ def print_progress(data):
 
 
 if __name__ == '__main__':
-    bipedal_walker_ADRES()
+    bipedal_walker_RES()

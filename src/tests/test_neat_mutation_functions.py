@@ -4,7 +4,7 @@ from gerel.genome.factories import minimal
 from gerel.genome.edge import Edge
 from gerel.genome.node import Node
 from gerel.algorithms.NEAT.functions import add_node, add_edge, curry_weight_mutator, curry_crossover
-from tests.unit_tests.factories import genome_pair_factory
+from tests.factories import genome_pair_factory
 from gerel.genome.factories import copy
 import itertools
 from random import random
