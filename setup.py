@@ -7,7 +7,7 @@ short_description = "Simple genetic algorithms library for reinforcement learnin
 
 setuptools.setup(
     name="gerel",
-    version="0.0.5",
+    version="0.0.6",
     author='mauicv',
     author_email='a.thornysort@gmail.com',
     description=short_description,

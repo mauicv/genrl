@@ -16,7 +16,10 @@ def tanh(x):
 
 def build_sigmoid(c=4.9):
     def sigmoid(x):
-        return 1 / (1 + exp(-c * x))
+        exp_arg = c * x
+        if - exp_arg > 100:
+            return 0
+        return 1 / (1 + exp(-exp_arg))
     return sigmoid
 
 
